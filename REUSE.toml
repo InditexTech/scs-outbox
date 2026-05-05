@@ -1,0 +1,14 @@
+version = 1
+SPDX-PackageName = "base-archetype"
+SPDX-PackageSupplier = "2025 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)"
+SPDX-PackageDownloadLocation = "https://github.com/InditexTech/base-archetype"
+
+[[annotations]]
+path = [
+    "repolinter.json",
+    "NOTICE",
+    ".gitignore",
+    ".github/CODEOWNERS",
+]
+SPDX-FileCopyrightText = "2025 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)"
+SPDX-License-Identifier = "Apache-2.0"
