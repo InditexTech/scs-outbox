@@ -1,0 +1,2 @@
+dev.inditex.scsoutbox.mongodb.config.MongoDbOutboxAutoConfiguration
+dev.inditex.scsoutbox.mongodb.config.MongoDbShedlockAutoConfiguration
