@@ -1,0 +1,14 @@
+repolinter.json
+  h_5ebe62d7d24f9c 162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "afe6670c9f2727b2180e44f4376b505297492335",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
