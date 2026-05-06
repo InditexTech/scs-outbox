@@ -1,0 +1,48 @@
+code/scs-outbox-libs/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-jdbc/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-starters/scs-outbox-mongodb-starter/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-serialization/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-it/scs-outbox-jdbc-it/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-metrics/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-test-support/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-starters/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-archive-mongodb/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-archive-jdbc/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-core/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-archive/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-it/scs-outbox-mongodb-it/pom.xml
+  h_5ebe62d7d24f9c 7
+code/jacoco-report-aggregate/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-it/pom.xml
+  h_5ebe62d7d24f9c 7
+code/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-libs/scs-outbox-mongodb/pom.xml
+  h_5ebe62d7d24f9c 7
+code/scs-outbox-starters/scs-outbox-jdbc-starter/pom.xml
+  h_5ebe62d7d24f9c 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "07f7e524bede6e5336a775ff6c53ccaf6467766b",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
