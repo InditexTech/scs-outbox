@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
+SPDX-FileCopyrightText: 2026 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
 
 SPDX-License-Identifier: Apache-2.0
 -->
@@ -60,4 +60,4 @@ See [ROADMAP.md](./ROADMAP.md) for planned features and development goals.
 
 This project is licensed under the [Apache-2.0 License](./LICENSE).
 
-© 2025 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
+© 2026 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
