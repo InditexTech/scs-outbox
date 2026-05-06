@@ -627,3 +627,6 @@ spring.cloud.stream.kafka.binder.configuration.linger.ms=0
 - **PostgreSQL table names must be lowercase**: scs-outbox does not use quoted identifiers. If you customize table names, ensure they are lowercase to avoid case-sensitivity issues.
 - **Integration test lock cleanup**: when running integration tests that trigger publishing, the publishing task may not finish before the test tears down, leaving the ShedLock lock unreleased. Restart the database between tests to avoid this.
 
+## License
+
+This software is available as open source under the terms of the [Apache-2.0](LICENSE).
