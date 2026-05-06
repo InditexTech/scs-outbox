@@ -1,0 +1,16 @@
+NOTICE
+  h_5ebe62d7d24f9c 1
+.gitignore
+  h_5ebe62d7d24f9c 1-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "c861f75498c34ec6671b33f9be66e1efacabbffb",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
