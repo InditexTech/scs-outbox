@@ -1,0 +1,14 @@
+REUSE.toml
+  h_5ebe62d7d24f9c 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "949b449261b5fe2fe2e81ffa861e84e011e86111",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
