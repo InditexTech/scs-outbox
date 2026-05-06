@@ -1,0 +1,14 @@
+README.md
+  h_5ebe62d7d24f9c 630-632
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "6d9d2591f40dc6f1efde505c9be47d6bd0df5717",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
