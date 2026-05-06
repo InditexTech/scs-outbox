@@ -6,7 +6,7 @@ SPDX-PackageDownloadLocation = "https://github.com/InditexTech/scs-outbox"
 [[annotations]]
 path = [
     "repolinter.json",
-    "NOTICE.txt",
+    "NOTICE",
     ".gitignore",
     ".gitattributes",
     ".github/CODEOWNERS",
