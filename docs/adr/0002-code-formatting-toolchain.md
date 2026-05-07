@@ -10,7 +10,7 @@
 
 ## Context
 
-The project previously relied on `com.inditex.libamfmt:amiga-javaformat-maven-plugin`, a proprietary plugin that enforced code formatting during the `validate` Maven phase. This plugin is not available in public repositories, which prevents the project from being built and maintained in open-source environments.
+The project previously has been used a proprietary plugin that enforced code formatting during the `validate` Maven phase. This plugin is not available in public repositories, which prevents the project from being built and maintained in open-source environments.
 
 The goal is to replace it with an equivalent toolchain composed entirely of open-source, publicly available plugins, while preserving the existing style rules and IDE configuration files already present in `src/main/config/`.
 
