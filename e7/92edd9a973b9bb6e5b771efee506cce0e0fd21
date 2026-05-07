@@ -1,0 +1,14 @@
+code/src/main/config/intellij-java-google-style.xml
+  h_5ebe62d7d24f9c 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "e792edd9a973b9bb6e5b771efee506cce0e0fd21",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
