@@ -1,0 +1,32 @@
+.github/workflows/docs/code-maven_java-build_snapshot.md
+  s_a0885ace76e3b4::t_65f6f4718f70e3 33,35,47,49
+  s_a0885ace76e3b4::t_92e779f554d7c0 37-46,48
+  s_a0885ace76e3b4::t_e48ffa50d48d17 68-79
+.github/workflows/code-maven_java-build_snapshot.yml
+  s_a0885ace76e3b4::t_b50e63699fc3dd 290-299,315,318
+  s_a0885ace76e3b4::t_766cdba6cb3817 8-9
+  s_a0885ace76e3b4::t_12623e128c15fc 182-205,208-289,300-314,316-317,319-330
+  s_a0885ace76e3b4::t_b230c679e16d72 141-150,166,169
+  h_5ebe62d7d24f9c 206-207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "16e37060d6d8f7afcfc9585a962b34d55b0bfa23",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_a0885ace76e3b4": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1778162587723",
+        "model": "unknown"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
