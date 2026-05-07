@@ -1,0 +1,14 @@
+docs/adr/0002-code-formatting-toolchain.md
+  h_5ebe62d7d24f9c 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "b7125d3cc68c45c8146d2da79ac402d757a27c69",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
