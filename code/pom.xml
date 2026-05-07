@@ -9,7 +9,7 @@
 
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Spring Cloud Stream Outbox pattern library providing reliable event publishing for JDBC and MongoDB backends with support for serialization, archiving, and metrics.</description>
-  <url>https://inditextech.github.io/scs-outbox</url>
+  <url>https://github.com/InditexTech/scs-outbox</url>
   <inceptionYear>2026</inceptionYear>
   <organization>
     <name>Industria de Diseño Textil, S.A.</name>
