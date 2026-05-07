@@ -1,0 +1,14 @@
+code/pom.xml
+  h_5ebe62d7d24f9c 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "c3ece4dd8719c538f9d638aae7d3db2f1ecb029f",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
