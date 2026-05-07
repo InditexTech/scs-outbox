@@ -5,7 +5,6 @@
 | **Status**  | Accepted                     |
 | **Date**    | 2026-04-13                   |
 | **Authors** | scs-outbox team              |
-| **Issue**   | [#520](https://github.com/inditex/lib-springcloudstreamoutbox/issues/520) — Replace amiga-javaformat with open-source code formatter |
 
 ---
 

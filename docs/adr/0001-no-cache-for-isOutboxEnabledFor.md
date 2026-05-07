@@ -5,13 +5,12 @@
 | **Status**  | Accepted                     |
 | **Date**    | 2026-03-06                   |
 | **Authors** | scs-outbox team              |
-| **Issue**   | [#420](https://github.com/inditex/lib-springcloudstreamoutbox/issues/420) — Support regular expressions for inclusion and exclusion outbox binding names |
 
 ---
 
 ## Context
 
-As part of [#420](https://github.com/inditex/lib-springcloudstreamoutbox/issues/420), the `inclusions` and `exclusions` binding properties were extended to support Java-style regular expressions (prefixed with `regex:`). This change introduced `BindingMatcher`, a class that wraps either an exact `String` comparison or a pre-compiled `java.util.regex.Pattern`.
+As part of an issue, the `inclusions` and `exclusions` binding properties were extended to support Java-style regular expressions (prefixed with `regex:`). This change introduced `BindingMatcher`, a class that wraps either an exact `String` comparison or a pre-compiled `java.util.regex.Pattern`.
 
 The method `OutboxServiceProperties.isOutboxEnabledFor(String bindingName)` is now evaluated by streaming over a list of `BindingMatcher` objects and calling `matcher.matches(bindingName)` on each. This raised the question of whether results should be cached in memory, given that:
 
