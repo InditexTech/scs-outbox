@@ -1,0 +1,3 @@
+dev.inditex.scsoutbox.jdbc.config.JdbcDataSourceAutoConfiguration
+dev.inditex.scsoutbox.jdbc.config.JdbcOutboxAutoConfiguration
+dev.inditex.scsoutbox.jdbc.config.JdbcShedlockAutoConfiguration

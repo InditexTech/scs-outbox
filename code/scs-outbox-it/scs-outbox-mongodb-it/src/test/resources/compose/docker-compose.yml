@@ -1,0 +1,50 @@
+name: scs-outbox-mongodb-it
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:7.0
+    ports:
+      - '27017'
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    healthcheck:
+      test: |
+        mongosh --quiet --eval "
+          try {
+            var s = rs.status();
+            quit(s.ok == 1 ? 0 : 1);
+          } catch(e) {
+            rs.initiate({_id:'rs0', members:[{_id:0, host:'localhost:27017'}]});
+            quit(1);
+          }
+        "
+      start_period: 10s
+      interval: 5s
+      timeout: 15s
+      retries: 10
+    labels:
+      org.springframework.boot.readiness-check.tcp.disable: false
+      # Enable service connection
+      org.springframework.boot.service-connection: mongo
+    volumes:
+      - "./mongodb:/tmp/data"
+  kafka:
+    image: apache/kafka:3.8.1
+    ports:
+      - "30810:9092"
+    environment:
+      - "KAFKA_NODE_ID=1"
+      - "KAFKA_PROCESS_ROLES=broker,controller"
+      - "KAFKA_LISTENERS=OUTSIDE://0.0.0.0:9092,PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093"
+      - "KAFKA_ADVERTISED_LISTENERS=OUTSIDE://localhost:30810,PLAINTEXT://kafka:29092"
+      - "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=OUTSIDE:PLAINTEXT,PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      - "KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT"
+      - "KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093"
+      - "KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER"
+      - "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1"
+      - "KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0"
+      - "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1"
+      - "KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1"
+    volumes:
+      - "./kafka:/tmp/data"
+    labels:
+      org.springframework.boot.readiness-check.tcp.disable: true

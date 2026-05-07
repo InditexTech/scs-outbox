@@ -1,0 +1,51 @@
+logging:
+  level:
+    dev.inditex.scsoutbox: DEBUG
+    root: WARN
+spring:
+  application:
+    name: scs-outbox-jdbc-it
+  docker:
+    compose:
+      enabled: false
+      file: classpath:compose/docker-compose.yml
+      start:
+        command: up
+        log-level: debug
+      stop:
+        command: down
+      skip:
+        in-tests: true
+  datasource:
+    username: postgres
+    password: postgres-pwd
+
+
+  cloud:
+    function:
+      definition: myConsumer
+    stream:
+      output-bindings: output
+      bindings:
+        myConsumer-in-0:
+          destination: outbox
+          group: outbox
+        output:
+          destination: outbox
+          contentType: text/*;charset=UTF-8
+      kafka:
+        binder:
+          brokers: localhost:30810
+scs-outbox:
+  bindings:
+    inclusions: "output"
+    exclusions: "myConsumer-in-0"
+  publishing:
+    after-commit: false
+    scheduler:
+      fixed-rate: 1000
+    archive:
+      enabled: false
+      json-payload-enabled: false
+    metrics:
+      enabled: true

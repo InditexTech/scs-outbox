@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>dev.inditex.scsoutbox</groupId>
+  <artifactId>scs-outbox</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>Spring Cloud Stream Outbox pattern library providing reliable event publishing for JDBC and MongoDB backends with support for serialization, archiving, and metrics.</description>
+  <url>https://github.com/InditexTech/scs-outbox/blob/develop/README.md</url>
+  <inceptionYear>2026</inceptionYear>
+  <organization>
+    <name>Industria de Diseño Textil, S.A.</name>
+    <url>https://inditex.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://github.com/InditexTech/scs-outbox/blob/develop/LICENSES/Apache-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Inditex Open Source Office</name>
+      <email>oso@inditex.com</email>
+      <organization>Industria de Diseño Textil, S.A.</organization>
+      <organizationUrl>https://inditex.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>scs-outbox-starters</module>
+    <module>scs-outbox-libs</module>
+    <module>jacoco-report-aggregate</module>
+    <module>scs-outbox-it</module>
+  </modules>
+
+  <scm>
+    <connection>${scm-connection}</connection>
+    <developerConnection>${scm-developer-connection}</developerConnection>
+    <url>${scm-url}</url>
+    <tag>${scm-tag}</tag>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>central</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <!-- ==================== Java & Build ==================== -->
+    <java.version>17</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- ==================== SCM ==================== -->
+    <scm-connection>scm:git:https://github.com/InditexTech/scs-outbox.git</scm-connection>
+    <scm-developer-connection>scm:git:https://github.com/InditexTech/scs-outbox.git</scm-developer-connection>
+    <scm-url>https://github.com/InditexTech/scs-outbox</scm-url>
+    <scm-tag>HEAD</scm-tag>
+    <project.scm.id>inditextech-scm-github</project.scm.id>
+
+    <!-- ==================== Release Strategy ==================== -->
+    <release.strategy.multibaseline>false</release.strategy.multibaseline>
+    <release.strategy.developmentBranch>develop</release.strategy.developmentBranch>
+    <release.strategy.createSyncPR>true</release.strategy.createSyncPR>
+    <release.strategy.syncPullReqLabels>kind/internal</release.strategy.syncPullReqLabels>
+
+    <!-- ==================== Plugin Versions ==================== -->
+    <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+    <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
+    <maven-gpg-plugin.version>3.2.5</maven-gpg-plugin.version>
+    <maven-javadoc-plugin.version>3.10.0</maven-javadoc-plugin.version>
+    <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+    <maven-release-semver-policy.version>3.3.1</maven-release-semver-policy.version>
+    <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+    <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
+    <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+    <spotless-maven-plugin.version>3.4.0</spotless-maven-plugin.version>
+    <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
+    <!-- Checkstyle version 12.X has been locked in due to JDK 17 compatibility -->
+    <checkstyle.version>12.3.1</checkstyle.version>
+
+    <!-- ==================== Dependency Versions ==================== -->
+    <!-- Code generation -->
+    <lombok.version>1.18.30</lombok.version>
+
+    <!-- Spring Platform -->
+    <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
+    <spring-cloud.version>2025.1.1</spring-cloud.version>
+
+    <!-- Distributed locking -->
+    <shedlock.version>7.7.0</shedlock.version>
+
+    <!-- Serialization -->
+    <avro.version>1.11.4</avro.version>
+
+    <!-- Test: database drivers & embedded stores -->
+    <postgresql.version>42.7.5</postgresql.version>
+    <mariadb.version>3.5.5</mariadb.version>
+    <de.flapdoodle.embed.mongo.spring4x.version>4.24.0</de.flapdoodle.embed.mongo.spring4x.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- ==================== BOM Imports ==================== -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-dependencies.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- ==================== Third-party Libraries ==================== -->
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-spring</artifactId>
+        <version>${shedlock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-provider-jdbc-template</artifactId>
+        <version>${shedlock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-provider-mongo</artifactId>
+        <version>${shedlock.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro</artifactId>
+        <version>${avro.version}</version>
+      </dependency>
+
+      <!-- ==================== Internal Modules ==================== -->
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-test-support</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-metrics</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-serialization</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-jdbc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-archive</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-archive-jdbc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-archive-mongodb</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-jdbc-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.inditex.scsoutbox</groupId>
+        <artifactId>scs-outbox-mongodb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- ==================== Test: Database Drivers & Embedded Stores ==================== -->
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <version>${mariadb.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>de.flapdoodle.embed</groupId>
+        <artifactId>de.flapdoodle.embed.mongo.spring4x</artifactId>
+        <version>${de.flapdoodle.embed.mongo.spring4x.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <parameters>true</parameters>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven-release-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.release</groupId>
+              <artifactId>maven-release-semver-policy</artifactId>
+              <version>${maven-release-semver-policy.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <arguments>-DskipEnforceSnapshots -DskipITs -DskipTests -DskipUTs</arguments>
+            <goals>install gpg:sign org.sonatype.central:central-publishing-maven-plugin:publish</goals>
+            <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
+            <scmReleaseCommitComment>@{prefix} Prepare release @{releaseLabel}</scmReleaseCommitComment>
+            <scmDevelopmentCommitComment>@{prefix} Prepare for next development iteration</scmDevelopmentCommitComment>
+            <tagNameFormat>@{project.version}</tagNameFormat>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>central</publishingServerId>
+            <autoPublish>true</autoPublish>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>deploy</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${maven-enforcer-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.9.4,3.10.0)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[17,18),[21,22)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-snapshots</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <skip>${skipEnforceSnapshots}</skip>
+              <rules>
+                <requireSnapshotVersion>
+                  <failWhenParentIsRelease>false</failWhenParentIsRelease>
+                  <message>Final versions not allowed</message>
+                </requireSnapshotVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless-maven-plugin.version}</version>
+        <configuration>
+          <java>
+            <excludes>
+              <exclude>**/package-info.java</exclude>
+              <exclude>**/archive/json/Product.java</exclude>
+              <exclude>**/archive/json/BookCreatedMessage.java</exclude>
+              <exclude>**/archive/json/Cycle.java</exclude>
+            </excludes>
+            <eclipse>
+              <file>${maven.multiModuleProjectDirectory}/src/main/config/eclipse-java-google-style.xml</file>
+            </eclipse>
+            <importOrder>
+              <file>${maven.multiModuleProjectDirectory}/src/main/config/eclipse-java-google-style.importorder</file>
+            </importOrder>
+          </java>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <inherited>true</inherited>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.ekryd.sortpom</groupId>
+        <artifactId>sortpom-maven-plugin</artifactId>
+        <version>${sortpom-maven-plugin.version}</version>
+        <configuration>
+          <createBackupFile>false</createBackupFile>
+          <expandEmptyElements>false</expandEmptyElements>
+          <keepBlankLines>true</keepBlankLines>
+          <nrOfIndentSpace>2</nrOfIndentSpace>
+          <predefinedSortOrder>custom_1</predefinedSortOrder>
+          <sortOrderFile>${maven.multiModuleProjectDirectory}/src/main/config/pom-code-convention.xml</sortOrderFile>
+          <verifyFail>stop</verifyFail>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+            <inherited>true</inherited>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven-checkstyle-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>checkstyle-validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <inherited>true</inherited>
+            <configuration>
+              <configLocation>${maven.multiModuleProjectDirectory}/src/main/config/checkstyle-java-google-style-17.xml</configLocation>
+              <suppressionsLocation>${maven.multiModuleProjectDirectory}/src/main/config/checkstyle-suppressions.xml</suppressionsLocation>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <!-- Sets the path to the file which contains the execution data. -->
+              <destFile>${project.build.directory}/coverage-reports/jacoco.exec</destFile>
+              <propertyName>surefireArgLine</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>pre-integration-test</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+            <configuration>
+              <!-- Sets the path to the file which contains the execution data. -->
+              <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+              <!-- Sets the name of the property containing the settings for JaCoCo runtime agent. -->
+              <propertyName>failsafeArgLine</propertyName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+        <configuration>
+          <!-- Sets the VM argument line used when unit tests are run. -->
+          <argLine>${surefireArgLine}</argLine>
+          <!-- Excludes integration tests when unit tests are run. -->
+          <excludes>
+            <exclude>**/IT*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <argLine>${failsafeArgLine}</argLine>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+        <inherited>false</inherited>
+        <configuration>
+          <outputDirectory>${project.basedir}</outputDirectory>
+          <thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
+          <excludedScopes>test</excludedScopes>
+          <failOnMissing>true</failOnMissing>
+          <excludedGroups>dev\.inditex.*</excludedGroups>
+          <licenseMerges>
+            <licenseMerge>Apache License, Version 2.0|Apache-2.0|Apache 2.0|Apache 2|Apache License 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|Apache Software License - Version 2.0|Apache License Version 2.0|Apache License v2.0</licenseMerge>
+            <licenseMerge>MIT License|MIT|The MIT License|MIT license|MIT-0</licenseMerge>
+            <licenseMerge>Eclipse Public License v2.0|Eclipse Public License - v 2.0|EPL-2.0|EPL 2.0|EPL-2.0 GPL-2.0-with-classpath-exception</licenseMerge>
+            <licenseMerge>Eclipse Public License v1.0|Eclipse Public License - v 1.0|EPL-1.0</licenseMerge>
+            <licenseMerge>GNU Lesser General Public License v2.1|LGPL-2.1|GNU Library General Public License 2.1|GNU Lesser General Public License</licenseMerge>
+            <licenseMerge>BSD 2-Clause License|BSD-2-Clause|BSD 2-Clause|The BSD License</licenseMerge>
+            <licenseMerge>BSD 3-Clause License|BSD-3-Clause|BSD 3-Clause|New BSD License|Go License|3-Clause BSD License</licenseMerge>
+            <licenseMerge>Public Domain|Public Domain, per Creative Commons CC0|CC0 1.0 Universal|CC0</licenseMerge>
+          </licenseMerges>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

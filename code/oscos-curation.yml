@@ -1,0 +1,6 @@
+artifact:
+  context:
+    users: "corporate"
+    distribution:
+      - "binaryDistribution"
+    sourceModification: false
