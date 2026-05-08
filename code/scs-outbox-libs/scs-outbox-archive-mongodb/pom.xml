@@ -4,13 +4,13 @@
   <parent>
     <groupId>dev.inditex.scsoutbox</groupId>
     <artifactId>scs-outbox</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>scs-outbox-archive-mongodb</artifactId>
 
-  <properties/>
+  <properties />
 
   <dependencies>
     <dependency>

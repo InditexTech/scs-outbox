@@ -4,12 +4,12 @@
   <parent>
     <groupId>dev.inditex.scsoutbox</groupId>
     <artifactId>scs-outbox-starters</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </parent>
 
   <artifactId>scs-outbox-mongodb-starter</artifactId>
 
-  <properties/>
+  <properties />
 
   <dependencies>
     <dependency>
