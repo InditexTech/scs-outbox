@@ -159,7 +159,7 @@
       "rule": {
         "type": "file-existence",
         "options": {
-          "globsAny": ["pom.xml", "build.xml", "build.gradle"]
+          "globsAny": ["**/pom.xml", "build.xml", "build.gradle"]
         }
       }
     },

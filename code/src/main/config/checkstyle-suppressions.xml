@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+  "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+  "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!-- About Using Suppression Filters: -->
+<!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/suppressions-filter.html -->
+<suppressions>
+  <!-- Example: Suppress function names that follow BDD Gherkin/Cucumber conventions -->
+  <!-- <suppress checks="MethodNameCheck" files=".*Steps.java"/> -->
+  <!-- Example: Suppress very long function names in test files -->
+  <!-- <suppress checks="LineLengthCheck" files="[/\\]test[/\\]"/> -->
+  <!-- Example: Suppress a specific message in all files -->
+  <!-- <suppress message="Interface type name 'MessageType' must match pattern"/> -->
+
+  <!-- Example: Suppress header check in package-info files -->
+  <suppress checks="RegexpHeader" files="package-info.java"/>
+
+  <!-- Suppress all checks on Avro auto-generated sources (DO NOT EDIT DIRECTLY) -->
+  <suppress checks=".*" files="[/\\]archive[/\\]json[/\\](Product|BookCreatedMessage|Cycle)\.java"/>
+
+  <!-- Suppress long-line and Avro-parameter-name checks in Avro test files -->
+  <suppress checks="LineLengthCheck" files="AvroToJsonMapperTest\.java"/>
+  <suppress checks="ParameterName" files="AvroToJsonMapperTest\.java"/>
+
+  <!-- Suppress MethodName for BDD-style factory methods (aXxx pattern) in test files -->
+  <suppress checks="MethodName" files="MongoDbOutboxMessageRepositoryTest\.java"/>
+
+</suppressions>
