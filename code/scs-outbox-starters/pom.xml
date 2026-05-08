@@ -4,7 +4,7 @@
   <parent>
     <groupId>dev.inditex.scsoutbox</groupId>
     <artifactId>scs-outbox</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>scs-outbox-starters</artifactId>
@@ -17,6 +17,6 @@
     <module>scs-outbox-mongodb-starter</module>
   </modules>
 
-  <properties/>
+  <properties />
 
 </project>
