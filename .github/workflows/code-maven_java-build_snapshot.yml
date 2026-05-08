@@ -5,6 +5,8 @@ run-name: "Publish Snapshot: ${{ github.event_name }}"
 on:
   issue_comment:
     types: [created]
+  pull_request:
+    types: [labeled]
   workflow_dispatch:
     inputs:
       BASELINE:
@@ -136,6 +138,16 @@ jobs:
           git config commit.gpgsign true
           git config tag.gpgsign true
 
+      - name: Set PR snapshot version
+        working-directory: code
+        run: |
+          CURRENT_VERSION=$(mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout)
+          BASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+          PR_VERSION="${BASE_VERSION}-PR${{ github.event.issue.number }}-SNAPSHOT"
+          mvn -B versions:set -DnewVersion="${PR_VERSION}" -DgenerateBackupPoms=false -DprocessAllModules=true
+          echo "PR_SNAPSHOT_VERSION=${PR_VERSION}" >> "$GITHUB_ENV"
+          echo "Snapshot version set to: ${PR_VERSION}"
+
       - name: Build & Deploy Snapshot
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
@@ -151,9 +163,10 @@ jobs:
         with:
           script: |
             const status = '${{ job.status }}';
+            const version = process.env.PR_SNAPSHOT_VERSION || '(unknown version)';
             let body;
             if (status === 'success') {
-              body = '### :rocket: Snapshot published successfully';
+              body = `### :rocket: Snapshot published successfully\n\n**Version**: \`${version}\``;
             } else {
               const workflowUrl = `${context.payload.repository.html_url}/actions/runs/${context.runId}`;
               body = `### :x: Snapshot publication failed\n\n[View workflow logs](${workflowUrl})`;
@@ -161,6 +174,155 @@ jobs:
 
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  publish-snapshot-from-label:
+    name: Publish Snapshot (Label)
+    concurrency: code-build-snapshot
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'autopublish/snapshot-binaries'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate admin permissions
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.actor
+            });
+            const permission = data.permission;
+            core.info(`User permission level: ${permission}`);
+            if (permission !== 'admin') {
+              core.setFailed(`User @${context.actor} is not a repository admin.`);
+            }
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Maven Cache
+        uses: actions/cache@v4
+        continue-on-error: true
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Setup asdf Cache
+        uses: actions/cache@v4
+        continue-on-error: true
+        with:
+          path: ~/.asdf/data
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-asdf-
+
+      - name: Validate tool-versions content
+        run: |
+          if grep -Evq '^[a-zA-Z0-9_-]+ [a-zA-Z0-9._+-]+$' code/.tool-versions; then
+            echo "::error::Invalid .tool-versions content detected"
+            exit 1
+          fi
+
+      - name: Save tool-versions content
+        run: |
+          {
+            echo "TOOL_VERSIONS<<EOF"
+            cat code/.tool-versions
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Setup asdf environment
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47 # v4
+        with:
+          tool_versions: ${{ env.TOOL_VERSIONS }}
+
+      - name: Setup Java environment vars
+        run: |
+          JAVA_HOME="$(asdf where java)"
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+
+      - name: Prepare committer information
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PRIVATE_KEY: ${{ secrets.CI_GPG_SECRET_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.CI_GPG_SECRET_KEY_PASSWORD }}
+        run: |
+          git config --global credential.helper store
+          cat <<EOT >> ~/.git-credentials
+          https://ci-user:$GITHUB_TOKEN@github.com
+          EOT
+
+          # GPG: non-interactive signing setup
+          mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
+          printf 'allow-loopback-pinentry\nallow-preset-passphrase\n' > ~/.gnupg/gpg-agent.conf
+          printf 'use-agent\npinentry-mode loopback\n' > ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent || true
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          KEY_DATA=$(gpg --list-secret-keys --with-colons)
+          echo "$KEY_DATA" | awk -F: '/^grp:/ {print $10}' | while read -r GRIP; do
+            /usr/lib/gnupg/gpg-preset-passphrase --preset "$GRIP" <<< "$GPG_PASSPHRASE"
+          done
+
+          # Git: identity and signing
+          FPR=$(echo "$KEY_DATA" | awk -F: '/^fpr:/ {print $10; exit}')
+          git config user.name "srvcosoitxtech"
+          git config user.email "oso@inditex.com"
+          git config user.signingkey "$FPR"
+          git config commit.gpgsign true
+          git config tag.gpgsign true
+
+      - name: Set PR snapshot version
+        working-directory: code
+        run: |
+          CURRENT_VERSION=$(mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout)
+          BASE_VERSION="${CURRENT_VERSION%-SNAPSHOT}"
+          PR_VERSION="${BASE_VERSION}-PR${{ github.event.pull_request.number }}-SNAPSHOT"
+          mvn -B versions:set -DnewVersion="${PR_VERSION}" -DgenerateBackupPoms=false -DprocessAllModules=true
+          echo "PR_SNAPSHOT_VERSION=${PR_VERSION}" >> "$GITHUB_ENV"
+          echo "Snapshot version set to: ${PR_VERSION}"
+
+      - name: Build & Deploy Snapshot
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.CI_GPG_SECRET_KEY_PASSWORD }}
+        working-directory: code
+        run: |
+          mvn -B clean deploy -DskipTests -DskipUTs -DskipITs -DskipEnforceSnapshots=true --settings=.mvn/settings.xml
+
+      - name: Comment on PR with result
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const version = process.env.PR_SNAPSHOT_VERSION || '(unknown version)';
+            let body;
+            if (status === 'success') {
+              body = `### :rocket: Snapshot published successfully\n\n**Version**: \`${version}\``;
+            } else {
+              const workflowUrl = `${context.payload.repository.html_url}/actions/runs/${context.runId}`;
+              body = `### :x: Snapshot publication failed\n\n[View workflow logs](${workflowUrl})`;
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: body
