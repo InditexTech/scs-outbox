@@ -190,7 +190,7 @@ jobs:
         working-directory: code
         run: |
           git add CHANGELOG.md
-          git commit -m "chore: Update CHANGELOG with ${{ steps.update-changelog.outputs.version }} version"
+          git commit --signoff -m "chore: Update CHANGELOG with ${{ steps.update-changelog.outputs.version }} version"
           git push --no-verify -u origin HEAD
           mvn -B release:prepare release:perform --settings=.mvn/settings.xml -DreleaseVersion=${{ steps.update-changelog.outputs.version }}
 
