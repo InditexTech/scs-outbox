@@ -9,6 +9,8 @@
 
   <artifactId>scs-outbox-mongodb-starter</artifactId>
 
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <properties/>
 
   <dependencies>
