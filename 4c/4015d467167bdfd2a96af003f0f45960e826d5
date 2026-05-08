@@ -1,0 +1,62 @@
+code/scs-outbox-libs/scs-outbox-jdbc/pom.xml
+  s_9b279fa32d2474::t_a093132dc18ae0 91-103
+  s_9b279fa32d2474::t_e21ee705bbc3e3 12-13
+code/scs-outbox-libs/pom.xml
+  s_9b279fa32d2474::t_bb83e3f04eb7e6 12-14
+code/scs-outbox-it/scs-outbox-jdbc-it/pom.xml
+  s_9b279fa32d2474::t_0850e91c3bb88c 12-13
+code/scs-outbox-it/scs-outbox-mongodb-it/pom.xml
+  s_9b279fa32d2474::t_c6c6f77e8ae65d 12-13
+code/scs-outbox-libs/scs-outbox-archive-jdbc/pom.xml
+  s_9b279fa32d2474::t_9ba3912feaf0d1 91-103
+  s_9b279fa32d2474::t_a70b330c5a9945 12-13
+code/scs-outbox-libs/scs-outbox-archive/pom.xml
+  s_9b279fa32d2474::t_744ace83269451 12-13
+  s_9b279fa32d2474::t_ea4626bdf1b885 56-68
+code/scs-outbox-libs/scs-outbox-metrics/pom.xml
+  s_9b279fa32d2474::t_4281214ae0081e 12-13
+code/scs-outbox-libs/scs-outbox-archive-mongodb/pom.xml
+  s_9b279fa32d2474::t_9ad1bd8a2e671c 13-14
+  s_9b279fa32d2474::t_9eac77aed07c58 82-94
+code/scs-outbox-libs/scs-outbox-test-support/pom.xml
+  s_9b279fa32d2474::t_4e00e0a2a6370d 12-13
+  s_9b279fa32d2474::t_7e654f35327ca6 17-29
+code/scs-outbox-starters/pom.xml
+  s_9b279fa32d2474::t_7d593ce3eb3539 13-14
+code/scs-outbox-starters/scs-outbox-jdbc-starter/pom.xml
+  s_9b279fa32d2474::t_7569bb67c7f8d3 12-13
+code/scs-outbox-libs/scs-outbox-mongodb/pom.xml
+  s_9b279fa32d2474::t_60320d1b8b28c5 12-13
+code/scs-outbox-it/pom.xml
+  s_9b279fa32d2474::t_31844250421715 12-14
+code/scs-outbox-libs/scs-outbox-serialization/pom.xml
+  s_9b279fa32d2474::t_93557174ef5b9a 12-13
+code/scs-outbox-libs/scs-outbox-core/pom.xml
+  s_9b279fa32d2474::t_a56ee992bc582c 77-89
+  s_9b279fa32d2474::t_a9d9311af275a0 12-13
+code/scs-outbox-starters/scs-outbox-mongodb-starter/pom.xml
+  s_9b279fa32d2474::t_433f84a36955b1 12-13
+code/jacoco-report-aggregate/pom.xml
+  s_9b279fa32d2474::t_93b239ecbd2374 13-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "4c4015d467167bdfd2a96af003f0f45960e826d5",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_9b279fa32d2474": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1778229237301",
+        "model": "unknown"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
