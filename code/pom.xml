@@ -4,7 +4,7 @@
 
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
 
   <name>${project.groupId}:${project.artifactId}</name>
@@ -42,7 +42,7 @@
     <connection>${scm-connection}</connection>
     <developerConnection>${scm-developer-connection}</developerConnection>
     <url>${scm-url}</url>
-    <tag>${scm-tag}</tag>
+    <tag>0.1.0</tag>
   </scm>
 
   <distributionManagement>
