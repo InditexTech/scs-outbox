@@ -630,3 +630,26 @@ spring.cloud.stream.kafka.binder.configuration.linger.ms=0
 ## License
 
 This software is available as open source under the terms of the [Apache-2.0](LICENSE).
+
+This project is distributed through Maven Central and includes third-party dependencies licensed under EPL-2.0, LGPL-2.1-or-later, and GPL-2.0-with-classpath-exception.
+The project does not incorporate or modify the source code of these dependencies. Such components are consumed as external Maven dependencies under their respective license terms.
+
+<details>
+<summary>Third-party dependency licenses</summary>
+
+Some dependencies are distributed under dual/alternative licenses (`OR`). The license elected for use in this project is listed below:
+
+| Dependency | Version | Available Licenses | Elected License |
+|---|---|---|---|
+| `ch.qos.logback:logback-classic` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) |
+| `ch.qos.logback:logback-core` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) |
+| `jakarta.annotation:jakarta.annotation-api` | 3.0.0 | EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0 | [EPL-2.0](LICENSES/EPL-2.0.txt) |
+| `org.aspectj:aspectjweaver` | 1.9.25.1 | EPL-2.0 | [EPL-2.0](LICENSES/EPL-2.0.txt) |
+
+Full license texts are available under the [`LICENSES/`](LICENSES/) directory:
+
+- [Apache-2.0](LICENSES/Apache-2.0.txt) — project license
+- [EPL-2.0](LICENSES/EPL-2.0.txt) — Eclipse Public License 2.0
+- [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) — GNU Lesser General Public License v2.1 or later
+
+</details>

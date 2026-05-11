@@ -31,3 +31,13 @@ path = [
 ]
 SPDX-FileCopyrightText = "2026 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "LICENSES/EPL-2.0.txt"
+SPDX-FileCopyrightText = "Eclipse Foundation"
+SPDX-License-Identifier = "EPL-2.0"
+
+[[annotations]]
+path = "LICENSES/LGPL-2.1-or-later.txt"
+SPDX-FileCopyrightText = "Free Software Foundation, Inc."
+SPDX-License-Identifier = "LGPL-2.1-or-later"
