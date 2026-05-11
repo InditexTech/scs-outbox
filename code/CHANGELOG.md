@@ -7,8 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-05-11
+
 ### Added
+
 - Initial outbox library implementation
 - Maven build configuration with javadocs and sources plugins
 - CI/CD workflows for release and testing
 
+[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/0.1.0...HEAD
+
+[0.1.0]: https://github.com/InditexTech/scs-outbox/releases/tag/0.1.0
