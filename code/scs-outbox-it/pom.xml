@@ -9,6 +9,9 @@
 
   <artifactId>scs-outbox-it</artifactId>
   <packaging>pom</packaging>
+
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <modules>
     <module>scs-outbox-mongodb-it</module>
     <module>scs-outbox-jdbc-it</module>

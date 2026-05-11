@@ -9,7 +9,9 @@
 
   <artifactId>scs-outbox-jdbc-it</artifactId>
 
-  <properties />
+  <name>${project.groupId}:${project.artifactId}</name>
+
+  <properties/>
 
   <dependencies>
     <dependency>

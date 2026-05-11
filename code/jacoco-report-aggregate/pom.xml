@@ -10,7 +10,9 @@
   <artifactId>jacoco-report-aggregate</artifactId>
   <packaging>pom</packaging>
 
-  <properties />
+  <name>${project.groupId}:${project.artifactId}</name>
+
+  <properties/>
 
   <dependencies>
     <dependency>
