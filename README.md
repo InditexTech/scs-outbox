@@ -641,15 +641,15 @@ Some dependencies are distributed under dual/alternative licenses (`OR`). The li
 
 | Dependency | Version | Available Licenses | Elected License |
 |---|---|---|---|
-| `ch.qos.logback:logback-classic` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) |
-| `ch.qos.logback:logback-core` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) |
-| `jakarta.annotation:jakarta.annotation-api` | 3.0.0 | EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0 | [EPL-2.0](LICENSES/EPL-2.0.txt) |
-| `org.aspectj:aspectjweaver` | 1.9.25.1 | EPL-2.0 | [EPL-2.0](LICENSES/EPL-2.0.txt) |
+| `ch.qos.logback:logback-classic` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) |
+| `ch.qos.logback:logback-core` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) |
+| `jakarta.annotation:jakarta.annotation-api` | 3.0.0 | EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0 | [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) |
+| `org.aspectj:aspectjweaver` | 1.9.25.1 | EPL-2.0 | [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) |
 
 Full license texts are available under the [`LICENSES/`](LICENSES/) directory:
 
 - [Apache-2.0](LICENSES/Apache-2.0.txt) — project license
-- [EPL-2.0](LICENSES/EPL-2.0.txt) — Eclipse Public License 2.0
-- [LGPL-2.1-or-later](LICENSES/LGPL-2.1-or-later.txt) — GNU Lesser General Public License v2.1 or later
+- [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) — Eclipse Public License 2.0
+- [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) — GNU Lesser General Public License v2.1 or later
 
 </details>

@@ -21,16 +21,16 @@ Their source code is not incorporated or modified.
 
 ch.qos.logback:logback-classic:1.5.32
   License: GNU Lesser General Public License v2.1 or later (LGPL-2.1-or-later)
-  License text: LICENSES/LGPL-2.1-or-later.txt
+  License text: THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt
 
 ch.qos.logback:logback-core:1.5.32
   License: GNU Lesser General Public License v2.1 or later (LGPL-2.1-or-later)
-  License text: LICENSES/LGPL-2.1-or-later.txt
+  License text: THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt
 
 jakarta.annotation:jakarta.annotation-api:3.0.0
   License: Eclipse Public License v2.0 (EPL-2.0)
-  License text: LICENSES/EPL-2.0.txt
+  License text: THIRD-PARTY-LICENSES/EPL-2.0.txt
 
 org.aspectj:aspectjweaver:1.9.25.1
   License: Eclipse Public License v2.0 (EPL-2.0)
-  License text: LICENSES/EPL-2.0.txt
+  License text: THIRD-PARTY-LICENSES/EPL-2.0.txt
