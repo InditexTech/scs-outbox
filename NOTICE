@@ -11,3 +11,26 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+---
+
+Third-Party Notices
+
+This project includes the following third-party dependencies as external Maven dependencies.
+Their source code is not incorporated or modified.
+
+ch.qos.logback:logback-classic:1.5.32
+  License: GNU Lesser General Public License v2.1 or later (LGPL-2.1-or-later)
+  License text: THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt
+
+ch.qos.logback:logback-core:1.5.32
+  License: GNU Lesser General Public License v2.1 or later (LGPL-2.1-or-later)
+  License text: THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt
+
+jakarta.annotation:jakarta.annotation-api:3.0.0
+  License: Eclipse Public License v2.0 (EPL-2.0)
+  License text: THIRD-PARTY-LICENSES/EPL-2.0.txt
+
+org.aspectj:aspectjweaver:1.9.25.1
+  License: Eclipse Public License v2.0 (EPL-2.0)
+  License text: THIRD-PARTY-LICENSES/EPL-2.0.txt
