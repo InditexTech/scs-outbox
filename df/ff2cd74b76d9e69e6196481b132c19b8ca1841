@@ -1,0 +1,22 @@
+README.md
+  s_3cf36be0cbbea5::t_2539e429934124 189-395
+  s_3cf36be0cbbea5::t_cdcfc5b2dbb160 159-161
+  s_3cf36be0cbbea5::t_ab7c3118d5e826 91-118
+  s_3cf36be0cbbea5::t_8d234246cb1a63 170-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "dfff2cd74b76d9e69e6196481b132c19b8ca1841",
+  "prompts": {},
+  "sessions": {
+    "s_3cf36be0cbbea5": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2d26857a-b522-4de8-9e73-fd27c8ff6fa2",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
