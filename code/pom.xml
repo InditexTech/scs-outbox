@@ -96,7 +96,7 @@
     <lombok.version>1.18.30</lombok.version>
 
     <!-- Spring Platform -->
-    <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
+    <spring-boot-dependencies.version>4.0.6</spring-boot-dependencies.version>
     <spring-cloud.version>2025.1.1</spring-cloud.version>
 
     <!-- Distributed locking -->
