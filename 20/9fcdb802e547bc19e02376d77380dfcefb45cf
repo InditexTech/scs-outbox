@@ -1,0 +1,19 @@
+code/pom.xml
+  s_e8a814a63a7771::t_a91224d68c0332 105-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "209fcdb802e547bc19e02376d77380dfcefb45cf",
+  "prompts": {},
+  "sessions": {
+    "s_e8a814a63a7771": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1738d6b94ffeQOE3Nc1s7bVr5C",
+        "model": "claude-haiku-4.5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
