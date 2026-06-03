@@ -1,0 +1,21 @@
+code/CHANGELOG.md
+  s_e8a814a63a7771::t_411bbd83cc9579 28
+code/pom.xml
+  s_e8a814a63a7771::t_a91224d68c0332 105-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "21196da945e0d433dad3d5edba8a8e72c3d4f7d6",
+  "prompts": {},
+  "sessions": {
+    "s_e8a814a63a7771": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_1738d6b94ffeQOE3Nc1s7bVr5C",
+        "model": "claude-haiku-4.5"
+      },
+      "human_author": null
+    }
+  }
+}
