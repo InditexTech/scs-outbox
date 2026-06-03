@@ -75,7 +75,7 @@
     <!-- ==================== Plugin Versions ==================== -->
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-    <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+    <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
     <maven-failsafe-plugin.version>3.5.5</maven-failsafe-plugin.version>
     <maven-gpg-plugin.version>3.2.5</maven-gpg-plugin.version>
     <maven-javadoc-plugin.version>3.10.0</maven-javadoc-plugin.version>
@@ -96,14 +96,14 @@
     <lombok.version>1.18.30</lombok.version>
 
     <!-- Spring Platform -->
-    <spring-boot-dependencies.version>4.0.4</spring-boot-dependencies.version>
+    <spring-boot-dependencies.version>4.0.6</spring-boot-dependencies.version>
     <spring-cloud.version>2025.1.1</spring-cloud.version>
 
     <!-- Distributed locking -->
     <shedlock.version>7.7.0</shedlock.version>
 
-    <!-- Serialization -->
-    <avro.version>1.11.4</avro.version>
+     <!-- Serialization -->
+     <avro.version>1.12.0</avro.version>
 
     <!-- Test: database drivers & embedded stores -->
     <postgresql.version>42.7.5</postgresql.version>

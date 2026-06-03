@@ -88,6 +88,34 @@ CREATE TABLE IF NOT EXISTS SCS_OUTBOX (
 
 </details>
 
+> [!NOTE]
+> The table name `SCS_OUTBOX` is the default. You can customize it with [`scs-outbox.jdbc.table-name`](#jdbc-properties) and [`scs-outbox.jdbc.schema`](#jdbc-properties). If you do, use your custom name in the SQL above.
+>
+> <details>
+> <summary>Example: custom table name</summary>
+>
+> ```sql
+> -- Use your custom name in the CREATE TABLE statement:
+> CREATE TABLE IF NOT EXISTS my_outbox (
+>   ID            varchar(36)  NOT NULL,
+>   BINDING_NAME  varchar(256) NOT NULL,
+>   CAPTURED_AT   timestamp    NOT NULL,
+>   DESTINATION   varchar(256) NOT NULL,
+>   HEADERS       text         NOT NULL,
+>   PAYLOAD       bytea        NOT NULL,  -- or blob for MariaDB
+>   CONSTRAINT PK_OUTBOX PRIMARY KEY (ID)
+> );
+> ```
+>
+> ```yaml
+> scs-outbox:
+>   jdbc:
+>     table-name: my_outbox
+>     schema: messaging   # optional
+> ```
+>
+> </details>
+
 scs-outbox also requires a [ShedLock](https://github.com/lukas-krecan/ShedLock) table for distributed lock coordination:
 
 ```sql
@@ -128,6 +156,9 @@ CREATE TABLE IF NOT EXISTS shedlock (
 >
 > </details>
 
+> [!NOTE]
+> For MongoDB, the collection name `SCS_OUTBOX` is the default and can be customized with [`scs-outbox.mongodb.collection-name`](#mongodb-properties). Use your custom name in the `createIndex` command above if you change it.
+
 ### Configure your application
 
 SCS-Outbox works with zero additional configuration, but requires:
@@ -135,6 +166,9 @@ SCS-Outbox works with zero additional configuration, but requires:
 - **Scheduling enabled**: SCS-Outbox uses a `@Scheduled` task to publish messages. Enable scheduling in your application with [`@EnableScheduling`](https://docs.spring.io/spring-framework/reference/integration/scheduling.html#scheduling-enable-annotation-support).
 - **JDBC**: a `DataSource` bean configured to access the database containing the outbox and ShedLock tables.
 - **MongoDB**: a `MongoTemplate` and `MongoClient` bean available in the application context.
+
+> [!TIP]
+> **Required vs optional**: only `@EnableScheduling` and a configured `DataSource` (JDBC) or `MongoTemplate` + `MongoClient` (MongoDB) are strictly required. All `scs-outbox.*` properties are optional and have sensible defaults — you do not need to add any of them to get started.
 
 ### Verify it works
 
@@ -151,6 +185,213 @@ Start your application and produce messages as usual. By default, SCS-Outbox is 
 >   }
 >   ```
 > - `ErrorMessage` instances are automatically filtered out and never captured.
+
+### Minimal working configuration
+
+Everything you need to get SCS-Outbox running, in one place (PostgreSQL + Kafka example):
+
+**1. Add the dependency**
+
+```xml
+<dependency>
+  <groupId>dev.inditex.scsoutbox</groupId>
+  <artifactId>scs-outbox-jdbc-starter</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+**2. Create the outbox tables** (see [Prepare your database](#prepare-your-database-jdbc-only) for MariaDB variant)
+
+```sql
+CREATE TABLE IF NOT EXISTS SCS_OUTBOX (
+  ID            varchar(36)  NOT NULL,
+  BINDING_NAME  varchar(256) NOT NULL,
+  CAPTURED_AT   timestamp    NOT NULL,
+  DESTINATION   varchar(256) NOT NULL,
+  HEADERS       text         NOT NULL,
+  PAYLOAD       bytea        NOT NULL,
+  CONSTRAINT PK_OUTBOX PRIMARY KEY (ID)
+);
+
+CREATE TABLE IF NOT EXISTS shedlock (
+  name       VARCHAR(64),
+  lock_until TIMESTAMP(3) NULL,
+  locked_at  TIMESTAMP(3) NULL,
+  locked_by  VARCHAR(255),
+  PRIMARY KEY (name)
+);
+```
+
+**3. Enable scheduling**
+
+```java
+@SpringBootApplication
+@EnableScheduling
+public class MyApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(MyApplication.class, args);
+  }
+}
+```
+
+**4. Minimal `application.yml`** — no `scs-outbox` config needed by default
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          configuration:
+            linger.ms: 0        # avoid batching delays (recommended)
+        bindings:
+          orders-out-0:
+            producer:
+              sync: true        # required for at-least-once delivery
+      bindings:
+        orders-out-0:
+          destination: orders
+```
+
+**5. Produce messages inside a `@Transactional` method**
+
+```java
+@Service
+public class OrderService {
+
+  @Autowired
+  private StreamBridge streamBridge;
+
+  @Transactional
+  public void placeOrder(Order order) {
+    orderRepository.save(order);
+    streamBridge.send("orders-out-0", order);  // captured, not sent yet
+  }
+}
+```
+
+That's it — SCS-Outbox will pick up and publish the captured messages every 5 seconds (default). See [Configuration Reference](#configuration-reference) to tune scheduling, batching, archiving, and more.
+
+### Configuration Examples
+
+Complete `application.yml` examples for the most common setups:
+
+<details>
+<summary>PostgreSQL + Kafka</summary>
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
+          configuration:
+            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              sync: true
+      bindings:
+        orders-out-0:
+          destination: orders
+
+scs-outbox:
+  jdbc:
+    table-name: SCS_OUTBOX   # default; customize if needed
+  publishing:
+    batch-size: 500
+    scheduler:
+      fixed-rate: 3000       # publish every 3 s
+    archive:
+      enabled: true
+  metrics:
+    enabled: true
+```
+
+</details>
+
+<details>
+<summary>MariaDB + Kafka</summary>
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/mydb
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
+          configuration:
+            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              sync: true
+      bindings:
+        orders-out-0:
+          destination: orders
+
+scs-outbox:
+  jdbc:
+    table-name: SCS_OUTBOX
+  publishing:
+    batch-size: 500
+    scheduler:
+      fixed-rate: 3000
+```
+
+</details>
+
+<details>
+<summary>MongoDB + Kafka</summary>
+
+```yaml
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@localhost:27017/mydb
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
+          configuration:
+            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              sync: true
+      bindings:
+        orders-out-0:
+          destination: orders
+
+scs-outbox:
+  mongodb:
+    collection-name: SCS_OUTBOX   # default; customize if needed
+  publishing:
+    batch-size: 500
+    scheduler:
+      fixed-rate: 3000
+    archive:
+      enabled: true
+  metrics:
+    enabled: true
+```
+
+</details>
 
 ## Architecture
 
@@ -630,3 +871,26 @@ spring.cloud.stream.kafka.binder.configuration.linger.ms=0
 ## License
 
 This software is available as open source under the terms of the [Apache-2.0](LICENSE).
+
+This project is distributed through Maven Central and includes third-party dependencies licensed under EPL-2.0, LGPL-2.1-or-later, and GPL-2.0-with-classpath-exception.
+The project does not incorporate or modify the source code of these dependencies. Such components are consumed as external Maven dependencies under their respective license terms.
+
+<details>
+<summary>Third-party dependency licenses</summary>
+
+Some dependencies are distributed under dual/alternative licenses (`OR`). The license elected for use in this project is listed below:
+
+| Dependency | Version | Available Licenses | Elected License |
+|---|---|---|---|
+| `ch.qos.logback:logback-classic` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) |
+| `ch.qos.logback:logback-core` | 1.5.32 | EPL-2.0 OR LGPL-2.1-or-later | [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) |
+| `jakarta.annotation:jakarta.annotation-api` | 3.0.0 | EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0 | [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) |
+| `org.aspectj:aspectjweaver` | 1.9.25.1 | EPL-2.0 | [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) |
+
+Full license texts are available under the [`LICENSES/`](LICENSES/) directory:
+
+- [Apache-2.0](LICENSES/Apache-2.0.txt) — project license
+- [EPL-2.0](THIRD-PARTY-LICENSES/EPL-2.0.txt) — Eclipse Public License 2.0
+- [LGPL-2.1-or-later](THIRD-PARTY-LICENSES/LGPL-2.1-or-later.txt) — GNU Lesser General Public License v2.1 or later
+
+</details>

@@ -31,3 +31,9 @@ path = [
 ]
 SPDX-FileCopyrightText = "2026 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "THIRD-PARTY-LICENSES/**"
+precedence = "override"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "Apache-2.0"
