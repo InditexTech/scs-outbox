@@ -1,0 +1,14 @@
+code/CHANGELOG.md
+  h_5ebe62d7d24f9c 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "2a10c43b64e3e7bb71c486ba3580037f05d130b1",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
