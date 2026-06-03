@@ -102,8 +102,8 @@
     <!-- Distributed locking -->
     <shedlock.version>7.7.0</shedlock.version>
 
-    <!-- Serialization -->
-    <avro.version>1.12.1</avro.version>
+     <!-- Serialization -->
+     <avro.version>1.12.0</avro.version>
 
     <!-- Test: database drivers & embedded stores -->
     <postgresql.version>42.7.5</postgresql.version>

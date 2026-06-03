@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 - Updated `org.springframework.boot:spring-boot-dependencies` from `4.0.4` to `4.0.6`.
-- Updated `org.apache.avro:avro` from `1.11.4` to `1.12.1`.
+- Updated `org.apache.avro:avro` from `1.11.4` to `1.12.0`.
 
 ## [0.1.0] - 2026-05-11
 
