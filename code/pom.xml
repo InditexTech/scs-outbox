@@ -107,7 +107,7 @@
 
     <!-- Test: database drivers & embedded stores -->
     <postgresql.version>42.7.5</postgresql.version>
-    <mariadb.version>3.5.5</mariadb.version>
+    <mariadb.version>3.5.8</mariadb.version>
     <de.flapdoodle.embed.mongo.spring4x.version>4.24.0</de.flapdoodle.embed.mongo.spring4x.version>
   </properties>
 
