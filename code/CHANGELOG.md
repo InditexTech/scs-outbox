@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Exclusion rules for testing and build directories in ORT analyzer configuration.
+
+### Changed
+
+- Updated maven release CI workflow to use a GitHub App Token, enable GPG commit signing, and configure secure HTTPS git remote URLs.
+
+### Fixed
+
+- Replace project's long name with "Outbox for Spring Cloud Stream".
+
 ## [1.0.0] - 2026-06-03
 
 ## [0.2.0] - 2026-06-03
