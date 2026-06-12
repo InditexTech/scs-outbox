@@ -1,0 +1,26 @@
+code/CHANGELOG.md
+  s_8c06f02e480e8d::t_20c83bf04b1966 10-21
+.github/workflows/code-maven_java-release.yml
+  h_3fa2067c00bbfd 66-72,75,151,155,195-210,212,214-215,222,244,251,264,269
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "12a447a7ed06bd807f9f2331bed65939a662f105",
+  "prompts": {},
+  "humans": {
+    "h_3fa2067c00bbfd": {
+      "author": "Adria Berge Aguilar <adriaba@ext.inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_8c06f02e480e8d": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1781253193370",
+        "model": "unknown"
+      },
+      "human_author": "Adria Berge Aguilar <adriaba@ext.inditex.com>"
+    }
+  }
+}
