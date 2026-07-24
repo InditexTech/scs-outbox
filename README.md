@@ -505,7 +505,7 @@ graph TD
 | `grouping-strategy` | `String` | `DESTINATION` | Message grouping strategy for ordering guarantees. See [Message grouping strategies](#message-grouping-strategies). Supports: `DESTINATION`, `KAFKA_MESSAGE_KEY`, `CUSTOM_GROUPING_KEY` |
 | `paused` | `Boolean` | `false` | Globally pauses all message publishing. Supports `@RefreshScope` |
 | `paused-destinations` | `Set<String>` | `[]` | Destinations to pause. Supports `@RefreshScope` |
-| `after-commit` | `Boolean` | `false` | Trigger publishing after transaction commit (requires `@EnableAsync`) |
+| `after-commit` | `Boolean` | `false` | Trigger publishing after transaction commit (requires `@EnableAsync`). Runs on the dedicated `outboxAfterCommitExecutor` (see [Executor service](#executor-service)) and triggers at most once per transaction, regardless of how many messages were captured within it |
 
 ### Scheduler properties
 
@@ -606,7 +606,12 @@ public class MyGroupingKeyGenerator implements GroupingKeyGenerator {
 
 ### Executor service
 
-The publishing task uses an `ExecutorService` to publish messages in parallel across groups. The default is `Executors.newCachedThreadPool()`.
+scs-outbox uses two independent executors, each dedicated to a different concern. They must not be shared with each other, nor with the
+application's default `@Async` executor.
+
+#### `outboxExecutorService`
+
+Used exclusively by `ParallelPublisher` to publish message groups in parallel. The default is `Executors.newCachedThreadPool()`.
 
 To provide a custom executor, define a Spring bean of type `ExecutorService` qualified with the name `outboxExecutorService`.
 
@@ -614,6 +619,26 @@ To provide a custom executor, define a Spring bean of type `ExecutorService` qua
 - `DESTINATION` grouping: set max threads >= number of destinations.
 - `KAFKA_MESSAGE_KEY` grouping: use a `ThreadPoolExecutor` with queue size ~ batch size, and tune max threads based on message volume.
 - `CUSTOM_GROUPING_KEY` grouping: set max threads based on the expected cardinality of your custom keys.
+
+#### `outboxAfterCommitExecutor`
+
+Used exclusively to run `AfterCommitTrigger.afterCommit(..)` when `scs-outbox.publishing.after-commit=true`. The default is also
+`Executors.newCachedThreadPool()`.
+
+This executor is intentionally kept separate from `outboxExecutorService` and from the application's global `@Async` default executor:
+
+- **Isolation from the global default executor.** Without a dedicated, explicitly qualified executor, `@Async` would resolve the
+  application-wide default async executor (shared with any other unrelated `@Async` workload in the app). A transaction that captures many
+  outbound messages could otherwise overwhelm a bounded default executor and cause `TaskRejectedException`/`RejectedExecutionException`.
+- **Isolation from `outboxExecutorService`.** The after-commit trigger calls `outboxPublishingTask()`, which submits publishing jobs to
+  `outboxExecutorService` and blocks waiting for them to complete. If both executors were the same bounded pool, all its workers could end
+  up blocked on after-commit invocations waiting for publishing jobs queued behind them, causing thread starvation or deadlock.
+
+To provide a custom executor, define a Spring bean of type `ExecutorService` **explicitly named**
+`outboxAfterCommitExecutor`.
+
+> Note: regardless of the executor used, a single transaction only ever triggers `outboxPublishingTask()` once, no matter how many
+> messages were captured within it (see [Publishing properties](#publishing-properties)).
 
 ### Archive messages
 

@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Exclusion rules for testing and build directories in ORT analyzer configuration.
+- Dedicated `outboxAfterCommitExecutor` bean for `AfterCommitTrigger.afterCommit(..)`, decoupled from the application's default `@Async`
+  executor and from `outboxExecutorService` to prevent task rejection on bulk transactions and thread starvation between the two
+  executors.
 
 ### Changed
 
 - Updated maven release CI workflow to use a GitHub App Token, enable GPG commit signing, and configure secure HTTPS git remote URLs.
+- `AfterCommitTrigger` now coalesces `MessageCaptured` events so only one publishing trigger is registered per transaction, regardless of
+  how many messages were captured within it.
 
 ### Fixed
 
