@@ -1,5 +1,6 @@
 package dev.inditex.scsoutbox.scheduler;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -66,6 +67,19 @@ class AfterCommitTriggerTest {
     this.afterCommitTrigger.publishMessageCapturedEvent();
 
     verify(this.applicationEventPublisher, times(2)).publishEvent(any(MessageCaptured.class));
+  }
+
+  @Test
+  void unbinds_resource_after_transaction_completes_with_rollback() {
+    TransactionSynchronizationManager.initSynchronization();
+    this.afterCommitTrigger.publishMessageCapturedEvent();
+
+    assertThat(TransactionSynchronizationManager.hasResource(this.afterCommitTrigger)).isTrue();
+
+    TransactionSynchronizationManager.getSynchronizations()
+        .forEach(synchronization -> synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK));
+
+    assertThat(TransactionSynchronizationManager.hasResource(this.afterCommitTrigger)).isFalse();
   }
 
   @Test
