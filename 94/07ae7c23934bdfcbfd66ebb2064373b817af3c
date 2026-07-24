@@ -1,0 +1,19 @@
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/AfterCommitCustomExecutorIT.java
+  s_35f1b38ce20009::t_1799e470c6116a 1-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "9407ae7c23934bdfcbfd66ebb2064373b817af3c",
+  "prompts": {},
+  "sessions": {
+    "s_35f1b38ce20009": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06c18fe3cffewhR5xsbYc2iN1o",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
