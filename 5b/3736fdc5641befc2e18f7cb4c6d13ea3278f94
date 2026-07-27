@@ -1,0 +1,21 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/OutboxAutoConfiguration.java
+  s_35f1b38ce20009::t_6e03ea0605df27 3-4,146-148
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/scheduler/AfterCommitTrigger.java
+  s_35f1b38ce20009::t_fec30fd5f4be98 20-22,24,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "5b3736fdc5641befc2e18f7cb4c6d13ea3278f94",
+  "prompts": {},
+  "sessions": {
+    "s_35f1b38ce20009": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_06c18fe3cffewhR5xsbYc2iN1o",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
