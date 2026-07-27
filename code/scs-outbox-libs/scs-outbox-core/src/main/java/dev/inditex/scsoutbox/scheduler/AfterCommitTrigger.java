@@ -28,7 +28,7 @@ public class AfterCommitTrigger {
   private final OutboxScheduledService outboxScheduledService;
 
   /**
-   * Publishes a {@link MessageCaptured} event after every {@code MessageCaptureTxService.capture(..)} invocation.
+   * Publishes a {@link MessageCaptured} event when at least one message is captured in the current transaction.
    *
    * <p>{@code capture(..)} is {@code Propagation.MANDATORY}, so it always runs inside an already active transaction. When multiple messages
    * are captured within the same (larger) transaction, this method is invoked multiple times but only publishes a single event for that
