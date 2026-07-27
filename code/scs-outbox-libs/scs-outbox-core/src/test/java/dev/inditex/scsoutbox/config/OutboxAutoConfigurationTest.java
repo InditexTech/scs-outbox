@@ -200,6 +200,9 @@ class OutboxAutoConfigurationTest {
           .run(context -> {
             assertThat(context).hasNotFailed();
             assertThat(context).hasBean("outboxAfterCommitExecutor");
+            assertThat(context).hasBean("outboxExecutorService");
+            assertThat(context.getBean("outboxAfterCommitExecutor"))
+                .isNotSameAs(context.getBean("outboxExecutorService"));
           });
     }
 
