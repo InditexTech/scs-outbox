@@ -1,0 +1,19 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/scheduler/AfterCommitTrigger.java
+  s_b9133d6751862b::t_d0b4ddf7c4cd90 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "0e35b917153ad5017d3cf6d6af808bcc5c84a97d",
+  "prompts": {},
+  "sessions": {
+    "s_b9133d6751862b": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "9c04e370-bfb7-49e0-8ea5-55691aaabc7f",
+        "model": "unknown"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
