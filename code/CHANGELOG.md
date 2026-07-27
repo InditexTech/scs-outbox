@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `outboxExecutorService` no longer silently adopts an unrelated `ExecutorService` bean (including one marked `@Primary`) present elsewhere
+  in the application context. It is now only satisfied by a bean explicitly named `outboxExecutorService` or by the library's own default,
+  matching the documented override contract. **This is a potentially breaking change** for applications relying on the previous
+  undocumented by-type/`@Primary` fallback; define a bean explicitly named `outboxExecutorService` to keep using a custom executor.
+
 ## [1.0.0] - 2026-06-03
 
 ## [0.2.0] - 2026-06-03
