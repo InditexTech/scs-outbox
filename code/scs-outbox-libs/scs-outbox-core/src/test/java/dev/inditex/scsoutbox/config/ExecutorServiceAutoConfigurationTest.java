@@ -50,8 +50,9 @@ class ExecutorServiceAutoConfigurationTest {
     void ignores_it_and_creates_its_own_default() {
       final Map<String, ExecutorService> beans = this.context.getBeansOfType(ExecutorService.class);
       System.out.println(beans);
-      assertThat(this.executorService).isEqualTo(beans.get("defaultOutboxExecutorService"));
-      assertThat(this.executorService).isNotEqualTo(beans.get("executorService"));
+      assertThat(this.executorService)
+          .isEqualTo(beans.get("defaultOutboxExecutorService"))
+          .isNotEqualTo(beans.get("executorService"));
     }
 
     @TestConfiguration
@@ -103,8 +104,9 @@ class ExecutorServiceAutoConfigurationTest {
     void ignores_it_and_creates_its_own_default() {
       final Map<String, ExecutorService> beans = this.context.getBeansOfType(ExecutorService.class);
       System.out.println(beans);
-      assertThat(this.executorService).isEqualTo(beans.get("defaultOutboxExecutorService"));
-      assertThat(this.executorService).isNotEqualTo(beans.get("primaryExecutorService"));
+      assertThat(this.executorService)
+          .isEqualTo(beans.get("defaultOutboxExecutorService"))
+          .isNotEqualTo(beans.get("primaryExecutorService"));
     }
 
     @TestConfiguration
