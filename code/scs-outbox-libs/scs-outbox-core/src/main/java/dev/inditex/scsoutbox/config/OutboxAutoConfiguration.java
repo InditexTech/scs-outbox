@@ -1,5 +1,7 @@
 package dev.inditex.scsoutbox.config;
 
+import static dev.inditex.scsoutbox.scheduler.AfterCommitTrigger.OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -58,13 +60,6 @@ public class OutboxAutoConfiguration {
   private static final String OUTBOX_EXECUTOR_SERVICE_BEAN_NAME = "outboxExecutorService";
 
   private static final String DEFAULT_OUTBOX_EXECUTOR_SERVICE_BEAN_NAME = "defaultOutboxExecutorService";
-
-  /**
-   * Bean name for the dedicated executor used by {@code AfterCommitTrigger.afterCommit(..)}. Kept independent from
-   * {@link #OUTBOX_EXECUTOR_SERVICE_BEAN_NAME} (used by {@code ParallelPublisher}) and from the application's default {@code @Async}
-   * executor. Must stay in sync with the literal value used in {@code AfterCommitTrigger}'s {@code @Async} qualifier.
-   */
-  private static final String OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME = "outboxAfterCommitExecutor";
 
   @Bean
   @GlobalChannelInterceptor
@@ -148,9 +143,9 @@ public class OutboxAutoConfiguration {
 
   /**
    * Default executor used to run the after-commit trigger. Backs off entirely if a bean is explicitly named
-   * {@value #OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME} (no by-type/{@code @Primary} fallback, unlike
-   * {@link #OUTBOX_EXECUTOR_SERVICE_BEAN_NAME}), since {@code Executor} beans are common in typical Spring Boot applications and picking
-   * one up unintentionally could route after-commit work to an unrelated pool.
+   * {@code outboxAfterCommitExecutor} (no by-type/{@code @Primary} fallback, unlike {@link #OUTBOX_EXECUTOR_SERVICE_BEAN_NAME}), since
+   * {@code Executor} beans are common in typical Spring Boot applications and picking one up unintentionally could route after-commit work
+   * to an unrelated pool.
    */
   @ConditionalOnProperty(value = "scs-outbox.publishing.after-commit", havingValue = "true", matchIfMissing = false)
   @ConditionalOnMissingBean(name = {OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME})

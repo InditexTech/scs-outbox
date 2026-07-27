@@ -32,6 +32,7 @@ class AfterCommitTriggerTest {
 
   @AfterEach
   void tearDown() {
+    TransactionSynchronizationManager.unbindResourceIfPossible(this.afterCommitTrigger);
     if (TransactionSynchronizationManager.isSynchronizationActive()) {
       TransactionSynchronizationManager.clearSynchronization();
     }

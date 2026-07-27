@@ -17,10 +17,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class AfterCommitTrigger {
 
   /**
-   * Bean name of the dedicated {@link java.util.concurrent.Executor} used to run {@link #afterCommit(MessageCaptured)}. Must stay in sync
-   * with {@code OutboxAutoConfiguration.OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME}, which registers the default bean under this name.
+   * Bean name of the dedicated {@link java.util.concurrent.Executor} used to run {@link #afterCommit(MessageCaptured)}. Registered as the
+   * default bean under this same name by {@code OutboxAutoConfiguration}, which references this constant to avoid duplicating the literal
+   * (a mismatch would make {@code @Async} silently resolve a different executor at runtime).
    */
-  private static final String OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME = "outboxAfterCommitExecutor";
+  public static final String OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME = "outboxAfterCommitExecutor";
 
   private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -64,7 +65,7 @@ public class AfterCommitTrigger {
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Async(OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME)
   public void afterCommit(final MessageCaptured event) {
-    log.debug("Triggering outbox publishing task after commit. on event: " + event.getClass().getSimpleName());
+    log.debug("Triggering outbox publishing task after commit. on event: {}", event.getClass().getName());
     this.outboxScheduledService.outboxPublishingTask();
   }
 
