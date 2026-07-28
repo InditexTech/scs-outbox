@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Replace project's long name with "Outbox for Spring Cloud Stream".
 
+## [1.0.1] - 2026-07-28
+
+### Fixed
+
+- [#51](https://github.com/InditexTech/scs-outbox/pull/51) outboxExecutorService silently adopts any ExecutorService bean instead of requiring the exact bean name
+
 ## [1.0.0] - 2026-06-03
 
 ## [0.2.0] - 2026-06-03
@@ -60,7 +66,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maven build configuration with javadocs and sources plugins
 - CI/CD workflows for release and testing
 
-[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...HEAD
+
+[1.0.1]: https://github.com/InditexTech/scs-outbox/compare/1.0.0...1.0.1
 
 [1.0.0]: https://github.com/InditexTech/scs-outbox/compare/0.2.0...1.0.0
 

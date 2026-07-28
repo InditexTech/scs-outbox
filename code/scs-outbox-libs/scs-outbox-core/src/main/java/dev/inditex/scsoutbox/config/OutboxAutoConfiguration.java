@@ -155,19 +155,14 @@ public class OutboxAutoConfiguration {
   }
 
   /**
-   * Default executor service.
+   * Default executor service used by {@code ParallelPublisher}. Backs off entirely if a bean is explicitly named
+   * {@code outboxExecutorService} (no by-type/{@code @Primary} fallback), since {@code ExecutorService} beans are common in typical Spring
+   * Boot applications and picking one up unintentionally could route outbox publishing to an unrelated pool.
    */
-  @ConditionalOnMissingBean
+  @ConditionalOnMissingBean(name = {OUTBOX_EXECUTOR_SERVICE_BEAN_NAME})
   @Bean(name = {DEFAULT_OUTBOX_EXECUTOR_SERVICE_BEAN_NAME, OUTBOX_EXECUTOR_SERVICE_BEAN_NAME})
   public ExecutorService defaultOutboxExecutorService() {
     return Executors.newCachedThreadPool();
-  }
-
-  @ConditionalOnMissingBean(name = {OUTBOX_EXECUTOR_SERVICE_BEAN_NAME})
-  @Bean(OUTBOX_EXECUTOR_SERVICE_BEAN_NAME)
-  public ExecutorService outboxExecutorService(
-      ExecutorService candidateExecutorServices) {
-    return candidateExecutorServices;
   }
 
   @Bean
