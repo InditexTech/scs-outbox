@@ -211,6 +211,18 @@ class OutboxAutoConfigurationTest {
     void does_not_create_after_commit_executor_when_disabled() {
       OutboxAutoConfigurationTest.this.baseContextRunner
           .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
+          .withPropertyValues("scs-outbox.publishing.after-commit=false")
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).doesNotHaveBean("outboxAfterCommitExecutor");
+          });
+    }
+
+    @Test
+    @DisplayName("does not create outboxAfterCommitExecutor when property is missing")
+    void does_not_create_after_commit_executor_when_property_missing() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
           .run(context -> {
             assertThat(context).hasNotFailed();
             assertThat(context).doesNotHaveBean("outboxAfterCommitExecutor");
