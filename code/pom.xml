@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>Spring Cloud Stream Outbox pattern library providing reliable event publishing for JDBC and MongoDB backends with support for serialization, archiving, and metrics.</description>
+  <description>Outbox for Spring Cloud Stream is a library providing reliable event publishing for JDBC and MongoDB backends with support for serialization, archiving, and metrics.</description>
   <url>https://github.com/InditexTech/scs-outbox/blob/develop/README.md</url>
   <inceptionYear>2026</inceptionYear>
   <organization>
