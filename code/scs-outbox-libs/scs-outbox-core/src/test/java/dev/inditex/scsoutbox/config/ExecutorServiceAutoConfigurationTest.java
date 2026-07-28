@@ -42,15 +42,17 @@ class ExecutorServiceAutoConfigurationTest {
 
   @Nested
   @SpringBootTest(
-      classes = {ExecutorServiceDefined.TestConfig.class, OutboxAutoConfiguration.class, RefreshAutoConfiguration.class},
+      classes = {UnrelatedExecutorServiceDefined.TestConfig.class, OutboxAutoConfiguration.class, RefreshAutoConfiguration.class},
       properties = {})
-  class ExecutorServiceDefined extends AbstractExecutorService {
+  class UnrelatedExecutorServiceDefined extends AbstractExecutorService {
 
     @Test
-    void uses_the_defined() {
+    void ignores_it_and_creates_its_own_default() {
       final Map<String, ExecutorService> beans = this.context.getBeansOfType(ExecutorService.class);
       System.out.println(beans);
-      assertThat(this.executorService).isEqualTo(beans.get("executorService"));
+      assertThat(this.executorService)
+          .isEqualTo(beans.get("defaultOutboxExecutorService"))
+          .isNotEqualTo(beans.get("executorService"));
     }
 
     @TestConfiguration
@@ -94,15 +96,17 @@ class ExecutorServiceAutoConfigurationTest {
 
   @Nested
   @SpringBootTest(
-      classes = {PrimaryExecutorServiceDefined.TestConfig.class, OutboxAutoConfiguration.class, RefreshAutoConfiguration.class},
+      classes = {UnrelatedPrimaryExecutorServiceDefined.TestConfig.class, OutboxAutoConfiguration.class, RefreshAutoConfiguration.class},
       properties = {})
-  class PrimaryExecutorServiceDefined extends AbstractExecutorService {
+  class UnrelatedPrimaryExecutorServiceDefined extends AbstractExecutorService {
 
     @Test
-    void uses_the_primary() {
+    void ignores_it_and_creates_its_own_default() {
       final Map<String, ExecutorService> beans = this.context.getBeansOfType(ExecutorService.class);
       System.out.println(beans);
-      assertThat(this.executorService).isEqualTo(beans.get("primaryExecutorService"));
+      assertThat(this.executorService)
+          .isEqualTo(beans.get("defaultOutboxExecutorService"))
+          .isNotEqualTo(beans.get("primaryExecutorService"));
     }
 
     @TestConfiguration
