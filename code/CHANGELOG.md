@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- [#51](https://github.com/InditexTech/scs-outbox/pull/51) outboxExecutorService silently adopts any ExecutorService bean instead of requiring the exact bean name
+
 ## [1.0.0] - 2026-06-03
 
 ## [0.2.0] - 2026-06-03
