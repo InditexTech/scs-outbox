@@ -9,10 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- `outboxExecutorService` no longer silently adopts an unrelated `ExecutorService` bean (including one marked `@Primary`) present elsewhere
-  in the application context. It is now only satisfied by a bean explicitly named `outboxExecutorService` or by the library's own default,
-  matching the documented override contract. **This is a potentially breaking change** for applications relying on the previous
-  undocumented by-type/`@Primary` fallback; define a bean explicitly named `outboxExecutorService` to keep using a custom executor.
+- [#51](https://github.com/InditexTech/scs-outbox/pull/51) outboxExecutorService silently adopts any ExecutorService bean instead of requiring the exact bean name
 
 ## [1.0.0] - 2026-06-03
 
