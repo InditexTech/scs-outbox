@@ -85,7 +85,7 @@
     <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
     <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
-    <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
     <spotless-maven-plugin.version>3.4.0</spotless-maven-plugin.version>
     <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
     <!-- Checkstyle version 12.X has been locked in due to JDK 17 compatibility -->
