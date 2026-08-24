@@ -113,9 +113,9 @@ jobs:
       - name: SonarCloud / Set asdf versions
         working-directory: code
         run: |
-          asdf local java ${{ env.SONAR_JAVA_VERSION }}
-          asdf local nodejs 20.10.0
-          asdf local maven 3.9.4
+          asdf set java ${{ env.SONAR_JAVA_VERSION }}
+          asdf set nodejs 20.10.0
+          asdf set maven 3.9.4
 
       - name: Setup Java environment vars
         working-directory: code
