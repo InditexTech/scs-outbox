@@ -1,0 +1,19 @@
+.github/workflows/code-maven_java-sonarcloud-analysis.yml
+  s_a9774b5f7f2643::t_fb1fd1e8edd954 116-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ed5354ca4fd798b030d71e4b665e471af1641178",
+  "prompts": {},
+  "sessions": {
+    "s_a9774b5f7f2643": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0292c-4b86-7b82-a4d6-ad14bb202156",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Ivan Alvarez Sabin <ivanasabi@ext.inditex.com>"
+    }
+  }
+}
