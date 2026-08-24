@@ -100,7 +100,7 @@
     <spring-cloud.version>2025.1.3</spring-cloud.version>
 
     <!-- Distributed locking -->
-    <shedlock.version>7.7.0</shedlock.version>
+    <shedlock.version>7.9.0</shedlock.version>
 
      <!-- Serialization -->
      <avro.version>1.12.0</avro.version>
