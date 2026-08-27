@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- [#64](https://github.com/InditexTech/scs-outbox/pull/64) Use `asdf set` instead of the removed `asdf local` command in the SonarCloud analysis workflow, which failed on asdf 0.16+.
 - Replace project's long name with "Outbox for Spring Cloud Stream".
 
 ## [1.0.1] - 2026-07-28
