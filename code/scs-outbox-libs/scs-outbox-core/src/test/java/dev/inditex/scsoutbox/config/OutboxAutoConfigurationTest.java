@@ -190,6 +190,59 @@ class OutboxAutoConfigurationTest {
             assertThat(context).doesNotHaveBean(AfterCommitTrigger.class);
           });
     }
+
+    @Test
+    @DisplayName("creates default outboxAfterCommitExecutor when after-commit is enabled")
+    void creates_default_after_commit_executor_when_enabled() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
+          .withPropertyValues("scs-outbox.publishing.after-commit=true")
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).hasBean("outboxAfterCommitExecutor");
+            assertThat(context).hasBean("outboxExecutorService");
+            assertThat(context.getBean("outboxAfterCommitExecutor"))
+                .isNotSameAs(context.getBean("outboxExecutorService"));
+          });
+    }
+
+    @Test
+    @DisplayName("does not create outboxAfterCommitExecutor when after-commit is disabled")
+    void does_not_create_after_commit_executor_when_disabled() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
+          .withPropertyValues("scs-outbox.publishing.after-commit=false")
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).doesNotHaveBean("outboxAfterCommitExecutor");
+          });
+    }
+
+    @Test
+    @DisplayName("does not create outboxAfterCommitExecutor when property is missing")
+    void does_not_create_after_commit_executor_when_property_missing() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).doesNotHaveBean("outboxAfterCommitExecutor");
+          });
+    }
+
+    @Test
+    @DisplayName("uses custom outboxAfterCommitExecutor bean when explicitly named")
+    void uses_custom_after_commit_executor_when_provided() {
+      final ExecutorService customExecutor = mock(ExecutorService.class);
+
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .withBean(ApplicationEventPublisher.class, () -> mock(ApplicationEventPublisher.class))
+          .withBean("outboxAfterCommitExecutor", ExecutorService.class, () -> customExecutor)
+          .withPropertyValues("scs-outbox.publishing.after-commit=true")
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).getBean("outboxAfterCommitExecutor").isSameAs(customExecutor);
+          });
+    }
   }
 
   @Nested
