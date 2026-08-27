@@ -153,6 +153,7 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.CI_GPG_SECRET_KEY_PASSWORD }}
         run: |
           git remote set-url origin "https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git"
+          git config --global url."https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/".insteadOf "https://github.com/"
 
           # GPG: non-interactive signing setup
           mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
@@ -211,7 +212,7 @@ jobs:
           git add CHANGELOG.md
           git commit -S -m "chore: Update CHANGELOG with ${{ steps.update-changelog.outputs.version }} version Signed-off-by: srvcosoitxtech <oso@inditex.com>"
           git push --no-verify -u origin HEAD     
-          mvn -B release:prepare release:perform -DreleaseVersion=${{ steps.update-changelog.outputs.version }} -DdeveloperConnection="scm:git:https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git" -Dconnection="scm:git:https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}.git"
+          mvn -B release:prepare release:perform -DreleaseVersion=${{ steps.update-changelog.outputs.version }} -DdeveloperConnection="scm:git:https://github.com/${{ github.repository }}.git" -Dconnection="scm:git:https://github.com/${{ github.repository }}.git"
           git push --follow-tags origin HEAD
 
       - name: Next Development Iteration / Create Sync Branch PR into Develop

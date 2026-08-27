@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#64](https://github.com/InditexTech/scs-outbox/pull/64) Use `asdf set` instead of the removed `asdf local` command in the SonarCloud analysis workflow, which failed on asdf 0.16+.
 - [#39](https://github.com/InditexTech/scs-outbox/pull/39) Replace project's long name with "Outbox for Spring Cloud Stream".
+- Restore git-level credentials for the maven-release-plugin push in the release workflow; the GitHub App Token migration removed the credential helper, which broke `release:prepare`.
 
 ### Dependencies
 
