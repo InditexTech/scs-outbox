@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-08-27
-
 ### Added
 
 - Exclusion rules for testing and build directories in ORT analyzer configuration.
@@ -22,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#64](https://github.com/InditexTech/scs-outbox/pull/64) Use `asdf set` instead of the removed `asdf local` command in the SonarCloud analysis workflow, which failed on asdf 0.16+.
 - [#39](https://github.com/InditexTech/scs-outbox/pull/39) Replace project's long name with "Outbox for Spring Cloud Stream".
+- Restore git-level credentials for the maven-release-plugin push in the release workflow; the GitHub App Token migration removed the credential helper, which broke `release:prepare`.
 
 ### Dependencies
 
@@ -82,9 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maven build configuration with javadocs and sources plugins
 - CI/CD workflows for release and testing
 
-[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.1.0...HEAD
-
-[1.1.0]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...1.1.0
+[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...HEAD
 
 [1.0.1]: https://github.com/InditexTech/scs-outbox/compare/1.0.0...1.0.1
 
