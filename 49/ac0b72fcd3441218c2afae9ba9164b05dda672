@@ -1,0 +1,19 @@
+code/CHANGELOG.md
+  s_a9774b5f7f2643::t_8c83c681ffca56 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "49ac0b72fcd3441218c2afae9ba9164b05dda672",
+  "prompts": {},
+  "sessions": {
+    "s_a9774b5f7f2643": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0292c-4b86-7b82-a4d6-ad14bb202156",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Ivan Alvarez Sabin <ivanasabi@ext.inditex.com>"
+    }
+  }
+}
