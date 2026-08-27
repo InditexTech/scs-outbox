@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-27
+
 ### Added
 
 - Exclusion rules for testing and build directories in ORT analyzer configuration.
@@ -81,7 +83,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maven build configuration with javadocs and sources plugins
 - CI/CD workflows for release and testing
 
-[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.1.0...HEAD
+
+[1.1.0]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...1.1.0
 
 [1.0.1]: https://github.com/InditexTech/scs-outbox/compare/1.0.0...1.0.1
 
