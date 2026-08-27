@@ -19,7 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [#64](https://github.com/InditexTech/scs-outbox/pull/64) Use `asdf set` instead of the removed `asdf local` command in the SonarCloud analysis workflow, which failed on asdf 0.16+.
-- Replace project's long name with "Outbox for Spring Cloud Stream".
+- [#39](https://github.com/InditexTech/scs-outbox/pull/39) Replace project's long name with "Outbox for Spring Cloud Stream".
+
+### Dependencies
+
+- [#17](https://github.com/InditexTech/scs-outbox/pull/17) chore(deps): bump org.apache.maven.plugins:maven-javadoc-plugin from 3.10.0 to 3.12.0 in /code
+- [#18](https://github.com/InditexTech/scs-outbox/pull/18) chore(deps-dev): bump org.apache.maven.plugins:maven-compiler-plugin from 3.13.0 to 3.15.0 in /code
+- [#19](https://github.com/InditexTech/scs-outbox/pull/19) chore(deps-dev): bump org.apache.maven.plugins:maven-surefire-plugin from 3.5.5 to 3.5.6 in /code
+- [#21](https://github.com/InditexTech/scs-outbox/pull/21) chore(deps): bump org.mariadb.jdbc:mariadb-java-client from 3.5.5 to 3.5.8 in /code
+- [#27](https://github.com/InditexTech/scs-outbox/pull/27) chore(deps-dev): bump org.apache.maven.plugins:maven-failsafe-plugin from 3.5.5 to 3.5.6 in /code
+- [#28](https://github.com/InditexTech/scs-outbox/pull/28) chore(deps-dev): bump org.apache.maven.plugins:maven-gpg-plugin from 3.2.5 to 3.2.8 in /code
+- [#29](https://github.com/InditexTech/scs-outbox/pull/29) chore(deps): bump org.apache.maven.plugins:maven-source-plugin from 3.3.1 to 3.4.0 in /code
+- [#30](https://github.com/InditexTech/scs-outbox/pull/30) chore(deps-dev): bump org.sonatype.central:central-publishing-maven-plugin from 0.5.0 to 0.11.0 in /code
+- [#31](https://github.com/InditexTech/scs-outbox/pull/31) chore(deps): bump org.postgresql:postgresql from 42.7.5 to 42.7.11 in /code
+- [#35](https://github.com/InditexTech/scs-outbox/pull/35) chore(deps): bump org.jacoco:jacoco-maven-plugin from 0.8.14 to 0.8.15 in /code
+- [#36](https://github.com/InditexTech/scs-outbox/pull/36) chore(deps): bump de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring4x from 4.24.0 to 4.33.0 in /code
+- [#59](https://github.com/InditexTech/scs-outbox/pull/59) chore(deps): bump org.springframework.boot:spring-boot-dependencies from 4.0.6 to 4.1.1 in /code
+- [#60](https://github.com/InditexTech/scs-outbox/pull/60) chore(deps): bump shedlock.version from 7.7.0 to 7.9.0 in /code
+- [#62](https://github.com/InditexTech/scs-outbox/pull/62) chore(deps): bump org.springframework.cloud:spring-cloud-dependencies from 2025.1.1 to 2025.1.3 in /code
 
 ## [1.0.1] - 2026-07-28
 

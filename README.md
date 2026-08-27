@@ -27,7 +27,7 @@ SCS-Outbox supports **JDBC** and **MongoDB** backends. Add the corresponding sta
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-jdbc-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -40,7 +40,7 @@ SCS-Outbox supports **JDBC** and **MongoDB** backends. Add the corresponding sta
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-mongodb-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -196,7 +196,7 @@ Everything you need to get SCS-Outbox running, in one place (PostgreSQL + Kafka 
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-jdbc-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS shedlock (
 @SpringBootApplication
 @EnableScheduling
 public class MyApplication {
-  public static void main(String[] args) {
+  static void main(String[] args) {
     SpringApplication.run(MyApplication.class, args);
   }
 }
@@ -270,7 +270,7 @@ public class OrderService {
   @Transactional
   public void placeOrder(Order order) {
     orderRepository.save(order);
-    streamBridge.send("orders-out-0", order);  // captured, not sent yet
+    this.streamBridge.send("orders-out-0", order);  // captured, not sent yet
   }
 }
 ```
