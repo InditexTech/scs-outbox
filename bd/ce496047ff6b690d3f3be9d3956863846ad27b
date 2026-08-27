@@ -1,0 +1,21 @@
+code/CHANGELOG.md
+  s_050a00c30f9d8b::t_93be545b831945 23,84
+.github/workflows/code-maven_java-release.yml
+  s_050a00c30f9d8b::t_74236d03ad2319 157-163,221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "bdce496047ff6b690d3f3be9d3956863846ad27b",
+  "prompts": {},
+  "sessions": {
+    "s_050a00c30f9d8b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "21a8e3da-a09f-4804-a78a-d7e3f9f0a36e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Ivan Alvarez Sabin <ivanasabi@ext.inditex.com>"
+    }
+  }
+}
