@@ -1,5 +1,7 @@
 package dev.inditex.scsoutbox.config;
 
+import static dev.inditex.scsoutbox.scheduler.AfterCommitTrigger.OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -137,6 +139,19 @@ public class OutboxAutoConfiguration {
       final ApplicationEventPublisher applicationEventPublisher,
       final OutboxScheduledService scsOutboxScheduledService) {
     return new AfterCommitTrigger(applicationEventPublisher, scsOutboxScheduledService);
+  }
+
+  /**
+   * Default executor used to run the after-commit trigger. Backs off entirely if a bean is explicitly named
+   * {@code outboxAfterCommitExecutor} (no by-type/{@code @Primary} fallback, unlike {@link #OUTBOX_EXECUTOR_SERVICE_BEAN_NAME}), since
+   * {@code Executor} beans are common in typical Spring Boot applications and picking one up unintentionally could route after-commit work
+   * to an unrelated pool.
+   */
+  @ConditionalOnProperty(value = "scs-outbox.publishing.after-commit", havingValue = "true", matchIfMissing = false)
+  @ConditionalOnMissingBean(name = {OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME})
+  @Bean(OUTBOX_AFTER_COMMIT_EXECUTOR_BEAN_NAME)
+  public ExecutorService outboxAfterCommitExecutor() {
+    return Executors.newCachedThreadPool();
   }
 
   /**

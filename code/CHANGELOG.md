@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Exclusion rules for testing and build directories in ORT analyzer configuration.
+- [#46](https://github.com/InditexTech/scs-outbox/pull/46) Allow configuring a dedicated executor for after-commit triggers
 
 ### Changed
 
