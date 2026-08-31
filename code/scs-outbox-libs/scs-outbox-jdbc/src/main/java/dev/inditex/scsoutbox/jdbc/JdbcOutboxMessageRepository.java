@@ -247,7 +247,7 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #9).
+  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #8).
   public void save(final OutboxMessage outboxMessage) {
     final SerializedOutboxMessage serializedOutboxMessage = this.serializer.serialize(outboxMessage);
     this.jdbcTemplate.update(
