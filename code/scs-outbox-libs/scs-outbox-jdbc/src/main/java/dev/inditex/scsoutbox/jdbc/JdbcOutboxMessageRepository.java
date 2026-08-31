@@ -247,9 +247,10 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
+  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #8).
   public void save(final OutboxMessage outboxMessage) {
     final SerializedOutboxMessage serializedOutboxMessage = this.serializer.serialize(outboxMessage);
-    this.jdbcTemplate.update(// NOSONAR java:S2077 - table name is validated by DbNamingValidator (alphanumeric and underscores only)
+    this.jdbcTemplate.update(
         "INSERT INTO "
             + this.table.getQualifiedTableName() + " (ID, BINDING_NAME, CAPTURED_AT, DESTINATION, HEADERS, PAYLOAD) "
             + "VALUES ( ?, ?, ?, ?, ?, ?)",
@@ -263,6 +264,7 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
+  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #9).
   public void delete(final OutboxMessage outboxMessage) {
     this.jdbcTemplate.update("DELETE FROM " + this.table.getQualifiedTableName() + " WHERE ID = ?",
         outboxMessage.getId().toString());
