@@ -249,7 +249,8 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
   @Transactional(propagation = Propagation.REQUIRED)
   public void save(final OutboxMessage outboxMessage) {
     final SerializedOutboxMessage serializedOutboxMessage = this.serializer.serialize(outboxMessage);
-    this.jdbcTemplate.update( // NOSONAR java:S2077 - table name is validated by DbNamingValidator (alphanumeric and underscores only)
+    // NOSONAR java:S2077 - table name is validated by DbNamingValidator (alphanumeric and underscores only)
+    this.jdbcTemplate.update(
         "INSERT INTO "
             + this.table.getQualifiedTableName() + " (ID, BINDING_NAME, CAPTURED_AT, DESTINATION, HEADERS, PAYLOAD) "
             + "VALUES ( ?, ?, ?, ?, ?, ?)",
