@@ -1,5 +1,8 @@
 # SCS-OUTBOX
 
+[![Maven Central: scs-outbox-jdbc-starter](https://img.shields.io/maven-central/v/dev.inditex.scsoutbox/scs-outbox-jdbc-starter.svg?label=scs-outbox-jdbc-starter)](https://central.sonatype.com/artifact/dev.inditex.scsoutbox/scs-outbox-jdbc-starter)
+[![Maven Central: scs-outbox-mongodb-starter](https://img.shields.io/maven-central/v/dev.inditex.scsoutbox/scs-outbox-mongodb-starter.svg?label=scs-outbox-mongodb-starter)](https://central.sonatype.com/artifact/dev.inditex.scsoutbox/scs-outbox-mongodb-starter)
+
 Outbox for Spring Cloud Stream is a library that implements the [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) for [Spring Cloud Stream](https://spring.io/projects/spring-cloud-stream) applications.
 
 It intercepts outbound messages produced via `StreamBridge`, stores them inside the current application transaction, and publishes them later through a scheduled task — guaranteeing both **at-least-once delivery** and **message ordering**.
