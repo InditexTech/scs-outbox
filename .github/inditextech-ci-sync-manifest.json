@@ -1,0 +1,74 @@
+{
+  "configuration": {
+    "development_flow": "git-flow",
+    "outputs": [
+      "gh-release",
+      "publish"
+    ],
+    "parameters": {
+      "project_type": "monorepo",
+      "release": {
+        "lifecycle": "delegated",
+        "packages": [
+          "scs-outbox-core",
+          "scs-outbox-jdbc",
+          "scs-outbox-mongodb",
+          "scs-outbox-serialization",
+          "scs-outbox-archive",
+          "scs-outbox-archive-jdbc",
+          "scs-outbox-archive-mongodb",
+          "scs-outbox-metrics",
+          "scs-outbox-test-support",
+          "scs-outbox-jdbc-starter",
+          "scs-outbox-mongodb-starter"
+        ],
+        "strategy": "locked-step"
+      },
+      "working_directory": "code"
+    }
+  },
+  "creation_year": 2026,
+  "integrity": {
+    "algorithm": "hmac-sha256",
+    "signature": "a1568891c66656372e5d473d3423fa4a4c020ff012386d106806875a21decb57"
+  },
+  "managed_by": "InditexTech CI governance",
+  "managed_paths": {
+    ".github/ISSUE_TEMPLATE/1-bug.yml": "cd4dad3f32fe707e06324790a2fe2c25829c55566de2b459d744e785b36e1205",
+    ".github/ISSUE_TEMPLATE/2-feature.yml": "ebb92730d6c01641d055f97ac094cbe07f88fac24be9b689ddf26e47e7bda863",
+    ".github/ISSUE_TEMPLATE/3-other.yml": "5a839b39a98704036210dee498146f51bd5a6c057228685680e02004ff063a9a",
+    ".github/ISSUE_TEMPLATE/config.yml": "10e5dee4d49aa9e7792ceb4c986160c61f95da1ba00a64bf06e5f1f636cd17ec",
+    ".github/PULL_REQUEST_TEMPLATE.md": "23a0b0ac79a9020ccac9c013582a01f86e2df2ae7f914673583b9a3368313041",
+    ".github/inditextech-ci-java.json": "cdde10c0ee0bdf7e371c3278808d02d0b244ba07badc27b7e25792edaf777cf8",
+    ".github/workflows/code-maven_java-PR_verify.yml": "9d763ae0ab0b6dbcc564b426fda3853da879c6e6c1766267107f0dc296fa9809",
+    ".github/workflows/code-maven_java-build_snapshot.yml": "1f6201f3449678c88360797c201fc3c4d9c092bdd40d0d2a6f312222484d2227",
+    ".github/workflows/code-maven_java-release-core.yml": "255145909b365083333899baec18027d0cb06d334a4cc8028057fadd58280f99",
+    ".github/workflows/code-maven_java-release.yml": "219fafc31647ecfe438b089def7d07b50f9a6e197564ce9168e7e2bdcc4251de",
+    ".github/workflows/code-maven_java-sonarcloud-analysis.yml": "023af151ca9dfadb39daa8d07fdd631e5d56b1f2a800e10c8031972df3e938e8",
+    ".github/workflows/code-release_preview.yml": "73d3b09e770a741a9de6cc250c5e45a29ca0d86f35b6161a946edb075593dc8f",
+    ".github/workflows/codeql.yml": "b4ef9dfddd7b28387b669d48a4228225dc1d6dc76f98d21b65dd4a324d228ad5",
+    ".github/workflows/pr-verify.yml": "b39240fd362fb004c3b47cd4189cb527d9e27a7c37645bbe6324d2a757e34f7f",
+    ".github/workflows/push-verify.yml": "49e6e9c6a7015ea59a2bc831982b2fc4bfd1d5721302f6041170b4a15b7d56e1",
+    ".github/workflows/scorecard-analysis.yml": "9866047c5d638ee5d9246e646400cad473ce8ab0f66b444337405b8f9f324f6e",
+    ".github/workflows/sync-to-develop.yml": "1b2d0f33094052f771d91a7e7c29a666e8a9cee5cc5ca28e1f40168920ca2702",
+    "CODE_OF_CONDUCT.md": "ce1e7a8f68a7917d48c03f9f7aae5529367f73af0e959276e889d33ea1e8d4ab",
+    "CONTRIBUTING.md": "4e1264ca54a45df44b362c7533f0eba912bfa77b6f561121ae9e5e9d6aa00df3",
+    "SECURITY.md": "0ee7a3356bc3a1c7649e3b7a6a9012b0608011be2b1ff8d106ad02c8950bab25",
+    "repolinter.json": "0efb305c47a63f03c488a34906fc2d5471c84145c2ff553f2aacf3a41b92e1a1"
+  },
+  "managed_variables": {
+    "DEVELOPMENT_FLOW": "git-flow",
+    "PROJECT_TYPE": "monorepo",
+    "WORKING_DIRECTORY": "code"
+  },
+  "profile": "java",
+  "repository_id": 1229656237,
+  "retained_paths": {
+    "code/.tool-versions": "8167a8b24549934ef11bd90902a405c02b511c66c2d7f5daa6132c004c4f1bb2"
+  },
+  "schema_version": 2,
+  "source_digests": {
+    "base": "84ae844059a60d9ea8bc96910d88c912b9875aa90e48411b243f119f584fd571",
+    "java": "a7961af43fa95516192dcd466821f243e0a06e0ecb66b24e3f26fcf6bb8ae47a"
+  }
+}

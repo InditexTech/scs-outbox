@@ -1,0 +1,22 @@
+{
+  "project_type": "monorepo",
+  "release": {
+    "lifecycle": "delegated",
+    "packages": [
+      "scs-outbox-core",
+      "scs-outbox-jdbc",
+      "scs-outbox-mongodb",
+      "scs-outbox-serialization",
+      "scs-outbox-archive",
+      "scs-outbox-archive-jdbc",
+      "scs-outbox-archive-mongodb",
+      "scs-outbox-metrics",
+      "scs-outbox-test-support",
+      "scs-outbox-jdbc-starter",
+      "scs-outbox-mongodb-starter"
+    ],
+    "strategy": "locked-step"
+  },
+  "schema_version": 1,
+  "working_directory": "code"
+}

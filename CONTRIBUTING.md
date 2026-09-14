@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2025 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
+SPDX-FileCopyrightText: 2026 INDUSTRIA DE DISEÑO TEXTIL S.A. (INDITEX S.A.)
 
 SPDX-License-Identifier: Apache-2.0
 -->
@@ -27,11 +27,11 @@ To maintain a collaborative and respectful environment, please consider the foll
 8. Push your branch to the remote repository: `git push origin your-branch-name`.
 9. Open a pull request describing your changes and linking the corresponding issue.
 10. Await comments and discussions on your pull request. Make any necessary modifications based on the received feedback.
-11. Once your pull request is approved, your contribution will be merged into the main branch.
+11. Once your pull request is approved, your contribution will be merged into the default branch.
 
 ## Contribution Guidelines
 
-- All contributors are expected to follow the project's [code of conduct](CODE_of_CONDUCT.md). Please be respectful and
+- All contributors are expected to follow the project's [code of conduct](CODE_OF_CONDUCT.md). Please be respectful and
 considerate towards other contributors.
 - Before starting work on a new feature or fix, check existing [issues](../../issues) and [pull requests](../../pulls)
 to avoid duplications and unnecessary discussions.
