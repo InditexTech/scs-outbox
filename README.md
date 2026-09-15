@@ -647,6 +647,13 @@ To provide a custom executor, define a Spring bean of type `ExecutorService` **e
 
 scs-outbox can archive published messages to a separate table or collection for auditing and troubleshooting.
 
+> [!IMPORTANT]
+> Archiving is a best-effort side effect that runs **after** a message has already been
+> successfully published to the broker. If archiving fails for a given message, that
+> message simply won't have an archive record — the outbox message is still removed from
+> the pending table/collection. Archiving failures are logged but never affect the
+> outbox's delivery guarantees (at-least-once, ordering).
+
 Enable in configuration:
 
 ```yaml
@@ -709,6 +716,27 @@ Set `json-payload-enabled: true` to store a human-readable JSON representation o
 > The JSON representation is for troubleshooting only — it is not suitable for re-injection. If a payload cannot be serialized to JSON, the field will be `null`.
 
 To add custom JSON serialization for specific types, create a Spring bean implementing `dev.inditex.scsoutbox.publish.archive.json.JsonMapper`.
+
+> [!WARNING]
+> When using the MongoDB archive repository, if the JSON representation of a payload
+> contains keys with dots (`.`) — for example, an Avro field that is a union with a named
+> type (`record`/`enum`/`fixed`) nested directly in it (`["null", SomeRecord]`), Avro's JSON
+> encoder produces a JSON key equal to that type's fully-qualified name, namespace included
+> (e.g. `com.example.SomeRecord`) — the archive insert will fail with an error similar to:
+> ```
+> org.springframework.data.mapping.MappingException: Map key com.example.SomeRecord
+> contains dots but no replacement was configured
+> ```
+> Since archiving is best-effort (see [Archive messages](#archive-messages)), this only
+> affects the archive record for that message — publishing is not impacted. To avoid it,
+> choose one of:
+> 1. Configure a dot replacement on your application's `MappingMongoConverter`
+>    (`mappingMongoConverter.setMapKeyDotReplacement(...)`). Note this changes behavior for
+>    the whole converter/`MongoTemplate`, including any of your own application's documents
+>    that may rely on dotted map keys — evaluate the impact before enabling it broadly.
+> 2. Provide your own `JsonMapper` bean (see above) producing a JSON representation that
+>    avoids dotted keys for your Avro types, instead of relying on the default
+>    `AvroToJsonMapper`.
 
 ### Metrics
 
