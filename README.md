@@ -878,30 +878,37 @@ To override it, define a custom `LockProvider` Spring bean.
 
 `OutboxMessagePublisher` deletes the outbox record as soon as `StreamBridge.send` returns `true`. With an **asynchronous** producer that happens before the broker acknowledges the record, so a later broker outage, retry exhaustion or serialization error loses the message with no trace left in the outbox table. Synchronous publishing is therefore what makes the outbox guarantee hold.
 
-scs-outbox configures this for you. For every **outbox-enabled producer binding** backed by a supported binder, it injects the binder-specific synchronous producer property at startup:
+scs-outbox configures this for you. For every **outbox-enabled producer binding** backed by a supported binder, it switches the producer to synchronous mode when the binder is initialised:
 
-| Binder | Property injected | Value |
-|--------|-------------------|-------|
+| Binder | Setting | Value |
+|--------|---------|-------|
 | Kafka | `spring.cloud.stream.kafka.bindings.<binding>.producer.sync` | `true` |
 
-Bindings excluded from the outbox through `scs-outbox.bindings.exclusions` (or not matched by `scs-outbox.bindings.inclusions`) are **never** touched. The injected values are contributed through a dedicated property source named `scs-outbox-sync-producers` and are visible in `/actuator/env`.
+Bindings excluded from the outbox through `scs-outbox.bindings.exclusions` (or not matched by `scs-outbox.bindings.inclusions`) are **never** touched, and neither are bindings served by a different binder. The bindings that were switched are reported at startup:
+
+```
+INFO  Enabled synchronous publishing for outbox-enabled bindings of binder [kafka]: [orders-out-0]
+```
+
+The configuration is applied to the binder itself rather than to the environment, so it is **not** visible in `/actuator/env`. This is what makes it work regardless of how your properties reach Spring Cloud Stream — including through a framework that owns its own configuration namespace — and lets scs-outbox see settings declared in a binder child environment under `spring.cloud.stream.binders.<name>.environment.*`.
 
 #### Precedence over your own configuration
 
-scs-outbox **never overrides a property you set**. A binding is left untouched when you configure either
+scs-outbox **never overrides a setting you declare**. A binding is left untouched when you configure either
 
 - `spring.cloud.stream.kafka.bindings.<binding>.producer.sync`, or
 - `spring.cloud.stream.kafka.default.producer.sync`
 
-Both keys are checked because Spring Cloud Stream resolves binding-scoped entries over binder-wide defaults regardless of property source ordering, so injecting a binding-scoped value would silently override an explicit `default.producer.sync` of yours.
+in the main environment **or** in the binder child environment. Both keys are checked because Spring Cloud Stream resolves binding-scoped entries over binder-wide defaults regardless of property source ordering, so setting a binding-scoped value would silently override an explicit `default.producer.sync` of yours.
 
 #### Startup validation
 
-Because scs-outbox stands aside for your own configuration, it verifies the effective result at startup:
+Because scs-outbox stands aside for your own configuration, it verifies the result:
 
-- **An outbox-enabled binding is explicitly asynchronous** → the application **fails to start** with a message naming the binding, the offending property and the available opt-outs. Starting would mean running without the delivery guarantee the outbox is supposed to provide.
-- **The binder is not supported, or its type cannot be resolved** → a `WARN` is logged listing the affected bindings. scs-outbox cannot tell whether such a configuration is safe, so it never blocks startup.
-- **The property is not set at all** → a `WARN` is logged. This only happens for bindings not declared through `spring.cloud.stream.bindings.*`, or when the context was not bootstrapped through `SpringApplication`.
+- **An outbox-enabled binding is explicitly asynchronous** → the application **fails to start** with a message naming the binder, the binding, the offending property and the available opt-outs. Starting would mean running without the delivery guarantee the outbox is supposed to provide.
+- **The binder is not supported** → a `WARN` is logged naming the binder. scs-outbox cannot tell whether such a configuration is safe, so it never blocks startup.
+
+The check runs when the binder is created. Bindings declared through `spring.cloud.stream.output-bindings` or `spring.cloud.stream.bindings.*` are bound during startup, so a misconfiguration fails the application. A destination used for the first time by `StreamBridge` at runtime is checked at that moment instead.
 
 #### Unsupported binders
 
@@ -942,7 +949,7 @@ spring.cloud.stream.kafka.binder.configuration.linger.ms=0
 - **ShedLock contention under high throughput**: ShedLock ensures only one instance publishes at a time. For extremely high message volumes, this can become a bottleneck. Evaluate whether the outbox pattern is the right fit for your throughput requirements.
 - **PostgreSQL table names must be lowercase**: scs-outbox does not use quoted identifiers. If you customize table names, ensure they are lowercase to avoid case-sensitivity issues.
 - **Integration test lock cleanup**: when running integration tests that trigger publishing, the publishing task may not finish before the test tears down, leaving the ShedLock lock unreleased. Restart the database between tests to avoid this.
-- **Synchronous producers are not auto-configured for undeclared bindings**: bindings that are not declared through `spring.cloud.stream.bindings.*` — dynamic destinations created on the fly by `StreamBridge`, or bindings derived from functions without explicit configuration — are invisible to the automatic [synchronous producer configuration](#synchronous-producers). A `WARN` is logged at startup. **Resolution**: declare the binding explicitly, or set the binder-specific synchronous producer property yourself.
+- **Synchronous producers are not auto-configured for undeclared bindings**: a destination created on the fly by `StreamBridge` without a corresponding entry in `spring.cloud.stream.bindings.*` is not enumerated, so the automatic [synchronous producer configuration](#synchronous-producers) does not apply to it. **Resolution**: declare the binding explicitly, or set the binder-specific synchronous producer property yourself.
 
 ## License
 

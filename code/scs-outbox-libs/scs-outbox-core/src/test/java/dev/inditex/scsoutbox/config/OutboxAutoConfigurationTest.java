@@ -2,15 +2,13 @@ package dev.inditex.scsoutbox.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
-import dev.inditex.scsoutbox.config.producer.SyncProducerValidator;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderFactoryListener;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -29,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationEventPublisher;
@@ -326,70 +323,17 @@ class OutboxAutoConfigurationTest {
   }
 
   @Nested
-  @DisplayName("Synchronous producer validation")
-  class SyncProducerValidation {
-
-    private static final String BOOK_SYNC_PROPERTY = "spring.cloud.stream.kafka.bindings.produce-book-out-0.producer.sync";
-
-    private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-        .withConfiguration(AutoConfigurations.of(OutboxAutoConfiguration.class, RefreshAutoConfiguration.class))
-        .withBean("outboxMessageRepository", OutboxMessageRepository.class, () -> mock(OutboxMessageRepository.class))
-        .withBean("publishingOutboxMessageRepository", OutboxMessageRepository.class, () -> mock(OutboxMessageRepository.class))
-        .withBean(BindingServiceProperties.class, SyncProducerValidation::bindingServicePropertiesWithBookProducer)
-        .withBean(CompositeMessageConverter.class, () -> mock(CompositeMessageConverter.class))
-        .withBean(StreamBridge.class, () -> mock(StreamBridge.class))
-        .withPropertyValues("spring.cloud.stream.default-binder=kafka");
-
-    private static BindingServiceProperties bindingServicePropertiesWithBookProducer() {
-      final BindingProperties bindingProperties = new BindingProperties();
-      bindingProperties.setDestination("book-destination");
-      final BindingServiceProperties properties = mock(BindingServiceProperties.class);
-      when(properties.getBindings()).thenReturn(Map.of("produce-book-out-0", bindingProperties));
-      return properties;
-    }
+  @DisplayName("Synchronous producer configuration")
+  class SyncProducerConfiguration {
 
     @Test
-    @DisplayName("registers the validator bean")
-    void registers_the_validator_bean() {
-      this.contextRunner
-          .withPropertyValues(BOOK_SYNC_PROPERTY + "=true")
+    @DisplayName("registers the binder factory listener bean")
+    void registers_the_binder_factory_listener_bean() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
           .run(context -> {
             assertThat(context).hasNotFailed();
-            assertThat(context).hasSingleBean(SyncProducerValidator.class);
+            assertThat(context).hasSingleBean(SyncProducerBinderFactoryListener.class);
           });
-    }
-
-    @Test
-    @DisplayName("fails context loading when an outbox-enabled binding is explicitly asynchronous")
-    void fails_when_outbox_binding_is_explicitly_asynchronous() {
-      this.contextRunner
-          .withPropertyValues(BOOK_SYNC_PROPERTY + "=false")
-          .run(context -> {
-            assertThat(context).hasFailed();
-            assertThat(context.getStartupFailure())
-                .hasRootCauseInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("produce-book-out-0");
-          });
-    }
-
-    @Test
-    @DisplayName("does not fail when the asynchronous binding is excluded from the outbox")
-    void does_not_fail_when_binding_is_excluded() {
-      this.contextRunner
-          .withPropertyValues(
-              BOOK_SYNC_PROPERTY + "=false",
-              "scs-outbox.bindings.exclusions=produce-book-out-0")
-          .run(context -> assertThat(context).hasNotFailed());
-    }
-
-    @Test
-    @DisplayName("does not fail when the automatic configuration is disabled")
-    void does_not_fail_when_sync_producers_are_disabled() {
-      this.contextRunner
-          .withPropertyValues(
-              BOOK_SYNC_PROPERTY + "=false",
-              "scs-outbox.bindings.sync-producers.enabled=false")
-          .run(context -> assertThat(context).hasNotFailed());
     }
   }
 }

@@ -6,8 +6,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.cloud.stream.config.BindingProperties;
 
 /**
- * Helpers shared by {@link SyncProducerEnvironmentPostProcessor} and {@link SyncProducerValidator} so that both always agree on which
- * bindings they consider, and on how binder properties are looked up.
+ * Binding selection and property lookup helpers used by {@link SyncProducerBinderFactoryListener}.
  */
 final class SyncProducerBindings {
 

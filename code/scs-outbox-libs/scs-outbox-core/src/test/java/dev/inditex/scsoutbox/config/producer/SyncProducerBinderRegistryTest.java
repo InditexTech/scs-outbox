@@ -13,44 +13,54 @@ import org.junit.jupiter.params.provider.ValueSource;
 class SyncProducerBinderRegistryTest {
 
   @Nested
-  class FindByBinderType {
+  class FindByDefaultsPrefix {
 
     @Test
-    void when_kafka_expect_sync_producer_property() {
-      final SyncProducerMapping mapping = SyncProducerBinderRegistry.findByBinderType("kafka").orElseThrow();
+    void when_kafka_expect_sync_producer_mapping() {
+      final SyncProducerMapping mapping =
+          SyncProducerBinderRegistry.findByDefaultsPrefix("spring.cloud.stream.kafka.default").orElseThrow();
 
-      assertThat(mapping.binderType()).isEqualTo("kafka");
+      assertThat(mapping.binderName()).isEqualTo("kafka");
       assertThat(mapping.bindingProperty("produce-book-out-0"))
           .isEqualTo("spring.cloud.stream.kafka.bindings.produce-book-out-0.producer.sync");
       assertThat(mapping.binderDefaultProperty()).isEqualTo("spring.cloud.stream.kafka.default.producer.sync");
-      assertThat(mapping.requiredValue()).isEqualTo("true");
+      assertThat(mapping.producerPropertyPath()).isEqualTo("sync");
+      assertThat(mapping.requiredValue()).isEqualTo(Boolean.TRUE);
     }
 
     @Test
-    void when_binder_type_has_different_case_expect_mapping_found() {
-      assertThat(SyncProducerBinderRegistry.findByBinderType("KAFKA")).isPresent();
+    void when_binding_name_contains_upper_case_expect_it_preserved() {
+      final SyncProducerMapping mapping =
+          SyncProducerBinderRegistry.findByDefaultsPrefix(SyncProducerBinderRegistry.KAFKA_DEFAULTS_PREFIX).orElseThrow();
+
+      assertThat(mapping.bindingProperty("myProducer-out-0"))
+          .isEqualTo("spring.cloud.stream.kafka.bindings.myProducer-out-0.producer.sync");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"rabbit", "pubsub", "solace", "unknown"})
-    void when_unsupported_binder_expect_empty(final String binderType) {
-      assertThat(SyncProducerBinderRegistry.findByBinderType(binderType)).isEmpty();
+    @ValueSource(strings = {
+        "spring.cloud.stream.rabbit.default",
+        "spring.cloud.stream.pubsub.default",
+        "spring.cloud.stream.kafka",
+        "unknown"})
+    void when_unsupported_binder_expect_empty(final String defaultsPrefix) {
+      assertThat(SyncProducerBinderRegistry.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   "})
-    void when_null_or_blank_binder_expect_empty(final String binderType) {
-      assertThat(SyncProducerBinderRegistry.findByBinderType(binderType)).isEmpty();
+    void when_null_or_blank_expect_empty(final String defaultsPrefix) {
+      assertThat(SyncProducerBinderRegistry.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
     }
   }
 
   @Nested
-  class SupportedBinderTypes {
+  class SupportedBinders {
 
     @Test
     void expect_kafka_only() {
-      assertThat(SyncProducerBinderRegistry.supportedBinderTypes()).containsExactly("kafka");
+      assertThat(SyncProducerBinderRegistry.supportedBinders()).containsExactly("kafka");
     }
   }
 }

@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import dev.inditex.scsoutbox.OutboxMessageRepository;
-import dev.inditex.scsoutbox.config.producer.SyncProducerEnvironmentPostProcessor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import org.springframework.cloud.stream.binder.kafka.properties.KafkaProducerPro
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,8 +33,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Integration test validating that scs-outbox automatically switches the Kafka producer of every outbox-enabled binding into synchronous
  * mode, and that it leaves bindings excluded from the outbox untouched.
  *
- * <p>The assertion is made against the {@link KafkaProducerProperties} actually resolved by the Kafka binder, not just against the
- * environment, so it proves the injected property really reaches the binder.
+ * <p>The assertion is made against the {@link KafkaProducerProperties} actually resolved by the Kafka binder, which is the object the
+ * binder uses when it creates the producer binding.
  *
  * <p>Synchronous publishing is what makes the outbox safe: {@code OutboxMessagePublisher} deletes the outbox record as soon as
  * {@code StreamBridge.send} returns {@code true}, which for an asynchronous producer happens before the broker acknowledges the record.
@@ -61,10 +59,6 @@ class SyncProducerAutoConfigurationIT {
 
   private static final String EXCLUDED_BINDING = "excluded-out-0";
 
-  private static final String OUTBOX_BINDING_SYNC_PROPERTY = "spring.cloud.stream.kafka.bindings.output.producer.sync";
-
-  private static final String EXCLUDED_BINDING_SYNC_PROPERTY = "spring.cloud.stream.kafka.bindings.excluded-out-0.producer.sync";
-
   @Configuration
   @EnableAutoConfiguration
   @EnableScheduling
@@ -82,9 +76,6 @@ class SyncProducerAutoConfigurationIT {
       };
     }
   }
-
-  @Autowired
-  private ConfigurableEnvironment environment;
 
   @Autowired
   private BinderFactory binderFactory;
@@ -110,16 +101,11 @@ class SyncProducerAutoConfigurationIT {
 
   @Test
   void when_binding_is_outbox_enabled_expect_kafka_producer_configured_as_synchronous() {
-    assertThat(this.environment.getPropertySources().contains(SyncProducerEnvironmentPostProcessor.PROPERTY_SOURCE_NAME)).isTrue();
-    assertThat(this.environment.getProperty(OUTBOX_BINDING_SYNC_PROPERTY)).isEqualTo("true");
-
     assertThat(this.resolvedProducerProperties(OUTBOX_BINDING).isSync()).isTrue();
   }
 
   @Test
   void when_binding_is_excluded_from_the_outbox_expect_kafka_producer_left_asynchronous() {
-    assertThat(this.environment.getProperty(EXCLUDED_BINDING_SYNC_PROPERTY)).isNull();
-
     assertThat(this.resolvedProducerProperties(EXCLUDED_BINDING).isSync()).isFalse();
   }
 
