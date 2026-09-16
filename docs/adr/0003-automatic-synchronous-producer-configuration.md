@@ -47,7 +47,7 @@ binding is explicitly configured as asynchronous.
 
 ### Mechanism
 
-The configuration is applied by a `DefaultBinderFactory.Listener` (`SyncProducerBinderFactoryListener`), which Spring Cloud Stream invokes
+The configuration is applied by a `DefaultBinderFactory.Listener` (`SyncProducerBinderListener`), which Spring Cloud Stream invokes
 once the binder child context has been refreshed and **before** the binder is cached or used to create any binding.
 
 For every outbox-enabled producer binding served by that binder, the listener reads the effective producer properties through
@@ -156,7 +156,7 @@ serves each binding.
 - It works the same whether the application configures Spring Cloud Stream directly or through a framework that owns its own configuration
   namespace and relocates it late.
 - Properties declared in a binder child environment are honoured.
-- `scs-outbox-core` gains no new dependency; binder support is a data-only entry in `SyncProducerBinderRegistry`, and the setting is read
+- `scs-outbox-core` gains no new dependency; binder support is a data-only entry in `SyncProducerMappings`, and the setting is read
   and written through a `BeanWrapper`.
 
 ### Negative

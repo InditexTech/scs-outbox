@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.cloud.stream.config.BindingProperties;
 
 /**
- * Binding selection and property lookup helpers used by {@link SyncProducerBinderFactoryListener}.
+ * Binding selection and property lookup helpers used by {@link SyncProducerBinderListener}.
  */
 final class SyncProducerBindings {
 

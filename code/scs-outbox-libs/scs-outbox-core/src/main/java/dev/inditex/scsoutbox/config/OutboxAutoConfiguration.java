@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
-import dev.inditex.scsoutbox.config.producer.SyncProducerBinderFactoryListener;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -87,11 +87,11 @@ public class OutboxAutoConfiguration {
    * Enables synchronous publishing on every outbox-enabled producer binding, and fails fast when a binding is explicitly configured to
    * publish asynchronously.
    *
-   * @see dev.inditex.scsoutbox.config.producer.SyncProducerBinderFactoryListener
+   * @see dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener
    */
   @Bean
-  public SyncProducerBinderFactoryListener scsOutboxSyncProducerBinderFactoryListener() {
-    return new SyncProducerBinderFactoryListener();
+  public SyncProducerBinderListener scsOutboxSyncProducerBinderListener() {
+    return new SyncProducerBinderListener();
   }
 
   @Bean

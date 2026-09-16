@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
-import dev.inditex.scsoutbox.config.producer.SyncProducerBinderRegistry.SyncProducerMapping;
+import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMapping;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
@@ -26,41 +26,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
 /**
- * Enables synchronous publishing on every outbox-enabled producer binding, and fails fast when a binding is explicitly configured to
- * publish asynchronously.
+ * Configures synchronous producers for outbox-managed producer bindings.
  *
- * <p>scs-outbox deletes an outbox record as soon as {@code StreamBridge.send} returns {@code true}. With an asynchronous producer that
- * happens before the broker acknowledges the record, so any failure occurring afterwards silently loses the message. Requiring every
- * application to remember the binder-specific property is error-prone, hence this automatic configuration.
- *
- * <p><strong>Why a binder factory listener.</strong> The configuration is applied from
- * {@link DefaultBinderFactory.Listener#afterBinderContextInitialized(String, ConfigurableApplicationContext)}, which Spring Cloud Stream
- * invokes once the binder child context has been refreshed and before the binder is cached or used to create any binding. This is the only
- * place where the effective producer configuration is known, because:
- *
- * <ul> <li>binder-specific properties may be declared in the main environment <em>or</em> under
- * {@code spring.cloud.stream.binders.<name>.environment.*}, which is materialised only in the binder child context;</li> <li>frameworks
- * layered on top of Spring Boot may expose their own configuration namespace and relocate it into the {@code spring.cloud.stream.*} /
- * {@code scs-outbox.*} namespaces from an {@code EnvironmentPostProcessor} ordered at the lowest possible precedence. Reading the
- * environment earlier would observe none of those properties.</li> </ul>
- *
- * <p><strong>Precedence.</strong> A binding is never modified when the application declares the setting itself, either for that binding or
- * as a binder-wide default. When the declared value is not synchronous the context fails to start instead of being silently overridden.
- *
- * <p>Bindings served by another binder, bindings that cannot publish, and binders for which no synchronous mapping is known are left
- * untouched.
- *
- * <p>The listener resolves its collaborators lazily from the application context: when Spring Cloud Stream instantiates the binder factory,
- * {@code OutboxProperties} and {@code BindingServiceProperties} are not necessarily resolvable as constructor dependencies yet.
- *
- * <p><strong>Coexisting with other listeners.</strong> This listener does not attempt to control its execution order relative to other
- * {@code DefaultBinderFactory.Listener} beans, because that order is not controllable: Spring Cloud Stream injects them as a
- * {@code Collection}, which Spring materialises as a {@code LinkedHashSet}, so the relative order follows bean registration only. A
- * third-party listener that validates the producer configuration may consequently run first and reject a binding that this listener was
- * about to configure.
+ * <p>The listener runs when a binder is initialized, so it can read the main and binder-child environments. Explicit asynchronous
+ * configuration fails startup; missing configuration is applied automatically. Unsupported binders and bindings not managed by the outbox
+ * are ignored. The order relative to other binder listeners is not guaranteed.
  */
 @Slf4j
-public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.Listener, ApplicationContextAware {
+public class SyncProducerBinderListener implements DefaultBinderFactory.Listener, ApplicationContextAware {
 
   private ApplicationContext applicationContext;
 
@@ -87,7 +60,7 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
     }
 
     final Optional<SyncProducerMapping> mapping =
-        SyncProducerBinderRegistry.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix());
+        SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix());
     if (mapping.isEmpty()) {
       this.warnUnsupported(configurationName, extendedPropertiesBinder.getDefaultsPrefix());
       return;
@@ -203,7 +176,7 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
         + " Supported binders: {}."
         + " Configure synchronous publishing manually for those bindings, otherwise messages may be lost:"
         + " the outbox record is deleted as soon as StreamBridge.send returns true.",
-        configurationName, binderDescription, SyncProducerBinderRegistry.supportedBinders());
+        configurationName, binderDescription, SyncProducerMappings.supportedBinders());
   }
 
   private static String buildViolationMessage(final String configurationName, final Map<String, String> violations) {

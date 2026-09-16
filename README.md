@@ -913,17 +913,7 @@ The check runs when the binder is created. Bindings declared through `spring.clo
 #### Unsupported binders
 
 Only the Kafka binder is supported today. Other binders must be configured manually.
-
-**RabbitMQ** in particular has no general synchronous producer mode:
-
-```properties
-spring.cloud.stream.rabbit.bindings.<binding>.producer.producerType=STREAM_SYNC
-```
-
-> [!WARNING]
-> `STREAM_SYNC` applies only to the **RabbitMQ Stream** binder and requires the RabbitMQ stream plugin plus `spring-rabbit-stream`. The default `AMQP` producer type exposes **no** synchronous mode, so with a plain AMQP producer scs-outbox cannot guarantee delivery: the record is deleted once the message is handed to the channel. Evaluate publisher confirms for your use case.
-
-See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/reference/kafka/kafka_overview.html#kafka-producer-properties) and the [RabbitMQ binder documentation](https://docs.spring.io/spring-cloud-stream/reference/rabbit/rabbit_overview/prod-props.html).
+See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/reference/kafka/kafka_overview.html#kafka-producer-properties).
 
 #### Opting out
 
@@ -931,8 +921,6 @@ See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/
 |---------|-------------|
 | `scs-outbox.bindings.exclusions=<binding>` | The binding is no longer managed by the outbox, so no constraint applies. **This is the correct opt-out** when a specific binding must publish asynchronously |
 | `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the automatic configuration and the validation for **every** outbox-enabled binding in the application. This is a drastic, application-wide decision, not a fix for a single misconfigured binding — it is never suggested by the startup failure. Set it only if you have your own way of guaranteeing synchronous publishing; otherwise **messages may be lost**. A `WARN` is logged at startup |
-
-See [ADR-0003](docs/adr/0003-automatic-synchronous-producer-configuration.md) for the full rationale.
 
 ### Kafka linger property
 

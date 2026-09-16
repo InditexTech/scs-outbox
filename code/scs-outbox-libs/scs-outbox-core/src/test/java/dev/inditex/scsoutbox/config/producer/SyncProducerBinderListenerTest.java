@@ -29,7 +29,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.env.MockEnvironment;
 
-class SyncProducerBinderFactoryListenerTest {
+class SyncProducerBinderListenerTest {
 
   private static final String BINDER_NAME = "kafka-pipe";
 
@@ -146,18 +146,18 @@ class SyncProducerBinderFactoryListenerTest {
     return context;
   }
 
-  private static SyncProducerBinderFactoryListener listener(final OutboxProperties outboxProperties,
+  private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
     final ApplicationContext applicationContext = mock(ApplicationContext.class);
     when(applicationContext.getBean(OutboxProperties.class)).thenReturn(outboxProperties);
     when(applicationContext.getBean(BindingServiceProperties.class)).thenReturn(bindingServiceProperties);
-    final SyncProducerBinderFactoryListener listener = new SyncProducerBinderFactoryListener();
+    final SyncProducerBinderListener listener = new SyncProducerBinderListener();
     listener.setApplicationContext(applicationContext);
     return listener;
   }
 
   private static StubBinder kafkaBinder() {
-    return new StubBinder(SyncProducerBinderRegistry.KAFKA_DEFAULTS_PREFIX);
+    return new StubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
   }
 
   @Nested

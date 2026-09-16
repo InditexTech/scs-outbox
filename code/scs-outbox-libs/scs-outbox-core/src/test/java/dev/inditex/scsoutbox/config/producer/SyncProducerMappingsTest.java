@@ -2,7 +2,7 @@ package dev.inditex.scsoutbox.config.producer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import dev.inditex.scsoutbox.config.producer.SyncProducerBinderRegistry.SyncProducerMapping;
+import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMapping;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class SyncProducerBinderRegistryTest {
+class SyncProducerMappingsTest {
 
   @Nested
   class FindByDefaultsPrefix {
@@ -18,7 +18,7 @@ class SyncProducerBinderRegistryTest {
     @Test
     void when_kafka_expect_sync_producer_mapping() {
       final SyncProducerMapping mapping =
-          SyncProducerBinderRegistry.findByDefaultsPrefix("spring.cloud.stream.kafka.default").orElseThrow();
+          SyncProducerMappings.findByDefaultsPrefix("spring.cloud.stream.kafka.default").orElseThrow();
 
       assertThat(mapping.binderName()).isEqualTo("kafka");
       assertThat(mapping.bindingProperty("produce-book-out-0"))
@@ -31,7 +31,7 @@ class SyncProducerBinderRegistryTest {
     @Test
     void when_binding_name_contains_upper_case_expect_it_preserved() {
       final SyncProducerMapping mapping =
-          SyncProducerBinderRegistry.findByDefaultsPrefix(SyncProducerBinderRegistry.KAFKA_DEFAULTS_PREFIX).orElseThrow();
+          SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX).orElseThrow();
 
       assertThat(mapping.bindingProperty("myProducer-out-0"))
           .isEqualTo("spring.cloud.stream.kafka.bindings.myProducer-out-0.producer.sync");
@@ -44,14 +44,14 @@ class SyncProducerBinderRegistryTest {
         "spring.cloud.stream.kafka",
         "unknown"})
     void when_unsupported_binder_expect_empty(final String defaultsPrefix) {
-      assertThat(SyncProducerBinderRegistry.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
+      assertThat(SyncProducerMappings.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   "})
     void when_null_or_blank_expect_empty(final String defaultsPrefix) {
-      assertThat(SyncProducerBinderRegistry.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
+      assertThat(SyncProducerMappings.findByDefaultsPrefix(defaultsPrefix)).isEmpty();
     }
   }
 
@@ -60,7 +60,7 @@ class SyncProducerBinderRegistryTest {
 
     @Test
     void expect_kafka_only() {
-      assertThat(SyncProducerBinderRegistry.supportedBinders()).containsExactly("kafka");
+      assertThat(SyncProducerMappings.supportedBinders()).containsExactly("kafka");
     }
   }
 }
