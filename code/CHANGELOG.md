@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - [#89](https://github.com/InditexTech/scs-outbox/pull/89) Add Maven Central badges to README.md
+- [#96](https://github.com/InditexTech/scs-outbox/pull/96) Automatically configure synchronous producers for outbox-enabled bindings
 
 ### Fixed
 
