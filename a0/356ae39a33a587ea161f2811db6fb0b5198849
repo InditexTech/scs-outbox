@@ -1,0 +1,21 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/OutboxProperties.java
+  s_983e68a5a1eadc::t_579b8ed8411b9c 98-99,101-103
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderFactoryListener.java
+  s_983e68a5a1eadc::t_e57d8e051cffb7 16,44,56-59,63,83,99-109,124,134-136,152-162,173-174,176,179-187,189-192,194-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a0356ae39a33a587ea161f2811db6fb0b5198849",
+  "prompts": {},
+  "sessions": {
+    "s_983e68a5a1eadc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f568ea1b4ffeq01pMvAox2PiwX",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
