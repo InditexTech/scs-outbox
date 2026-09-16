@@ -1,0 +1,19 @@
+code/.tool-versions
+  s_bea1a9f4f6925e::t_a254729cca3c98 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "718bda03dee843ccfa2c9e218d9c133b6ebecef0",
+  "prompts": {},
+  "sessions": {
+    "s_bea1a9f4f6925e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a09ecc-862c-7443-b563-f819240fd186",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "ivanasabi <ivanasabi@users.noreply.github.com>"
+    }
+  }
+}

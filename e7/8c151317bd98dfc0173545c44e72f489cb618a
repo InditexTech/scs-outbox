@@ -1,0 +1,19 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderFactoryListener.java
+  s_983e68a5a1eadc::t_f995e5886d141c 199-201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e78c151317bd98dfc0173545c44e72f489cb618a",
+  "prompts": {},
+  "sessions": {
+    "s_983e68a5a1eadc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f568ea1b4ffeq01pMvAox2PiwX",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}

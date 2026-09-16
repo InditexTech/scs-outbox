@@ -1,0 +1,19 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/publish/OutboxMessagePublisherInterceptor.java
+  s_b638031e19a193::t_179ebed0a13365 5-13,16-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e7c389132eda46adbd55ad8cad816250a597a161",
+  "prompts": {},
+  "sessions": {
+    "s_b638031e19a193": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f797f2affe73yJy3a3jCCzpb",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}

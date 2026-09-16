@@ -1,0 +1,19 @@
+docs/adr/0003-automatic-synchronous-producer-configuration.md
+  s_983e68a5a1eadc::t_cf4ce756238846 78-80,177-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "69eacef3b1c1f5a6a60d29d484b9f70c731ffab2",
+  "prompts": {},
+  "sessions": {
+    "s_983e68a5a1eadc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f568ea1b4ffeq01pMvAox2PiwX",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
