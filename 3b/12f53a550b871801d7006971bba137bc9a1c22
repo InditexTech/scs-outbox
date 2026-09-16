@@ -1,0 +1,33 @@
+README.md
+  s_983e68a5a1eadc::t_713dd51238cfa2 255,429,485,879,881,883-898,900,902-910,916-928,945
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerAutoConfigurationIT.java
+  s_983e68a5a1eadc::t_42a25e15e079d1 1-137
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerConflictIT.java
+  s_983e68a5a1eadc::t_cf3d4dd1756526 1-91
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/OutboxAutoConfiguration.java
+  s_983e68a5a1eadc::t_c29521b06d40b9 13,44,87-99
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/BinderTypeResolver.java
+  s_983e68a5a1eadc::t_002e4e239eb717 1-121
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBindings.java
+  s_983e68a5a1eadc::t_dca28083a16f7a 1-58
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/OutboxAutoConfigurationTest.java
+  s_983e68a5a1eadc::t_f48c7a703b5a38 5,7,13,32,327-394
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/BinderTypeResolverTest.java
+  s_983e68a5a1eadc::t_80c6278733ae7b 1-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b12f53a550b871801d7006971bba137bc9a1c22",
+  "prompts": {},
+  "sessions": {
+    "s_983e68a5a1eadc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f568ea1b4ffeq01pMvAox2PiwX",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
