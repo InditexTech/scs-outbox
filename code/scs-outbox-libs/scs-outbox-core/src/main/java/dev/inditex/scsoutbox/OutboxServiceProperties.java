@@ -5,7 +5,6 @@ import java.util.List;
 
 import dev.inditex.scsoutbox.config.BindingMatcher;
 import dev.inditex.scsoutbox.config.OutboxProperties;
-import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +22,9 @@ public class OutboxServiceProperties implements InitializingBean {
   /**
    * Determines whether the outbox is enabled for the given Spring Cloud Stream binding name.
    *
-   * <p>Evaluation rules (in order): <ol> <li>If both {@code inclusions} and {@code exclusions} are empty, outbox is enabled for all
-   * bindings (default behaviour).</li> <li>If {@code inclusions} is empty, outbox is enabled unless the binding matches any entry in
-   * {@code exclusions}.</li> <li>Otherwise, outbox is enabled only if the binding matches at least one entry in {@code inclusions} AND does
-   * not match any entry in {@code exclusions}. <strong>Exclusions always take precedence.</strong></li> </ol>
+   * <p>The evaluation rules live in {@link dev.inditex.scsoutbox.config.OutboxProperties.Bindings#matches(String)} so that they can also be
+   * applied before the application context is created (see
+   * {@code dev.inditex.scsoutbox.config.producer.SyncProducerEnvironmentPostProcessor}).
    *
    * <p>Each entry in {@code inclusions} / {@code exclusions} is represented by a {@link dev.inditex.scsoutbox.config.BindingMatcher} that
    * performs either an exact {@link String#equals} comparison or a full Java-regex match (when the entry is prefixed with
@@ -41,15 +39,7 @@ public class OutboxServiceProperties implements InitializingBean {
    * @return {@code true} if the outbox should intercept messages for this binding, {@code false} otherwise
    */
   public boolean isOutboxEnabledFor(final String bindingName) {
-    final Bindings bindings = this.properties.getBindings();
-    if (bindings.getInclusions().isEmpty() && bindings.getExclusions().isEmpty()) {
-      // Default behaviour
-      return true;
-    } else if (bindings.getInclusions().isEmpty()) {
-      return bindings.getExclusions().stream().noneMatch(m -> m.matches(bindingName));
-    }
-    return bindings.getInclusions().stream().anyMatch(m -> m.matches(bindingName))
-        && bindings.getExclusions().stream().noneMatch(m -> m.matches(bindingName));
+    return this.properties.getBindings().matches(bindingName);
   }
 
   public String getDestination(final String bindingName) {

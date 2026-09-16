@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
+import dev.inditex.scsoutbox.config.producer.SyncProducerValidator;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -40,6 +41,7 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.integration.config.GlobalChannelInterceptor;
 
 @Slf4j
@@ -80,6 +82,19 @@ public class OutboxAutoConfiguration {
       final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
     return new OutboxServiceProperties(outboxProperties, bindingServiceProperties);
+  }
+
+  /**
+   * Verifies at startup that every outbox-enabled producer binding publishes synchronously.
+   *
+   * @see dev.inditex.scsoutbox.config.producer.SyncProducerEnvironmentPostProcessor
+   */
+  @Bean
+  public SyncProducerValidator scsOutboxSyncProducerValidator(
+      final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties,
+      final Environment environment) {
+    return new SyncProducerValidator(outboxProperties, bindingServiceProperties, environment);
   }
 
   @Bean
