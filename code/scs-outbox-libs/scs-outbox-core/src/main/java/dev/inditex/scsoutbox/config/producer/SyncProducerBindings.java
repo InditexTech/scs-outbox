@@ -25,7 +25,7 @@ final class SyncProducerBindings {
    *
    * <p>A binding is discarded when it declares no destination (nothing would be published), when its name follows the Spring Cloud Stream
    * convention for function inputs, or when it only declares consumer settings. Contributing producer properties to a consumer binding
-   * would be harmless for the binder but would make the validator report inbound bindings as violations.
+   * would be harmless for the binder but would make the listener report inbound bindings as violations.
    *
    * @param bindingName the Spring Cloud Stream binding name
    * @param bindingProperties the binding configuration, may be {@code null}

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.stream.binder.DefaultBinderFactory;
@@ -22,7 +23,6 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
 /**
@@ -41,7 +41,7 @@ import org.springframework.core.env.Environment;
  * <ul> <li>binder-specific properties may be declared in the main environment <em>or</em> under
  * {@code spring.cloud.stream.binders.<name>.environment.*}, which is materialised only in the binder child context;</li> <li>frameworks
  * layered on top of Spring Boot may expose their own configuration namespace and relocate it into the {@code spring.cloud.stream.*} /
- * {@code scs-outbox.*} namespaces from an {@code EnvironmentPostProcessor} ordered at {@link Ordered#LOWEST_PRECEDENCE}. Reading the
+ * {@code scs-outbox.*} namespaces from an {@code EnvironmentPostProcessor} ordered at the lowest possible precedence. Reading the
  * environment earlier would observe none of those properties.</li> </ul>
  *
  * <p><strong>Precedence.</strong> A binding is never modified when the application declares the setting itself, either for that binding or
@@ -53,26 +53,20 @@ import org.springframework.core.env.Environment;
  * <p>The listener resolves its collaborators lazily from the application context: when Spring Cloud Stream instantiates the binder factory,
  * {@code OutboxProperties} and {@code BindingServiceProperties} are not necessarily resolvable as constructor dependencies yet.
  *
- * <p><strong>Coexisting with other listeners.</strong> Spring Cloud Stream injects the listeners as a {@code Collection}, which Spring
- * materialises as a {@code LinkedHashSet}; the relative order therefore follows bean registration and is not influenced by {@link Ordered}.
- * A third-party listener that validates the producer configuration may consequently run first and reject a binding that this listener was
+ * <p><strong>Coexisting with other listeners.</strong> This listener does not attempt to control its execution order relative to other
+ * {@code DefaultBinderFactory.Listener} beans, because that order is not controllable: Spring Cloud Stream injects them as a
+ * {@code Collection}, which Spring materialises as a {@code LinkedHashSet}, so the relative order follows bean registration only. A
+ * third-party listener that validates the producer configuration may consequently run first and reject a binding that this listener was
  * about to configure.
  */
 @Slf4j
-public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.Listener, ApplicationContextAware, Ordered {
+public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.Listener, ApplicationContextAware {
 
   private ApplicationContext applicationContext;
 
   @Override
   public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
-  }
-
-  @Override
-  public int getOrder() {
-    // Best effort only: Spring Cloud Stream injects the listeners as a Collection, which Spring materialises as a LinkedHashSet and
-    // therefore does not sort. Should that ever become a List, this makes bindings synchronous before another listener validates them.
-    return Ordered.HIGHEST_PRECEDENCE;
   }
 
   @Override
@@ -86,7 +80,7 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
       return;
     }
 
-    final Object binder = binderContext.getBean(org.springframework.cloud.stream.binder.Binder.class);
+    final Object binder = resolveBinder(binderContext);
     if (!(binder instanceof final ExtendedPropertiesBinder<?, ?, ?> extendedPropertiesBinder)) {
       this.warnUnsupported(configurationName, binder.getClass().getName());
       return;
@@ -100,6 +94,17 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
     }
 
     this.configure(configurationName, binderContext.getEnvironment(), extendedPropertiesBinder, mapping.get(), outboxProperties);
+  }
+
+  /**
+   * Resolves the Spring Cloud Stream {@code Binder} bean from the binder child context.
+   *
+   * <p>Fully qualified on purpose: {@code org.springframework.cloud.stream.binder.Binder} would otherwise collide with
+   * {@link org.springframework.boot.context.properties.bind.Binder}, already imported and used throughout this class to resolve declared
+   * properties.
+   */
+  private static Object resolveBinder(final ConfigurableApplicationContext binderContext) {
+    return binderContext.getBean(org.springframework.cloud.stream.binder.Binder.class);
   }
 
   private void configure(final String configurationName, final Environment binderEnvironment,
@@ -116,9 +121,7 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
       final String bindingName = entry.getKey();
       final BindingProperties bindingProperties = entry.getValue();
 
-      if (!SyncProducerBindings.isProducerBinding(bindingName, bindingProperties)
-          || !outboxProperties.getBindings().matches(bindingName)
-          || !isServedBy(configurationName, bindingProperties)) {
+      if (!isEligible(configurationName, outboxProperties, bindingName, bindingProperties)) {
         continue;
       }
 
@@ -128,9 +131,9 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
         continue;
       }
 
-      final String declaredValue = declaredValue(propertyBinder, mapping, bindingName);
-      if (declaredValue != null) {
-        violations.put(bindingName, declaredProperty(mapping, bindingName, propertyBinder) + "=" + declaredValue);
+      final Optional<DeclaredSetting> declared = declaredSetting(propertyBinder, mapping, bindingName);
+      if (declared.isPresent()) {
+        violations.put(bindingName, declared.get().property() + "=" + declared.get().value());
       } else {
         producerProperties.setPropertyValue(mapping.producerPropertyPath(), mapping.requiredValue());
         configured.add(bindingName);
@@ -147,6 +150,17 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
   }
 
   /**
+   * A binding is eligible for automatic configuration when it can publish messages, it is managed by the outbox, and it is served by the
+   * binder currently being initialised.
+   */
+  private static boolean isEligible(final String configurationName, final OutboxProperties outboxProperties, final String bindingName,
+      final BindingProperties bindingProperties) {
+    return SyncProducerBindings.isProducerBinding(bindingName, bindingProperties)
+        && outboxProperties.getBindings().matches(bindingName)
+        && isServedBy(configurationName, bindingProperties);
+  }
+
+  /**
    * A binding is served by this binder when it does not name a different one. Bindings without an explicit binder fall back to the default
    * binder, which is the binder currently being initialised whenever a single binder is in use.
    */
@@ -156,26 +170,32 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
   }
 
   /**
-   * Returns the value declared by the application for the binding, or {@code null} when it declares none.
-   *
-   * <p>Both the binding-scoped key and the binder-wide default key are inspected. Spring Cloud Stream resolves binding-scoped entries over
-   * binder-wide defaults regardless of property source ordering, so overriding a binding whose binder-wide default says otherwise would
-   * silently discard an explicit decision of the application.
+   * The property key and value the application declared for a binding, either at the binding-scoped key or, failing that, at the
+   * binder-wide default key.
    */
-  private static String declaredValue(final Binder propertyBinder, final SyncProducerMapping mapping, final String bindingName) {
-    return propertyBinder
-        .bind(SyncProducerBindings.propertyName(mapping.bindingProperty(bindingName)), Bindable.of(String.class))
-        .orElseGet(() -> propertyBinder
-            .bind(SyncProducerBindings.propertyName(mapping.binderDefaultProperty()), Bindable.of(String.class))
-            .orElse(null));
+  private record DeclaredSetting(String property, String value) {
   }
 
-  private static String declaredProperty(final SyncProducerMapping mapping, final String bindingName, final Binder propertyBinder) {
+  /**
+   * Returns the setting declared by the application for the binding, or {@link Optional#empty()} when it declares none.
+   *
+   * <p>The binding-scoped key is inspected first, then the binder-wide default key. Spring Cloud Stream resolves binding-scoped entries
+   * over binder-wide defaults regardless of property source ordering, so overriding a binding whose binder-wide default says otherwise
+   * would silently discard an explicit decision of the application.
+   */
+  private static Optional<DeclaredSetting> declaredSetting(final Binder propertyBinder, final SyncProducerMapping mapping,
+      final String bindingName) {
     final String bindingProperty = mapping.bindingProperty(bindingName);
-    if (propertyBinder.bind(SyncProducerBindings.propertyName(bindingProperty), Bindable.of(String.class)).isBound()) {
-      return bindingProperty;
+    final BindResult<String> bindingResult =
+        propertyBinder.bind(SyncProducerBindings.propertyName(bindingProperty), Bindable.of(String.class));
+    if (bindingResult.isBound()) {
+      return Optional.of(new DeclaredSetting(bindingProperty, bindingResult.get()));
     }
-    return mapping.binderDefaultProperty();
+
+    final String defaultProperty = mapping.binderDefaultProperty();
+    final BindResult<String> defaultResult =
+        propertyBinder.bind(SyncProducerBindings.propertyName(defaultProperty), Bindable.of(String.class));
+    return defaultResult.isBound() ? Optional.of(new DeclaredSetting(defaultProperty, defaultResult.get())) : Optional.empty();
   }
 
   private void warnUnsupported(final String configurationName, final String binderDescription) {

@@ -405,14 +405,4 @@ class SyncProducerBinderFactoryListenerTest {
       assertThat(binder.getExtendedProducerProperties(BOOK_BINDING).isSync()).isFalse();
     }
   }
-
-  @Nested
-  class Ordering {
-
-    @Test
-    void expect_to_run_before_any_other_binder_factory_listener() {
-      assertThat(new SyncProducerBinderFactoryListener().getOrder())
-          .isEqualTo(org.springframework.core.Ordered.HIGHEST_PRECEDENCE);
-    }
-  }
 }

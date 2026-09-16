@@ -95,12 +95,12 @@ public class OutboxProperties {
   /**
    * Controls the automatic configuration of synchronous producers for outbox-enabled bindings.
    *
-   * <p>When enabled (the default), scs-outbox injects the binder-specific synchronous producer property for every outbox-enabled binding
-   * that does not already configure it, and fails fast at startup when an outbox-enabled binding is explicitly configured as asynchronous.
+   * <p>When enabled (the default), scs-outbox switches every outbox-enabled producer binding to synchronous mode when its binder is
+   * initialised, and fails fast at startup when a binding is explicitly configured as asynchronous.
    *
-   * <p>Disabling this flag turns off both the property injection and the startup validation. The application then becomes fully responsible
-   * for configuring synchronous producers; otherwise message loss is possible, because scs-outbox deletes the outbox record as soon as
-   * {@code StreamBridge.send} returns {@code true}, which for asynchronous producers happens before the broker acknowledges the record.
+   * <p>Disabling this flag turns off both behaviours. The application then becomes fully responsible for configuring synchronous producers;
+   * otherwise message loss is possible, because scs-outbox deletes the outbox record as soon as {@code StreamBridge.send} returns
+   * {@code true}, which for asynchronous producers happens before the broker acknowledges the record.
    */
   @Getter
   public static class SyncProducers {

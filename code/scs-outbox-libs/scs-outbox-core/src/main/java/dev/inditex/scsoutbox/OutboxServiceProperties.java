@@ -23,8 +23,7 @@ public class OutboxServiceProperties implements InitializingBean {
    * Determines whether the outbox is enabled for the given Spring Cloud Stream binding name.
    *
    * <p>The evaluation rules live in {@link dev.inditex.scsoutbox.config.OutboxProperties.Bindings#matches(String)} so that they can also be
-   * applied before the application context is created (see
-   * {@code dev.inditex.scsoutbox.config.producer.SyncProducerEnvironmentPostProcessor}).
+   * applied while a binder is being initialised (see {@code dev.inditex.scsoutbox.config.producer.SyncProducerBinderFactoryListener}).
    *
    * <p>Each entry in {@code inclusions} / {@code exclusions} is represented by a {@link dev.inditex.scsoutbox.config.BindingMatcher} that
    * performs either an exact {@link String#equals} comparison or a full Java-regex match (when the entry is prefixed with

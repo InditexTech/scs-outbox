@@ -75,9 +75,10 @@ Alternatives considered and rejected:
 | `BeanPostProcessor` on the binder-specific binding properties | Requires a hard dependency on the binder implementation, which `scs-outbox-core` does not have, and the properties live in the binder child context rather than the main one. |
 | `DefaultBinderFactory.Listener` (**chosen**) | Sees the fully resolved configuration, is independent of how and when the application's properties reached the environment, and needs no binder dependency: the setting is read and written through a `BeanWrapper`. Listeners are injected as a `Collection`, so coexisting with an application's own listener is safe. |
 
-The listener implements `Ordered` at `HIGHEST_PRECEDENCE`, but this is **best effort only**: Spring Cloud Stream injects the listeners as a
-`Collection`, which Spring materialises as a `LinkedHashSet` and therefore does not sort. The relative order follows bean registration, so a
-third-party listener that validates the producer configuration may run first and reject a binding this listener was about to configure.
+The listener does not attempt to control its execution order relative to other `DefaultBinderFactory.Listener` beans, because that order is
+not controllable: Spring Cloud Stream injects them as a `Collection`, which Spring materialises as a `LinkedHashSet` and therefore does not
+sort. The relative order follows bean registration, so a third-party listener that validates the producer configuration may run first and
+reject a binding this listener was about to configure.
 
 ### Supported binders
 

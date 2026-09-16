@@ -3,6 +3,7 @@ package dev.inditex.scsoutbox.config.producer;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Registry of the binder-specific properties that enable synchronous publishing.
@@ -30,7 +31,6 @@ public final class SyncProducerBinderRegistry {
   private static final Map<String, SyncProducerMapping> MAPPINGS = Map.of(
       KAFKA_DEFAULTS_PREFIX, new SyncProducerMapping(
           "kafka",
-          KAFKA_DEFAULTS_PREFIX,
           "spring.cloud.stream.kafka.bindings.%s.producer.sync",
           "spring.cloud.stream.kafka.default.producer.sync",
           "sync",
@@ -56,14 +56,13 @@ public final class SyncProducerBinderRegistry {
    * Returns the binder names for which scs-outbox can configure synchronous producers automatically.
    */
   public static Set<String> supportedBinders() {
-    return MAPPINGS.values().stream().map(SyncProducerMapping::binderName).collect(java.util.stream.Collectors.toUnmodifiableSet());
+    return MAPPINGS.values().stream().map(SyncProducerMapping::binderName).collect(Collectors.toUnmodifiableSet());
   }
 
   /**
    * Describes how to enable synchronous publishing for a given binder.
    *
    * @param binderName human readable binder name, used in log and error messages
-   * @param defaultsPrefix the defaults prefix reported by the binder
    * @param bindingPropertyTemplate binding-scoped property key template, with a single {@code %s} placeholder for the binding name
    * @param binderDefaultProperty binder-wide default property key for the same setting
    * @param producerPropertyPath JavaBean property path of the setting on the binder-specific producer properties object
@@ -71,7 +70,6 @@ public final class SyncProducerBinderRegistry {
    */
   public record SyncProducerMapping(
       String binderName,
-      String defaultsPrefix,
       String bindingPropertyTemplate,
       String binderDefaultProperty,
       String producerPropertyPath,
