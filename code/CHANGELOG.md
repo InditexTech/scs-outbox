@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#89](https://github.com/InditexTech/scs-outbox/pull/89) Add Maven Central badges to README.md
 
+### Fixed
+
+- [#94](https://github.com/InditexTech/scs-outbox/pull/94) Archiving failure after a successful publish can cause outbox messages to be re-sent and duplicated
+
 ## [1.1.0] - 2026-08-27
 
 ### Added
