@@ -905,7 +905,7 @@ in the main environment **or** in the binder child environment. Both keys are ch
 
 Because scs-outbox stands aside for your own configuration, it verifies the result:
 
-- **An outbox-enabled binding is explicitly asynchronous** → the application **fails to start** with a message naming the binder, the binding, the offending property and the available opt-outs. Starting would mean running without the delivery guarantee the outbox is supposed to provide.
+- **An outbox-enabled binding is explicitly asynchronous** → the application **fails to start** with a message naming the binder, the binding and the offending property. Starting would mean running without the delivery guarantee the outbox is supposed to provide. The message only suggests removing the property, or excluding that specific binding via `scs-outbox.bindings.exclusions` if it must genuinely publish asynchronously — it never suggests disabling the automatic configuration globally, since that would compromise the guarantee for every other outbox-enabled binding in the application.
 - **The binder is not supported** → a `WARN` is logged naming the binder. scs-outbox cannot tell whether such a configuration is safe, so it never blocks startup.
 
 The check runs when the binder is created. Bindings declared through `spring.cloud.stream.output-bindings` or `spring.cloud.stream.bindings.*` are bound during startup, so a misconfiguration fails the application. A destination used for the first time by `StreamBridge` at runtime is checked at that moment instead.
@@ -929,8 +929,8 @@ See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/
 
 | Opt-out | Consequence |
 |---------|-------------|
-| `scs-outbox.bindings.exclusions=<binding>` | The binding is no longer managed by the outbox, so no constraint applies. **This is the correct opt-out** when a binding must publish asynchronously |
-| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the injection and the validation globally. You become fully responsible for configuring synchronous producers; **messages may be lost**. A `WARN` is logged at startup |
+| `scs-outbox.bindings.exclusions=<binding>` | The binding is no longer managed by the outbox, so no constraint applies. **This is the correct opt-out** when a specific binding must publish asynchronously |
+| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the automatic configuration and the validation for **every** outbox-enabled binding in the application. This is a drastic, application-wide decision, not a fix for a single misconfigured binding — it is never suggested by the startup failure. Set it only if you have your own way of guaranteeing synchronous publishing; otherwise **messages may be lost**. A `WARN` is logged at startup |
 
 See [ADR-0003](docs/adr/0003-automatic-synchronous-producer-configuration.md) for the full rationale.
 

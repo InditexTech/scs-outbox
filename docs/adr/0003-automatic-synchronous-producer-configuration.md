@@ -105,9 +105,14 @@ producer binding:
 
 | Situation | Behaviour | Rationale |
 |-----------|-----------|-----------|
-| Supported binder, the application declares a non-synchronous value | **Startup fails** with an `IllegalStateException` naming the binder, the binding, the property, its value and the two documented opt-outs | scs-outbox *knows* the configuration is unsafe |
+| Supported binder, the application declares a non-synchronous value | **Startup fails** with an `IllegalStateException` naming the binder, the binding, the property and its value | scs-outbox *knows* the configuration is unsafe |
 | Supported binder, nothing declared | The producer is switched to synchronous and the affected bindings are reported at `INFO` | The application expressed no intent, so scs-outbox applies the guarantee it needs |
 | Binder is unknown, or is not an `ExtendedPropertiesBinder` | `WARN` listing the binder and the supported binders | scs-outbox *cannot tell* whether the configuration is unsafe. Failing would break every non-Kafka user |
+
+The failure message only suggests fixing the property, or excluding that specific binding via `scs-outbox.bindings.exclusions` when it must
+genuinely publish asynchronously. It deliberately never suggests `scs-outbox.bindings.sync-producers.enabled=false`: that switch disables the
+guarantee for **every** outbox-enabled binding in the application, not just the one that failed to start, so presenting it next to the
+correct, binding-scoped fix would normalise disabling the safety net instead of fixing the misconfiguration.
 
 Failing rather than silently overriding was chosen deliberately. Both options provide the same guarantee, but overriding discards an
 explicit, intentional application setting and makes the runtime behaviour diverge from what the application declared. Failing
@@ -137,7 +142,7 @@ serves each binding.
 | Opt-out | Effect |
 |---------|--------|
 | `scs-outbox.bindings.exclusions` | The binding is no longer managed by the outbox at all, so no synchronous producer constraint applies. This is the correct opt-out when a binding must publish asynchronously |
-| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the configuration and the validation globally. The application becomes fully responsible for configuring synchronous producers; message loss is possible. A `WARN` is logged |
+| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the configuration and the validation globally. The application becomes fully responsible for configuring synchronous producers; message loss is possible. A `WARN` is logged. This is a deliberate, upfront, application-wide decision — it is never suggested by a per-binding startup failure |
 
 ---
 

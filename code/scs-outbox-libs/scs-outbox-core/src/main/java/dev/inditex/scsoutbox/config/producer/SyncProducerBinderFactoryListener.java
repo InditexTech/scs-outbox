@@ -196,12 +196,9 @@ public class SyncProducerBinderFactoryListener implements DefaultBinderFactory.L
     violations.forEach((binding, detail) -> message.append(System.lineSeparator())
         .append("  - binding '").append(binding).append("': ").append(detail));
     message.append(System.lineSeparator())
-        .append("Fix it by removing that property so scs-outbox can configure it, or opt out explicitly by either")
-        .append(System.lineSeparator())
-        .append("  - excluding the binding from the outbox via 'scs-outbox.bindings.exclusions', or")
-        .append(System.lineSeparator())
-        .append("  - setting 'scs-outbox.bindings.sync-producers.enabled=false', ")
-        .append("accepting that messages may be lost.");
+        .append("Fix it by removing that property so scs-outbox can configure it, or, if this binding must genuinely publish")
+        .append(
+            " asynchronously, exclude it from the outbox via 'scs-outbox.bindings.exclusions' so it is no longer managed by scs-outbox.");
     return message.toString();
   }
 }

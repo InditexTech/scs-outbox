@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Integration test validating that the application refuses to start when an outbox-enabled binding is explicitly configured to publish
  * asynchronously.
  *
- * <p>{@code SyncProducerEnvironmentPostProcessor} never overrides a property owned by the application, so an explicit
+ * <p>{@code SyncProducerBinderFactoryListener} never overrides a property owned by the application, so an explicit
  * {@code producer.sync=false} would otherwise silently disable the delivery guarantee of the outbox: the outbox record is deleted as soon
  * as {@code StreamBridge.send} returns {@code true}, which for an asynchronous producer happens before the broker acknowledges the record.
  * Failing at startup surfaces the misconfiguration instead of losing messages at runtime.
@@ -67,7 +67,9 @@ class SyncProducerConflictIT {
         .hasMessageContaining("output")
         .hasMessageContaining(OUTBOX_BINDING_SYNC_PROPERTY + "=false")
         .hasMessageContaining("scs-outbox.bindings.exclusions")
-        .hasMessageContaining("scs-outbox.bindings.sync-producers.enabled=false");
+        // The global 'scs-outbox.bindings.sync-producers.enabled=false' switch must never be suggested as a fix for a single
+        // misconfigured binding: it disables the delivery guarantee for every outbox-enabled binding in the application.
+        .hasMessageNotContaining("scs-outbox.bindings.sync-producers.enabled=false");
   }
 
   @Test

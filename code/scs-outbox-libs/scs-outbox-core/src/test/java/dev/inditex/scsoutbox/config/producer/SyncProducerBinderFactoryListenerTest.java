@@ -225,7 +225,9 @@ class SyncProducerBinderFactoryListenerTest {
               .hasMessageContaining(BOOK_BINDING)
               .hasMessageContaining(BOOK_SYNC_PROPERTY + "=false")
               .hasMessageContaining("scs-outbox.bindings.exclusions")
-              .hasMessageContaining("scs-outbox.bindings.sync-producers.enabled=false");
+              // The global 'scs-outbox.bindings.sync-producers.enabled=false' switch must never be suggested as a fix for a single
+              // misconfigured binding: it disables the delivery guarantee for every outbox-enabled binding in the application.
+              .hasMessageNotContaining("scs-outbox.bindings.sync-producers.enabled=false");
     }
 
     @Test
