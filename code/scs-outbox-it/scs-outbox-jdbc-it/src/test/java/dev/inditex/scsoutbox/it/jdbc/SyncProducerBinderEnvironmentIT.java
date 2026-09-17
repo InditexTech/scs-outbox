@@ -82,7 +82,7 @@ class SyncProducerBinderEnvironmentIT {
 
   @Test
   void when_sync_is_disabled_only_in_the_binder_child_environment_expect_startup_failure() {
-    assertThatThrownBy(() -> run(BINDER_DEFAULT_SYNC_PROPERTY + "=false").close())
+    assertThatThrownBy(() -> run(BINDER_DEFAULT_SYNC_PROPERTY + "=false"))
         .rootCause()
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("output")

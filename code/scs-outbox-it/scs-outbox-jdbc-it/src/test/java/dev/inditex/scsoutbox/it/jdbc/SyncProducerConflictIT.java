@@ -61,7 +61,7 @@ class SyncProducerConflictIT {
 
   @Test
   void when_outbox_enabled_binding_is_explicitly_asynchronous_expect_startup_failure() {
-    assertThatThrownBy(() -> run(OUTBOX_BINDING_SYNC_PROPERTY + "=false").close())
+    assertThatThrownBy(() -> run(OUTBOX_BINDING_SYNC_PROPERTY + "=false"))
         .rootCause()
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("output")

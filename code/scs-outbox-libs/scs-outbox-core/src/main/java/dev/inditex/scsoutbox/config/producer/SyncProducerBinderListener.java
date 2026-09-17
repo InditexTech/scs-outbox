@@ -72,6 +72,7 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
         case CONFIGURED -> configured.add(binding.name());
         case VIOLATION -> violations.put(binding.name(), describe(outcome.declaredSetting().orElseThrow()));
         case ALREADY_SYNCHRONOUS -> {
+          // No-op: the binding already publishes synchronously, nothing to configure or report.
         }
         default -> throw new IllegalStateException("Unexpected sync outcome status: " + outcome.status());
       }

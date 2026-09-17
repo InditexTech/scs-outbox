@@ -113,11 +113,12 @@ class SyncProducerBinderListenerTest {
       // The binder child environment is what Spring Cloud Stream builds out of 'binders.<name>.environment.*' plus the inherited main
       // environment, which is exactly what the listener receives.
       final MockEnvironment binderEnvironment = new MockEnvironment().withProperty(KAFKA_DEFAULT_SYNC_PROPERTY, "false");
+      final SyncProducerBinderListener listener = listener(outboxProperties(), bindings(bookBinding()));
+      final ConfigurableApplicationContext binderContext = binderContext(kafkaBinder(), binderEnvironment);
 
-      assertThatThrownBy(() -> listener(outboxProperties(), bindings(bookBinding()))
-          .afterBinderContextInitialized(BINDER_NAME, binderContext(kafkaBinder(), binderEnvironment)))
-              .isInstanceOf(IllegalStateException.class)
-              .hasMessageContaining(BOOK_BINDING);
+      assertThatThrownBy(() -> listener.afterBinderContextInitialized(BINDER_NAME, binderContext))
+          .isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining(BOOK_BINDING);
     }
 
     @Test
@@ -127,13 +128,14 @@ class SyncProducerBinderListenerTest {
           BOOK_BINDING, producerBinding("book-destination"),
           "produce-audit-out-0", producerBinding("audit-destination"));
       final MockEnvironment environment = new MockEnvironment().withProperty(BOOK_SYNC_PROPERTY, "false");
+      final SyncProducerBinderListener listener = listener(outboxProperties(), bindings(declared));
+      final ConfigurableApplicationContext binderContext = binderContext(binder, environment);
 
-      assertThatThrownBy(() -> listener(outboxProperties(), bindings(declared))
-          .afterBinderContextInitialized(BINDER_NAME, binderContext(binder, environment)))
-              .isInstanceOf(IllegalStateException.class)
-              .hasMessageContaining(BINDER_NAME)
-              .hasMessageContaining(BOOK_BINDING)
-              .hasMessageContaining(BOOK_SYNC_PROPERTY + "=false");
+      assertThatThrownBy(() -> listener.afterBinderContextInitialized(BINDER_NAME, binderContext))
+          .isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining(BINDER_NAME)
+          .hasMessageContaining(BOOK_BINDING)
+          .hasMessageContaining(BOOK_SYNC_PROPERTY + "=false");
       assertThat(binder.getExtendedProducerProperties("produce-audit-out-0").isSync()).isTrue();
     }
   }

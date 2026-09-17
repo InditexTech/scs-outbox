@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
@@ -49,7 +48,7 @@ class SupportedBinderTest {
   }
 
   private static List<String> bindingNames(final SupportedBinder supportedBinder) {
-    return supportedBinder.getBindings().stream().map(OutboxBinding::name).collect(Collectors.toList());
+    return supportedBinder.getBindings().stream().map(OutboxBinding::name).toList();
   }
 
   @Nested
