@@ -1,0 +1,22 @@
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerBinderEnvironmentIT.java
+  h_5ebe62d7d24f9c 85
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerConflictIT.java
+  h_5ebe62d7d24f9c 64
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderListener.java
+  h_5ebe62d7d24f9c 75
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/SupportedBinderTest.java
+  h_5ebe62d7d24f9c 51
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderListenerTest.java
+  h_5ebe62d7d24f9c 116-117,119-121,131-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e004123759f4462556dbe736069ac217c57a4022",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
