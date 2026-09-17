@@ -1,0 +1,19 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/DeclaredSetting.java
+  s_e7d083c18fc2b0::t_a583d9277edd09 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eb655326e7b285db22ba2f87b1f4214c7adac01c",
+  "prompts": {},
+  "sessions": {
+    "s_e7d083c18fc2b0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f515eddceffeEa0omLQ4CjkK6S",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
