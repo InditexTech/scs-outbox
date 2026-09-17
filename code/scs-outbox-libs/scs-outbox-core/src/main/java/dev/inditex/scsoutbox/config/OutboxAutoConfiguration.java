@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
+import dev.inditex.scsoutbox.config.producer.OutboxBindingsContext;
 import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
@@ -92,6 +93,18 @@ public class OutboxAutoConfiguration {
   @Bean
   public SyncProducerBinderListener scsOutboxSyncProducerBinderListener() {
     return new SyncProducerBinderListener();
+  }
+
+  /**
+   * Resolved by {@link SyncProducerBinderListener} (which is not itself a Spring-managed collaborator with regular constructor injection,
+   * since it is instantiated by {@code DefaultBinderFactory} before the binder child context exists) to determine whether the automatic
+   * synchronous producer feature is enabled and which bindings it applies to.
+   */
+  @Bean
+  public OutboxBindingsContext outboxBindingsContext(
+      final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties) {
+    return new OutboxBindingsContext(outboxProperties, bindingServiceProperties);
   }
 
   @Bean
