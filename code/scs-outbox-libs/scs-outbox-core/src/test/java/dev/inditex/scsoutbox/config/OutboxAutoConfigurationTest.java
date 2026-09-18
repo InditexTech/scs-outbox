@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
+import dev.inditex.scsoutbox.config.producer.OutboxBindingsContext;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -317,6 +319,31 @@ class OutboxAutoConfigurationTest {
             assertThat(context).hasNotFailed();
             final MessageChannelAccessor accessor = context.getBean(MessageChannelAccessor.class);
             assertThat(accessor).extracting("appName").isEqualTo("");
+          });
+    }
+  }
+
+  @Nested
+  @DisplayName("Synchronous producer configuration")
+  class SyncProducerConfiguration {
+
+    @Test
+    @DisplayName("registers the binder factory listener bean")
+    void registers_the_binder_factory_listener_bean() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).hasSingleBean(SyncProducerBinderListener.class);
+          });
+    }
+
+    @Test
+    @DisplayName("registers the outbox bindings context bean")
+    void registers_the_outbox_bindings_context_bean() {
+      OutboxAutoConfigurationTest.this.baseContextRunner
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).hasSingleBean(OutboxBindingsContext.class);
           });
     }
   }

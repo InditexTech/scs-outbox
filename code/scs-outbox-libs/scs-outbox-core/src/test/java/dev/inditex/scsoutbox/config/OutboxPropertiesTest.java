@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
+import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -92,6 +93,82 @@ class OutboxPropertiesTest {
           List.of("binding-a", "regex:produce-.*"),
           List.of("binding-a", "regex:consume-.*")))
               .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void when_two_argument_constructor_expect_sync_producers_enabled_by_default() {
+      final Bindings bindings = new Bindings(List.of(), List.of());
+
+      assertThat(bindings.getSyncProducers()).isNotNull();
+      assertThat(bindings.getSyncProducers().isEnabled()).isTrue();
+    }
+
+    @Test
+    void when_null_sync_producers_expect_enabled_by_default() {
+      final Bindings bindings = new Bindings(List.of(), List.of(), null);
+
+      assertThat(bindings.getSyncProducers().isEnabled()).isTrue();
+    }
+
+    @Test
+    void when_sync_producers_disabled_expect_disabled() {
+      final Bindings bindings = new Bindings(List.of(), List.of(), new SyncProducers(false));
+
+      assertThat(bindings.getSyncProducers().isEnabled()).isFalse();
+    }
+  }
+
+  @Nested
+  class SyncProducersConstructor {
+
+    @Test
+    void when_no_argument_constructor_expect_enabled() {
+      assertThat(new SyncProducers().isEnabled()).isTrue();
+    }
+
+    @Test
+    void when_null_expect_enabled() {
+      assertThat(new SyncProducers(null).isEnabled()).isTrue();
+    }
+
+    @Test
+    void when_true_expect_enabled() {
+      assertThat(new SyncProducers(true).isEnabled()).isTrue();
+    }
+  }
+
+  @Nested
+  class BindingsMatches {
+
+    @Test
+    void when_no_inclusions_and_no_exclusions_expect_all_bindings_matched() {
+      final Bindings bindings = new Bindings(List.of(), List.of());
+
+      assertThat(bindings.matches("any-binding-out-0")).isTrue();
+    }
+
+    @Test
+    void when_only_exclusions_expect_all_but_excluded_matched() {
+      final Bindings bindings = new Bindings(List.of(), List.of("excluded-out-0"));
+
+      assertThat(bindings.matches("included-out-0")).isTrue();
+      assertThat(bindings.matches("excluded-out-0")).isFalse();
+    }
+
+    @Test
+    void when_inclusions_expect_only_included_matched() {
+      final Bindings bindings = new Bindings(List.of("included-out-0"), List.of());
+
+      assertThat(bindings.matches("included-out-0")).isTrue();
+      assertThat(bindings.matches("other-out-0")).isFalse();
+    }
+
+    @Test
+    void when_binding_matches_inclusion_and_exclusion_regex_expect_exclusion_wins() {
+      final Bindings bindings = new Bindings(List.of("regex:produce-.*"), List.of("regex:produce-audit-.*"));
+
+      assertThat(bindings.matches("produce-book-out-0")).isTrue();
+      assertThat(bindings.matches("produce-audit-out-0")).isFalse();
     }
   }
 }
