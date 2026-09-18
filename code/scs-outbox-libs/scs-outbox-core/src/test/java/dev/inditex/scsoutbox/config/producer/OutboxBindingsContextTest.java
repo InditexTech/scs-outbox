@@ -18,7 +18,7 @@ import org.springframework.mock.env.MockEnvironment;
 
 class OutboxBindingsContextTest {
 
-  private static final String BINDER_NAME = "kafka-pipe";
+  private static final String BINDER_NAME = "named-kafka";
 
   private static OutboxBindingsContext context(final OutboxProperties outboxProperties) {
     return new OutboxBindingsContext(outboxProperties, mock(BindingServiceProperties.class));

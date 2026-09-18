@@ -26,12 +26,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * <p>Those properties never appear in the main application environment: Spring Cloud Stream materialises them only in the child context it
  * creates for the binder. scs-outbox must therefore read the effective producer configuration from the binder itself, otherwise it would
  * both fail to notice that the application already enabled synchronous publishing and silently override an explicit decision to disable it.
- * 
  */
 class SyncProducerBinderEnvironmentIT {
 
   private static final String BINDER_DEFAULT_SYNC_PROPERTY =
-      "spring.cloud.stream.binders.kafka-pipe.environment.spring.cloud.stream.kafka.default.producer.sync";
+      "spring.cloud.stream.binders.named-kafka.environment.spring.cloud.stream.kafka.default.producer.sync";
 
   @Configuration
   @EnableAutoConfiguration
@@ -56,9 +55,9 @@ class SyncProducerBinderEnvironmentIT {
             "--spring.docker.compose.skip.in-tests=false",
             "--app.scheduling.enable=false",
             // A named binder instance, declaring its own child environment.
-            "--spring.cloud.stream.binders.kafka-pipe.type=kafka",
-            "--spring.cloud.stream.binders.kafka-pipe.environment.spring.cloud.stream.kafka.binder.brokers=localhost:30810",
-            "--spring.cloud.stream.default-binder=kafka-pipe"),
+            "--spring.cloud.stream.binders.named-kafka.type=kafka",
+            "--spring.cloud.stream.binders.named-kafka.environment.spring.cloud.stream.kafka.binder.brokers=localhost:30810",
+            "--spring.cloud.stream.default-binder=named-kafka"),
         Stream.of(properties).map(property -> "--" + property))
         .toArray(String[]::new);
     return new SpringApplicationBuilder(TestConfig.class)

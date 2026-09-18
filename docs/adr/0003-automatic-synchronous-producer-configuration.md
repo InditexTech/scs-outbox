@@ -63,13 +63,13 @@ This is the only point where the effective producer configuration is known, beca
 
 Binder support is keyed by the binder's own `ExtendedBindingProperties#getDefaultsPrefix()` (`spring.cloud.stream.kafka.default` for Kafka).
 Keying on the prefix the binder reports itself removes any need to infer a binder *type* from the binding, the default binder or the
-classpath, and works unchanged for named binder instances such as `kafka-pipe`.
+classpath, and works unchanged for named binder instances such as `named-kafka`.
 
 Alternatives considered and rejected:
 
 | Alternative | Why it was rejected |
 |-------------|---------------------|
-| `EnvironmentPostProcessor` contributing properties | **Tried first, and it does not work in general.** Two independent defects: (1) frameworks layered on top of Spring Boot commonly expose their own configuration namespace and relocate it into `spring.cloud.stream.*` / `scs-outbox.*` from an `EnvironmentPostProcessor` ordered at `Ordered.LOWEST_PRECEDENCE`; reading the environment earlier observes an empty set of bindings and silently configures nothing. (2) It cannot see `spring.cloud.stream.binders.<name>.environment.*`, so it neither notices that the application already enabled synchronous publishing nor avoids silently overriding an explicit decision to disable it. |
+| `EnvironmentPostProcessor` contributing properties | **Tried first, and it does not work in general.** Two independent defects: (1) properties can be contributed after an earlier environment post-processing step, so reading the environment too early observes an empty set of bindings and silently configures nothing. (2) It cannot see `spring.cloud.stream.binders.<name>.environment.*`, so it neither notices that the application already enabled synchronous publishing nor avoids silently overriding an explicit decision to disable it. |
 | `ApplicationContextInitializer` contributing properties | Fixes the ordering defect, because initializers run after every `EnvironmentPostProcessor`, but not the binder child environment defect. It would still have to scan `spring.cloud.stream.binders.*.environment.*` by hand to avoid overriding the application. |
 | `ProducerMessageHandlerCustomizer` bean | Spring Cloud Stream resolves this bean **by type**. An application that declares its own customizer would break the context with `NoUniqueBeanDefinitionException`. It also requires compile-time access to binder-specific handler classes. |
 | `BeanPostProcessor` on the binder-specific binding properties | Requires a hard dependency on the binder implementation, which `scs-outbox-core` does not have, and the properties live in the binder child context rather than the main one. |
@@ -153,8 +153,7 @@ serves each binding.
 
 - Applications using the Kafka binder get the outbox delivery guarantee by default, without having to know a binder-specific property.
 - A configuration that breaks the guarantee can no longer start silently.
-- It works the same whether the application configures Spring Cloud Stream directly or through a framework that owns its own configuration
-  namespace and relocates it late.
+- It works the same whether the application's properties are available during environment post-processing or are contributed later.
 - Properties declared in a binder child environment are honoured.
 - `scs-outbox-core` gains no new dependency; binder support is a data-only entry in `SyncProducerMappings`, and the setting is read
   and written through a `BeanWrapper`.
@@ -180,6 +179,6 @@ serves each binding.
   synchronous mode at all, so no honest one-property mapping exists. RabbitMQ bindings fall into the unsupported-binder `WARN` path.
 - **Binders that are not `ExtendedPropertiesBinder`** — a binder without binder-specific extended properties exposes no such setting to
   configure, and its bindings are reported with a `WARN`.
-- **Other binder factory listeners** — because the listener order is not sortable, an application or framework that registers its own
+- **Other binder factory listeners** — because the listener order is not sortable, an application or another component that registers its own
   `DefaultBinderFactory.Listener` validating the producer configuration may run first and fail the context before this listener has
   configured the bindings.

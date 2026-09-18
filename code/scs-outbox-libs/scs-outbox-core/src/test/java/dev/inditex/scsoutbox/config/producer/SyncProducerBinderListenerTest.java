@@ -25,7 +25,7 @@ import org.springframework.mock.env.MockEnvironment;
 
 class SyncProducerBinderListenerTest {
 
-  private static final String BINDER_NAME = "kafka-pipe";
+  private static final String BINDER_NAME = "named-kafka";
 
   private static final String BOOK_BINDING = "produce-book-out-0";
 

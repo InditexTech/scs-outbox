@@ -25,10 +25,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Integration test covering bindings that are contributed to the environment <em>late</em>, after Spring Boot has run every
  * {@code EnvironmentPostProcessor}.
  *
- * <p>Frameworks layered on top of Spring Boot commonly expose their own configuration namespace and relocate it into the
- * {@code spring.cloud.stream.*} namespace from an {@code EnvironmentPostProcessor} ordered at {@code Ordered.LOWEST_PRECEDENCE}, or later
- * still. Any attempt by scs-outbox to read {@code spring.cloud.stream.bindings.*} during its own environment post-processing would observe
- * an empty map and silently configure nothing.
+ * <p>Some applications contribute properties to the environment from an {@code EnvironmentPostProcessor} ordered at
+ * {@code Ordered.LOWEST_PRECEDENCE}, or later still. Any attempt by scs-outbox to read {@code spring.cloud.stream.bindings.*} during its
+ * own environment post-processing would observe an empty map and silently configure nothing.
  *
  * <p>Applying the configuration when the binder is initialised makes scs-outbox independent of that ordering: by then every property source
  * has been contributed and {@code BindingServiceProperties} is fully bound.
@@ -38,8 +37,7 @@ class SyncProducerLatePropertySourceIT {
   private static final String LATE_BINDING = "late-out-0";
 
   /**
-   * Contributes the binding definition only once the environment has been fully post-processed, reproducing what a framework that relocates
-   * its own configuration namespace does.
+   * Contributes the binding definition only once the environment has been fully post-processed, reproducing a late property source.
    */
   static class LateBindingInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 

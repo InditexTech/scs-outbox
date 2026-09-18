@@ -890,7 +890,7 @@ Bindings excluded from the outbox through `scs-outbox.bindings.exclusions` (or n
 INFO  Enabled synchronous publishing for outbox-enabled bindings of binder [kafka]: [orders-out-0]
 ```
 
-The configuration is applied to the binder itself rather than to the environment, so it is **not** visible in `/actuator/env`. This is what makes it work regardless of how your properties reach Spring Cloud Stream — including through a framework that owns its own configuration namespace — and lets scs-outbox see settings declared in a binder child environment under `spring.cloud.stream.binders.<name>.environment.*`.
+The configuration is applied to the binder itself rather than to the environment, so it is **not** visible in `/actuator/env`. This makes it independent of property-source ordering and lets scs-outbox see settings declared in a binder child environment under `spring.cloud.stream.binders.<name>.environment.*`.
 
 #### Precedence over your own configuration
 
