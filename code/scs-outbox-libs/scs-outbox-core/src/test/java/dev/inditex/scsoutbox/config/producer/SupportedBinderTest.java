@@ -14,6 +14,7 @@ import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMa
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.cloud.stream.config.BinderProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.mock.env.MockEnvironment;
@@ -27,6 +28,13 @@ class SupportedBinderTest {
   private static BindingServiceProperties bindings(final Map<String, BindingProperties> bindings) {
     final BindingServiceProperties properties = mock(BindingServiceProperties.class);
     when(properties.getBindings()).thenReturn(bindings);
+    return properties;
+  }
+
+  private static BinderProperties binderProperties(final String type, final boolean defaultCandidate) {
+    final BinderProperties properties = new BinderProperties();
+    properties.setType(type);
+    properties.setDefaultCandidate(defaultCandidate);
     return properties;
   }
 
@@ -44,7 +52,26 @@ class SupportedBinderTest {
     final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
     final SyncProducerMapping mapping = SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX)
         .orElseThrow();
-    return new SupportedBinder(BINDER_NAME, binder, mapping, Binder.get(new MockEnvironment()), outboxProperties, bindings(declared));
+    return supportedBinder(outboxProperties, bindings(declared), binder, mapping);
+  }
+
+  private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties) {
+    final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
+    final SyncProducerMapping mapping = SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX)
+        .orElseThrow();
+    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping);
+  }
+
+  private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties, final KafkaLikeStubBinder binder, final SyncProducerMapping mapping) {
+    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping);
+  }
+
+  private static SupportedBinder supportedBinder(final String binderConfigurationName, final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties, final KafkaLikeStubBinder binder, final SyncProducerMapping mapping) {
+    return new SupportedBinder(binderConfigurationName, binder, mapping, Binder.get(new MockEnvironment()), outboxProperties,
+        bindingServiceProperties);
   }
 
   private static List<String> bindingNames(final SupportedBinder supportedBinder) {
@@ -100,6 +127,82 @@ class SupportedBinderTest {
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of(BOOK_BINDING, bindingProperties));
 
       assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_binding_has_no_binder_and_default_binder_is_current_expect_it_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getDefaultBinder()).thenReturn(BINDER_NAME);
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+    }
+
+    @Test
+    void when_binding_has_no_binder_and_default_binder_is_another_expect_it_not_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getDefaultBinder()).thenReturn("another-binder");
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_binding_has_no_binder_and_current_binder_is_the_single_default_candidate_expect_it_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getBinders()).thenReturn(Map.of(BINDER_NAME, binderProperties("kafka", true)));
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+    }
+
+    @Test
+    void when_binding_has_no_binder_and_another_binder_is_the_single_default_candidate_expect_it_not_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getBinders()).thenReturn(Map.of("another-binder", binderProperties("kafka", true)));
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_binding_has_no_binder_and_multiple_default_candidates_expect_it_not_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getBinders()).thenReturn(Map.of(
+          BINDER_NAME, binderProperties("kafka", true),
+          "another-binder", binderProperties("kafka", true)));
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_named_binder_is_not_a_default_candidate_and_current_binder_is_named_expect_it_not_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getBinders()).thenReturn(Map.of(BINDER_NAME, binderProperties("kafka", false)));
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_named_binder_is_not_a_default_candidate_and_current_binder_is_auto_discovered_expect_it_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(BOOK_BINDING, producerBinding("book-destination")));
+      when(bindingServiceProperties.getBinders()).thenReturn(Map.of(BINDER_NAME, binderProperties("kafka", false)));
+      final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
+      final SyncProducerMapping mapping = SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX)
+          .orElseThrow();
+
+      final SupportedBinder supportedBinder = supportedBinder("kafka", outboxProperties(List.of(), List.of()), bindingServiceProperties,
+          binder, mapping);
+
+      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
     }
 
     @Test

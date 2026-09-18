@@ -10,6 +10,7 @@ import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMa
 
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.stream.binder.ExtendedPropertiesBinder;
+import org.springframework.cloud.stream.config.BinderProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 
@@ -67,20 +68,64 @@ final class SupportedBinder {
 
       if (isProducerBinding(bindingName, bindingProperties)
           && this.outboxProperties.getBindings().matches(bindingName)
-          && this.isServedByCurrentBinder(bindingProperties)) {
+          && this.belongsToCurrentBinder(bindingProperties)) {
         bindings.add(new OutboxBinding(bindingName, this.binder, this.mapping, this.propertyBinder));
       }
     }
     return bindings;
   }
 
-  /**
-   * A binding is served by this binder when it does not name a different one. Bindings without an explicit binder fall back to the default
-   * binder, which is the binder currently being initialised whenever a single binder is in use.
-   */
-  private boolean isServedByCurrentBinder(final BindingProperties bindingProperties) {
-    final String declaredBinder = bindingProperties.getBinder();
-    return declaredBinder == null || declaredBinder.isBlank() || declaredBinder.equals(this.binderConfigurationName);
+  /** Determines whether the binding belongs to this binder configuration. */
+  private boolean belongsToCurrentBinder(final BindingProperties bindingProperties) {
+    final String explicitlyAssignedBinder = bindingProperties.getBinder();
+    if (hasText(explicitlyAssignedBinder)) {
+      return this.binderConfigurationName.equals(explicitlyAssignedBinder);
+    }
+
+    return this.currentBinderIsEffectiveDefault();
+  }
+
+  private boolean currentBinderIsEffectiveDefault() {
+    final String explicitlyConfiguredDefaultBinder = this.bindingServiceProperties.getDefaultBinder();
+    if (hasText(explicitlyConfiguredDefaultBinder)) {
+      return this.binderConfigurationName.equals(explicitlyConfiguredDefaultBinder);
+    }
+
+    final List<String> defaultCandidateNames = this.defaultCandidateNames();
+    if (defaultCandidateNames.isEmpty()) {
+      return this.currentBinderIsImplicitlyDiscovered();
+    }
+    if (defaultCandidateNames.size() > 1) {
+      return false;
+    }
+
+    return this.binderConfigurationName.equals(defaultCandidateNames.get(0));
+  }
+
+  private List<String> defaultCandidateNames() {
+    final Map<String, BinderProperties> declaredBinderConfigurations = this.bindingServiceProperties.getBinders();
+    if (declaredBinderConfigurations == null) {
+      return List.of();
+    }
+
+    return declaredBinderConfigurations.entrySet().stream()
+        .filter(entry -> entry.getValue() != null && entry.getValue().isDefaultCandidate())
+        .map(Map.Entry::getKey)
+        .toList();
+  }
+
+  private boolean currentBinderIsImplicitlyDiscovered() {
+    final Map<String, BinderProperties> declaredBinderConfigurations = this.bindingServiceProperties.getBinders();
+    if (declaredBinderConfigurations == null || declaredBinderConfigurations.isEmpty()) {
+      return true;
+    }
+
+    final boolean currentBinderWasDeclared = declaredBinderConfigurations.containsKey(this.binderConfigurationName);
+    return !currentBinderWasDeclared;
+  }
+
+  private static boolean hasText(final String value) {
+    return value != null && !value.isBlank();
   }
 
   /**
