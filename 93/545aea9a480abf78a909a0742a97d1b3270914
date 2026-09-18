@@ -1,0 +1,19 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SupportedBinder.java
+  s_d051cebd4fc234::t_62599497414c44 4,16,141,147-153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "93545aea9a480abf78a909a0742a97d1b3270914",
+  "prompts": {},
+  "sessions": {
+    "s_d051cebd4fc234": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4c909e24ffek6Y1PD1Ift7slE",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
