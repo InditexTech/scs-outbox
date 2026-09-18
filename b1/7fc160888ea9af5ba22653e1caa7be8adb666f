@@ -1,0 +1,19 @@
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerLatePropertySourceIT.java
+  s_d051cebd4fc234::t_03b63028866801 28-30,40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b17fc160888ea9af5ba22653e1caa7be8adb666f",
+  "prompts": {},
+  "sessions": {
+    "s_d051cebd4fc234": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4c909e24ffek6Y1PD1Ift7slE",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
