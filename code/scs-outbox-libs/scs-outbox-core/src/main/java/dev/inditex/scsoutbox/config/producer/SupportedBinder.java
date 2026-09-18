@@ -1,6 +1,7 @@
 package dev.inditex.scsoutbox.config.producer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.cloud.stream.binder.ExtendedPropertiesBinder;
 import org.springframework.cloud.stream.config.BinderProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
+import org.springframework.util.StringUtils;
 
 /**
  * A binder that scs-outbox knows how to enforce synchronous publishing on.
@@ -136,10 +138,17 @@ final class SupportedBinder {
     if (bindingProperties == null || bindingProperties.getDestination() == null || bindingProperties.getDestination().isBlank()) {
       return false;
     }
-    if (this.inputBindings.isInputBinding(bindingName)) {
+    if (this.inputBindings.isInputBinding(bindingName) && !this.isExplicitOutputBinding(bindingName)) {
       return false;
     }
     return !isConsumerOnlyBinding(bindingProperties);
+  }
+
+  private boolean isExplicitOutputBinding(final String bindingName) {
+    final String outputBindings = this.bindingServiceProperties.getOutputBindings();
+    return StringUtils.hasText(outputBindings)
+        && Arrays.stream(StringUtils.tokenizeToStringArray(outputBindings, ";"))
+            .anyMatch(bindingName::equals);
   }
 
   /**

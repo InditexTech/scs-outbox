@@ -151,6 +151,31 @@ class SupportedBinderTest {
     }
 
     @Test
+    void when_conventional_input_name_is_declared_as_explicit_output_expect_it_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(
+          Map.of("legacy-in-0", producerBinding("legacy-destination")));
+      when(bindingServiceProperties.getOutputBindings()).thenReturn("legacy-in-0");
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties,
+          new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX), kafkaMapping());
+
+      assertThat(bindingNames(supportedBinder)).containsExactly("legacy-in-0");
+    }
+
+    @Test
+    void when_explicit_outputs_are_separated_by_semicolons_expect_exact_output_name_returned() {
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(
+          "legacy-in-0", producerBinding("legacy-destination"),
+          "function-in-0", producerBinding("input-destination")));
+      when(bindingServiceProperties.getOutputBindings()).thenReturn("other-output;legacy-in-0");
+
+      final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties,
+          new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX), kafkaMapping());
+
+      assertThat(bindingNames(supportedBinder)).containsExactly("legacy-in-0");
+    }
+
+    @Test
     void when_binding_declares_no_destination_expect_it_not_returned() {
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of("no-destination", new BindingProperties()));
@@ -266,5 +291,9 @@ class SupportedBinderTest {
 
       assertThat(bindingNames(supportedBinder)).containsExactlyInAnyOrder(BOOK_BINDING, "produce-audit-out-0");
     }
+  }
+
+  private static SyncProducerMapping kafkaMapping() {
+    return SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX).orElseThrow();
   }
 }
