@@ -45,10 +45,26 @@ public class OutboxBindingsContext {
       return Optional.empty();
     }
 
-    final Optional<SyncProducerMapping> mapping =
-        SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix());
     // The binder child environment inherits the main environment and adds 'spring.cloud.stream.binders.<name>.environment.*'.
-    return mapping.map(syncProducerMapping -> new SupportedBinder(binderConfigurationName, extendedPropertiesBinder, syncProducerMapping,
-        Binder.get(binderEnvironment), this.outboxProperties, this.bindingServiceProperties));
+    return SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix())
+        .flatMap(mapping -> this.supportFor(binderConfigurationName, extendedPropertiesBinder, mapping, binderEnvironment,
+            InputBindings.conventionalNamesOnly()));
+  }
+
+  Optional<SupportedBinder> supportFor(final String binderConfigurationName, final Object binder, final Environment binderEnvironment,
+      final InputBindings inputBindings) {
+    if (!(binder instanceof final ExtendedPropertiesBinder<?, ?, ?> extendedPropertiesBinder)) {
+      return Optional.empty();
+    }
+
+    return SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix())
+        .flatMap(mapping -> this.supportFor(binderConfigurationName, extendedPropertiesBinder, mapping, binderEnvironment, inputBindings));
+  }
+
+  private Optional<SupportedBinder> supportFor(final String binderConfigurationName,
+      final ExtendedPropertiesBinder<?, ?, ?> binder, final SyncProducerMapping mapping, final Environment binderEnvironment,
+      final InputBindings inputBindings) {
+    return Optional.of(new SupportedBinder(binderConfigurationName, binder, mapping, Binder.get(binderEnvironment), this.outboxProperties,
+        this.bindingServiceProperties, inputBindings));
   }
 }

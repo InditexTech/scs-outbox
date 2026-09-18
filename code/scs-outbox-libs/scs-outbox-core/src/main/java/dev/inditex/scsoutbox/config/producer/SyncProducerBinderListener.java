@@ -9,6 +9,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.cloud.stream.binder.DefaultBinderFactory;
+import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,8 +41,9 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
     }
 
     final Object binder = resolveBinder(binderContext);
+    final InputBindings inputBindings = InputBindings.from(this.applicationContext.getBeansOfType(Bindable.class).values());
     final Optional<SupportedBinder> supportedBinder =
-        bindingsContext.supportFor(binderConfigurationName, binder, binderContext.getEnvironment());
+        bindingsContext.supportFor(binderConfigurationName, binder, binderContext.getEnvironment(), inputBindings);
 
     if (supportedBinder.isEmpty()) {
       log.warn(SyncProducerDiagnostics.unsupportedBinderMessage(binderConfigurationName, binder.getClass().getName()));

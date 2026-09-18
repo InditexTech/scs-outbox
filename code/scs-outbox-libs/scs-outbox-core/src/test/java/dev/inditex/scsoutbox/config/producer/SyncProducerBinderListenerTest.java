@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
@@ -16,6 +17,7 @@ import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.cloud.stream.binder.Binder;
+import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.context.ApplicationContext;
@@ -64,6 +66,20 @@ class SyncProducerBinderListenerTest {
   private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
     final ApplicationContext applicationContext = mock(ApplicationContext.class);
+    when(applicationContext.getBeansOfType(Bindable.class)).thenReturn(Map.of());
+    when(applicationContext.getBean(OutboxBindingsContext.class))
+        .thenReturn(new OutboxBindingsContext(outboxProperties, bindingServiceProperties));
+    final SyncProducerBinderListener listener = new SyncProducerBinderListener();
+    listener.setApplicationContext(applicationContext);
+    return listener;
+  }
+
+  private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties, final Set<String> inputBindingNames) {
+    final ApplicationContext applicationContext = mock(ApplicationContext.class);
+    final Bindable bindable = mock(Bindable.class);
+    when(bindable.getInputs()).thenReturn(inputBindingNames);
+    when(applicationContext.getBeansOfType(Bindable.class)).thenReturn(Map.of("function", bindable));
     when(applicationContext.getBean(OutboxBindingsContext.class))
         .thenReturn(new OutboxBindingsContext(outboxProperties, bindingServiceProperties));
     final SyncProducerBinderListener listener = new SyncProducerBinderListener();
@@ -95,6 +111,27 @@ class SyncProducerBinderListenerTest {
 
       assertThat(binder.getExtendedProducerProperties(BOOK_BINDING).isSync()).isTrue();
       assertThat(binder.getExtendedProducerProperties("produce-audit-out-0").isSync()).isTrue();
+    }
+  }
+
+  @Nested
+  class InputBindings {
+
+    @Test
+    void when_renamed_input_is_known_to_spring_cloud_stream_expect_it_not_treated_as_producer() {
+      final String inputBindingName = "anonymous-inbound";
+      final BindingProperties input = producerBinding("inbound");
+      final Map<String, BindingProperties> declared = Map.of(
+          inputBindingName, input,
+          BOOK_BINDING, producerBinding("book-destination"));
+      final MockEnvironment environment = new MockEnvironment()
+          .withProperty("spring.cloud.stream.kafka.bindings.anonymous-inbound.producer.sync", "false");
+      final KafkaLikeStubBinder binder = kafkaBinder();
+
+      assertThatCode(() -> listener(outboxProperties(), bindings(declared), Set.of(inputBindingName))
+          .afterBinderContextInitialized(BINDER_NAME, binderContext(binder, environment)))
+              .doesNotThrowAnyException();
+      assertThat(binder.getExtendedProducerProperties(BOOK_BINDING).isSync()).isTrue();
     }
   }
 

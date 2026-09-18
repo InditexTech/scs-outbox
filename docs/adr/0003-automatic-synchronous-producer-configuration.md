@@ -131,9 +131,10 @@ Only bindings that are **both** outbox-enabled and producer candidates are affec
 Outbox membership reuses `OutboxProperties.Bindings#matches(..)`, the same inclusion/exclusion logic used by `OutboxChannelInterceptor`
 through `OutboxServiceProperties.isOutboxEnabledFor(..)`. The logic lives in `Bindings` so both call sites share exactly one implementation.
 
-A binding is considered a producer candidate when it declares a destination, its name does not follow the Spring Cloud Stream convention for
-function inputs (`<function>-in-<index>`), and it does not declare consumer-only settings. Configuring an inbound binding would be harmless
-for the binder, but would make the listener report inbound bindings as violations.
+A binding is considered a producer candidate when it declares a destination, Spring Cloud Stream has not resolved its name as an input, and it
+does not declare consumer-only settings. The conventional function input name (`<function>-in-<index>`) is retained as a fallback when input
+metadata is not available. Configuring an inbound binding would be harmless for the binder, but would make the listener report inbound
+bindings as violations. This also covers function inputs renamed through `spring.cloud.stream.function.bindings.*`.
 
 Bindings that name a *different* binder are skipped, so a multi-binder application is only ever evaluated against the binder that actually
 serves each binding.

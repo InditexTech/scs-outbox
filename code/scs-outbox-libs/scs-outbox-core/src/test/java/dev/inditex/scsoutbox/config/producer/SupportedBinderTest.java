@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
@@ -14,6 +15,7 @@ import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMa
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.cloud.stream.config.BinderProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
@@ -49,10 +51,15 @@ class SupportedBinderTest {
   }
 
   private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties, final Map<String, BindingProperties> declared) {
+    return supportedBinder(outboxProperties, declared, InputBindings.conventionalNamesOnly());
+  }
+
+  private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties,
+      final Map<String, BindingProperties> declared, final InputBindings inputBindings) {
     final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
     final SyncProducerMapping mapping = SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX)
         .orElseThrow();
-    return supportedBinder(outboxProperties, bindings(declared), binder, mapping);
+    return supportedBinder(BINDER_NAME, outboxProperties, bindings(declared), binder, mapping, inputBindings);
   }
 
   private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties,
@@ -60,22 +67,37 @@ class SupportedBinderTest {
     final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
     final SyncProducerMapping mapping = SyncProducerMappings.findByDefaultsPrefix(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX)
         .orElseThrow();
-    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping);
+    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping,
+        InputBindings.conventionalNamesOnly());
   }
 
   private static SupportedBinder supportedBinder(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties, final KafkaLikeStubBinder binder, final SyncProducerMapping mapping) {
-    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping);
+    return supportedBinder(BINDER_NAME, outboxProperties, bindingServiceProperties, binder, mapping,
+        InputBindings.conventionalNamesOnly());
   }
 
   private static SupportedBinder supportedBinder(final String binderConfigurationName, final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties, final KafkaLikeStubBinder binder, final SyncProducerMapping mapping) {
+    return supportedBinder(binderConfigurationName, outboxProperties, bindingServiceProperties, binder, mapping,
+        InputBindings.conventionalNamesOnly());
+  }
+
+  private static SupportedBinder supportedBinder(final String binderConfigurationName, final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties, final KafkaLikeStubBinder binder, final SyncProducerMapping mapping,
+      final InputBindings inputBindings) {
     return new SupportedBinder(binderConfigurationName, binder, mapping, Binder.get(new MockEnvironment()), outboxProperties,
-        bindingServiceProperties);
+        bindingServiceProperties, inputBindings);
   }
 
   private static List<String> bindingNames(final SupportedBinder supportedBinder) {
     return supportedBinder.getBindings().stream().map(OutboxBinding::name).toList();
+  }
+
+  private static InputBindings inputBindings(final String... names) {
+    final Bindable bindable = mock(Bindable.class);
+    when(bindable.getInputs()).thenReturn(Set.of(names));
+    return InputBindings.from(List.of(bindable));
   }
 
   @Nested
@@ -106,6 +128,24 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of("myConsumer-in-0", consumer));
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_renamed_function_input_is_reported_by_spring_cloud_stream_expect_it_not_returned() {
+      final BindingProperties input = producerBinding("inbound");
+      final SupportedBinder supportedBinder = supportedBinder(
+          outboxProperties(List.of(), List.of()), Map.of("anonymous-inbound", input), inputBindings("anonymous-inbound"));
+
+      assertThat(bindingNames(supportedBinder)).isEmpty();
+    }
+
+    @Test
+    void when_function_input_metadata_is_unavailable_expect_conventional_name_to_be_used_as_fallback() {
+      final BindingProperties input = producerBinding("inbound");
+      final SupportedBinder supportedBinder = supportedBinder(
+          outboxProperties(List.of(), List.of()), Map.of("anonymous-in-0", input), inputBindings());
 
       assertThat(bindingNames(supportedBinder)).isEmpty();
     }

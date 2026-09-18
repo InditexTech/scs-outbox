@@ -3,7 +3,6 @@ package dev.inditex.scsoutbox.config.producer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMapping;
@@ -22,12 +21,6 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
  */
 final class SupportedBinder {
 
-  /**
-   * Spring Cloud Stream names the bindings derived from a function {@code <function>-in-<index>} for inputs and
-   * {@code <function>-out-<index>} for outputs.
-   */
-  private static final Pattern FUNCTION_INPUT_BINDING = Pattern.compile(".*-in-\\d+");
-
   private final String binderConfigurationName;
 
   private final ExtendedPropertiesBinder<?, ?, ?> binder;
@@ -40,14 +33,18 @@ final class SupportedBinder {
 
   private final BindingServiceProperties bindingServiceProperties;
 
+  private final InputBindings inputBindings;
+
   SupportedBinder(final String binderConfigurationName, final ExtendedPropertiesBinder<?, ?, ?> binder, final SyncProducerMapping mapping,
-      final Binder propertyBinder, final OutboxProperties outboxProperties, final BindingServiceProperties bindingServiceProperties) {
+      final Binder propertyBinder, final OutboxProperties outboxProperties, final BindingServiceProperties bindingServiceProperties,
+      final InputBindings inputBindings) {
     this.binderConfigurationName = binderConfigurationName;
     this.binder = binder;
     this.mapping = mapping;
     this.propertyBinder = propertyBinder;
     this.outboxProperties = outboxProperties;
     this.bindingServiceProperties = bindingServiceProperties;
+    this.inputBindings = inputBindings;
   }
 
   /** The Spring Cloud Stream binder configuration name this instance was resolved for. */
@@ -135,11 +132,11 @@ final class SupportedBinder {
    * <p>A binding is discarded when it declares no destination (nothing would be published), when its name follows the Spring Cloud Stream
    * convention for function inputs, or when it is a {@linkplain #isConsumerOnlyBinding consumer-only binding}.
    */
-  private static boolean isProducerBinding(final String bindingName, final BindingProperties bindingProperties) {
+  private boolean isProducerBinding(final String bindingName, final BindingProperties bindingProperties) {
     if (bindingProperties == null || bindingProperties.getDestination() == null || bindingProperties.getDestination().isBlank()) {
       return false;
     }
-    if (FUNCTION_INPUT_BINDING.matcher(bindingName).matches()) {
+    if (this.inputBindings.isInputBinding(bindingName)) {
       return false;
     }
     return !isConsumerOnlyBinding(bindingProperties);
