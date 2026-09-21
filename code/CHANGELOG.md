@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#89](https://github.com/InditexTech/scs-outbox/pull/89) Add Maven Central badges to README.md
 - [#96](https://github.com/InditexTech/scs-outbox/pull/96) Enforce synchronous producers for outbox-enabled bindings
+- [#98](https://github.com/InditexTech/scs-outbox/pull/98) Add a metric to measure archiving (post-send interceptor) failures
 
 ### Fixed
 

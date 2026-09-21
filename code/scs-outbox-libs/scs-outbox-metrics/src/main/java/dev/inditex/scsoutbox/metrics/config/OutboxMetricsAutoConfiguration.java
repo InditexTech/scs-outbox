@@ -2,6 +2,7 @@ package dev.inditex.scsoutbox.metrics.config;
 
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.metrics.MessagesPendingMeter;
+import dev.inditex.scsoutbox.metrics.PostSendErrorsMeter;
 import dev.inditex.scsoutbox.metrics.PublishingDelayMeter;
 import dev.inditex.scsoutbox.metrics.PublishingTaskMeter;
 
@@ -38,6 +39,11 @@ public class OutboxMetricsAutoConfiguration {
   @Bean
   public PublishingTaskMeter publishingTaskMeter(final MeterRegistry meterRegistry) {
     return new PublishingTaskMeter(meterRegistry);
+  }
+
+  @Bean
+  public PostSendErrorsMeter postSendErrorsMeter(final MeterRegistry meterRegistry) {
+    return new PostSendErrorsMeter(meterRegistry);
   }
 
 }

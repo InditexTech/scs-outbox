@@ -734,6 +734,7 @@ scs-outbox provides [Micrometer](https://docs.micrometer.io/micrometer/reference
 | `outbox.publishing.time` | Timer | Time taken for the publishing task execution (via `@Timed`) |
 | `outbox.publishing.delay` | Timer | Delay between message capture and publishing |
 | `outbox.publishing.messages` | Counter | Number of messages published |
+| `outbox.publishing.postsend.errors` | Counter | Number of exceptions thrown by post-send interceptors (e.g. archiving), tagged by `interceptor` and `destination` |
 | `outbox.messages.pending` | Gauge | Estimated number of messages pending publishing |
 
 ### Pause message publishing
