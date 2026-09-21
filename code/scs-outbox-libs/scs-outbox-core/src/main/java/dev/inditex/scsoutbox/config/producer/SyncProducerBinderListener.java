@@ -67,7 +67,7 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
     final List<String> configured = new ArrayList<>();
     final Map<String, String> violations = new LinkedHashMap<>();
 
-    for (final OutboxBinding binding : supportedBinder.getBindings()) {
+    for (final OutboxBinding binding : supportedBinder.outboxManagedProducerBindings()) {
       final SyncOutcome outcome = binding.enforceSync();
       switch (outcome.status()) {
         case CONFIGURED -> configured.add(binding.name());

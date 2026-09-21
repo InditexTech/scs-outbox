@@ -90,8 +90,8 @@ class SupportedBinderTest {
         bindingServiceProperties, inputBindings);
   }
 
-  private static List<String> bindingNames(final SupportedBinder supportedBinder) {
-    return supportedBinder.getBindings().stream().map(OutboxBinding::name).toList();
+  private static List<String> outboxBindingNames(final SupportedBinder supportedBinder) {
+    return supportedBinder.outboxManagedProducerBindings().stream().map(OutboxBinding::name).toList();
   }
 
   private static InputBindings inputBindings(final String... names) {
@@ -101,7 +101,7 @@ class SupportedBinderTest {
   }
 
   @Nested
-  class GetBindings {
+  class OutboxManagedProducerBindings {
 
     @Test
     void when_binding_is_excluded_expect_it_not_returned() {
@@ -109,7 +109,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of(BOOK_BINDING)), declared);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -118,7 +118,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of("produce-audit-out-0"), List.of()), declared);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -129,7 +129,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of("myConsumer-in-0", consumer));
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -138,7 +138,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder = supportedBinder(
           outboxProperties(List.of(), List.of()), Map.of("anonymous-inbound", input), inputBindings("anonymous-inbound"));
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -147,7 +147,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder = supportedBinder(
           outboxProperties(List.of(), List.of()), Map.of("anonymous-in-0", input), inputBindings());
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -159,7 +159,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties,
           new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX), kafkaMapping());
 
-      assertThat(bindingNames(supportedBinder)).containsExactly("legacy-in-0");
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly("legacy-in-0");
     }
 
     @Test
@@ -172,7 +172,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties,
           new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX), kafkaMapping());
 
-      assertThat(bindingNames(supportedBinder)).containsExactly("legacy-in-0");
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly("legacy-in-0");
     }
 
     @Test
@@ -180,7 +180,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of("no-destination", new BindingProperties()));
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -191,7 +191,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of(BOOK_BINDING, bindingProperties));
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -201,7 +201,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
     }
 
     @Test
@@ -211,7 +211,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -221,7 +221,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
     }
 
     @Test
@@ -231,7 +231,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -243,7 +243,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -253,7 +253,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), bindingServiceProperties);
 
-      assertThat(bindingNames(supportedBinder)).isEmpty();
+      assertThat(outboxBindingNames(supportedBinder)).isEmpty();
     }
 
     @Test
@@ -267,7 +267,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder = supportedBinder("kafka", outboxProperties(List.of(), List.of()), bindingServiceProperties,
           binder, mapping);
 
-      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
     }
 
     @Test
@@ -278,7 +278,7 @@ class SupportedBinderTest {
       final SupportedBinder supportedBinder =
           supportedBinder(outboxProperties(List.of(), List.of()), Map.of(BOOK_BINDING, bindingProperties));
 
-      assertThat(bindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly(BOOK_BINDING);
     }
 
     @Test
@@ -289,7 +289,7 @@ class SupportedBinderTest {
 
       final SupportedBinder supportedBinder = supportedBinder(outboxProperties(List.of(), List.of()), declared);
 
-      assertThat(bindingNames(supportedBinder)).containsExactlyInAnyOrder(BOOK_BINDING, "produce-audit-out-0");
+      assertThat(outboxBindingNames(supportedBinder)).containsExactlyInAnyOrder(BOOK_BINDING, "produce-audit-out-0");
     }
   }
 

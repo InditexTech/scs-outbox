@@ -59,7 +59,7 @@ final class SupportedBinder {
    *
    * <p>A binding is included when it can publish messages, it is managed by the outbox, and it is served by this binder.
    */
-  List<OutboxBinding> getBindings() {
+  List<OutboxBinding> outboxManagedProducerBindings() {
     final List<OutboxBinding> bindings = new ArrayList<>();
     for (final Map.Entry<String, BindingProperties> entry : this.bindingServiceProperties.getBindings().entrySet()) {
       final String bindingName = entry.getKey();
