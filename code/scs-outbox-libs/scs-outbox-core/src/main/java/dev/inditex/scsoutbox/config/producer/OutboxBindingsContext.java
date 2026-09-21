@@ -3,7 +3,6 @@ package dev.inditex.scsoutbox.config.producer;
 import java.util.Optional;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
-import dev.inditex.scsoutbox.config.producer.SyncProducerMappings.SyncProducerMapping;
 
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.stream.binder.ExtendedPropertiesBinder;
@@ -38,33 +37,17 @@ public class OutboxBindingsContext {
    * @param binderConfigurationName the binder configuration name
    * @param binder the raw {@code org.springframework.cloud.stream.binder.Binder} bean resolved from the binder child context
    * @param binderEnvironment the environment of the binder child context, used to detect settings the application declared explicitly
+   * @param inputBindings the input binding names resolved by Spring Cloud Stream for the application
    */
-  public Optional<SupportedBinder> supportFor(final String binderConfigurationName, final Object binder,
-      final Environment binderEnvironment) {
-    if (!(binder instanceof final ExtendedPropertiesBinder<?, ?, ?> extendedPropertiesBinder)) {
-      return Optional.empty();
-    }
-
-    // The binder child environment inherits the main environment and adds 'spring.cloud.stream.binders.<name>.environment.*'.
-    return SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix())
-        .flatMap(mapping -> this.supportFor(binderConfigurationName, extendedPropertiesBinder, mapping, binderEnvironment,
-            InputBindings.conventionalNamesOnly()));
-  }
-
   Optional<SupportedBinder> supportFor(final String binderConfigurationName, final Object binder, final Environment binderEnvironment,
       final InputBindings inputBindings) {
     if (!(binder instanceof final ExtendedPropertiesBinder<?, ?, ?> extendedPropertiesBinder)) {
       return Optional.empty();
     }
 
+    // The binder child environment inherits the main environment and adds 'spring.cloud.stream.binders.<name>.environment.*'.
     return SyncProducerMappings.findByDefaultsPrefix(extendedPropertiesBinder.getDefaultsPrefix())
-        .flatMap(mapping -> this.supportFor(binderConfigurationName, extendedPropertiesBinder, mapping, binderEnvironment, inputBindings));
-  }
-
-  private Optional<SupportedBinder> supportFor(final String binderConfigurationName,
-      final ExtendedPropertiesBinder<?, ?, ?> binder, final SyncProducerMapping mapping, final Environment binderEnvironment,
-      final InputBindings inputBindings) {
-    return Optional.of(new SupportedBinder(binderConfigurationName, binder, mapping, Binder.get(binderEnvironment), this.outboxProperties,
-        this.bindingServiceProperties, inputBindings));
+        .map(mapping -> new SupportedBinder(binderConfigurationName, extendedPropertiesBinder, mapping, Binder.get(binderEnvironment),
+            this.outboxProperties, this.bindingServiceProperties, inputBindings));
   }
 }

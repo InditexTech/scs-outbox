@@ -51,8 +51,8 @@ class OutboxBindingsContextTest {
     void when_binder_is_not_an_extended_properties_binder_expect_empty() {
       final Binder<?, ?, ?> plainBinder = mock(Binder.class);
 
-      final Optional<SupportedBinder> supportedBinder =
-          context(outboxProperties()).supportFor(BINDER_NAME, plainBinder, new MockEnvironment());
+      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
+          .supportFor(BINDER_NAME, plainBinder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isEmpty();
     }
@@ -61,8 +61,8 @@ class OutboxBindingsContextTest {
     void when_binder_defaults_prefix_is_unknown_expect_empty() {
       final KafkaLikeStubBinder binder = new KafkaLikeStubBinder("spring.cloud.stream.rabbit.default");
 
-      final Optional<SupportedBinder> supportedBinder =
-          context(outboxProperties()).supportFor(BINDER_NAME, binder, new MockEnvironment());
+      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
+          .supportFor(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isEmpty();
     }
@@ -71,8 +71,8 @@ class OutboxBindingsContextTest {
     void when_binder_defaults_prefix_is_known_expect_supported_binder_present() {
       final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
 
-      final Optional<SupportedBinder> supportedBinder =
-          context(outboxProperties()).supportFor(BINDER_NAME, binder, new MockEnvironment());
+      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
+          .supportFor(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isPresent();
     }
