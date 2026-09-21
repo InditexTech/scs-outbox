@@ -25,14 +25,14 @@ public class OutboxBindingsContext {
   }
 
   /** Whether scs-outbox should automatically configure synchronous producers at all. */
-  public boolean isSyncProducerAutoConfigurationEnabled() {
+  boolean isSyncProducerAutoConfigurationEnabled() {
     return this.outboxProperties.getBindings().getSyncProducers().isEnabled();
   }
 
   /**
    * Resolves the given binder into a {@link SupportedBinder}, or {@link Optional#empty()} when scs-outbox does not know how to configure
-   * synchronous producers for it (it is not an {@link ExtendedPropertiesBinder}, or its defaults prefix is not one of the
-   * {@linkplain SyncProducerMappings#supportedBinders() supported binders}).
+   * synchronous producers for it (it is not an {@link ExtendedPropertiesBinder}, or its defaults prefix is not one of the binders supported
+   * by scs-outbox).
    *
    * @param binderConfigurationName the binder configuration name
    * @param binder the raw {@code org.springframework.cloud.stream.binder.Binder} bean resolved from the binder child context

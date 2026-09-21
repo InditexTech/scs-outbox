@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
@@ -16,11 +17,11 @@ import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.env.MockEnvironment;
@@ -65,26 +66,22 @@ class SyncProducerBinderListenerTest {
 
   private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
-    final ApplicationContext applicationContext = mock(ApplicationContext.class);
-    when(applicationContext.getBeansOfType(Bindable.class)).thenReturn(Map.of());
-    when(applicationContext.getBean(OutboxBindingsContext.class))
-        .thenReturn(new OutboxBindingsContext(outboxProperties, bindingServiceProperties));
-    final SyncProducerBinderListener listener = new SyncProducerBinderListener();
-    listener.setApplicationContext(applicationContext);
-    return listener;
+    return new SyncProducerBinderListener(
+        new OutboxBindingsContext(outboxProperties, bindingServiceProperties), bindables());
   }
 
   private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties, final Set<String> inputBindingNames) {
-    final ApplicationContext applicationContext = mock(ApplicationContext.class);
     final Bindable bindable = mock(Bindable.class);
     when(bindable.getInputs()).thenReturn(inputBindingNames);
-    when(applicationContext.getBeansOfType(Bindable.class)).thenReturn(Map.of("function", bindable));
-    when(applicationContext.getBean(OutboxBindingsContext.class))
-        .thenReturn(new OutboxBindingsContext(outboxProperties, bindingServiceProperties));
-    final SyncProducerBinderListener listener = new SyncProducerBinderListener();
-    listener.setApplicationContext(applicationContext);
-    return listener;
+    return new SyncProducerBinderListener(
+        new OutboxBindingsContext(outboxProperties, bindingServiceProperties), bindables(bindable));
+  }
+
+  private static ObjectProvider<Bindable> bindables(final Bindable... bindables) {
+    final ObjectProvider<Bindable> provider = mock();
+    when(provider.stream()).thenAnswer(invocation -> Stream.of(bindables));
+    return provider;
   }
 
   private static KafkaLikeStubBinder kafkaBinder() {

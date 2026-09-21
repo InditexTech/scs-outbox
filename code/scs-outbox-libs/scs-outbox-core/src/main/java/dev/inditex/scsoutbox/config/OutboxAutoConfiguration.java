@@ -31,6 +31,7 @@ import dev.inditex.scsoutbox.scheduler.AfterCommitTrigger;
 import dev.inditex.scsoutbox.scheduler.OutboxScheduledService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationEventPublisher;
@@ -91,14 +93,14 @@ public class OutboxAutoConfiguration {
    * @see dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener
    */
   @Bean
-  public SyncProducerBinderListener scsOutboxSyncProducerBinderListener() {
-    return new SyncProducerBinderListener();
+  public SyncProducerBinderListener scsOutboxSyncProducerBinderListener(
+      final OutboxBindingsContext outboxBindingsContext,
+      final ObjectProvider<Bindable> bindables) {
+    return new SyncProducerBinderListener(outboxBindingsContext, bindables);
   }
 
   /**
-   * Resolved by {@link SyncProducerBinderListener} (which is not itself a Spring-managed collaborator with regular constructor injection,
-   * since it is instantiated by {@code DefaultBinderFactory} before the binder child context exists) to determine whether the automatic
-   * synchronous producer feature is enabled and which bindings it applies to.
+   * Determines whether automatic synchronous producer configuration is enabled and which bindings it applies to.
    */
   @Bean
   public OutboxBindingsContext outboxBindingsContext(

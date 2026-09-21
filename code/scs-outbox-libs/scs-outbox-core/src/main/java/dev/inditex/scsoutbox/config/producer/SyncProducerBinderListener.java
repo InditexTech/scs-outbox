@@ -7,11 +7,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.stream.binder.DefaultBinderFactory;
 import org.springframework.cloud.stream.binding.Bindable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -22,28 +20,28 @@ import org.springframework.context.ConfigurableApplicationContext;
  * are ignored. The order relative to other binder listeners is not guaranteed.
  */
 @Slf4j
-public class SyncProducerBinderListener implements DefaultBinderFactory.Listener, ApplicationContextAware {
+public class SyncProducerBinderListener implements DefaultBinderFactory.Listener {
 
-  private ApplicationContext applicationContext;
+  private final OutboxBindingsContext outboxBindingsContext;
 
-  @Override
-  public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
+  private final ObjectProvider<Bindable> bindables;
+
+  public SyncProducerBinderListener(final OutboxBindingsContext outboxBindingsContext, final ObjectProvider<Bindable> bindables) {
+    this.outboxBindingsContext = outboxBindingsContext;
+    this.bindables = bindables;
   }
 
   @Override
   public void afterBinderContextInitialized(final String binderConfigurationName, final ConfigurableApplicationContext binderContext) {
-    final OutboxBindingsContext bindingsContext = this.applicationContext.getBean(OutboxBindingsContext.class);
-
-    if (!bindingsContext.isSyncProducerAutoConfigurationEnabled()) {
+    if (!this.outboxBindingsContext.isSyncProducerAutoConfigurationEnabled()) {
       log.warn(SyncProducerDiagnostics.autoConfigurationDisabledMessage());
       return;
     }
 
     final Object binder = resolveBinder(binderContext);
-    final InputBindings inputBindings = InputBindings.from(this.applicationContext.getBeansOfType(Bindable.class).values());
+    final InputBindings inputBindings = InputBindings.from(this.bindables.stream().toList());
     final Optional<SupportedBinder> supportedBinder =
-        bindingsContext.supportFor(binderConfigurationName, binder, binderContext.getEnvironment(), inputBindings);
+        this.outboxBindingsContext.supportFor(binderConfigurationName, binder, binderContext.getEnvironment(), inputBindings);
 
     if (supportedBinder.isEmpty()) {
       log.warn(SyncProducerDiagnostics.unsupportedBinderMessage(binderConfigurationName, binder.getClass().getName()));

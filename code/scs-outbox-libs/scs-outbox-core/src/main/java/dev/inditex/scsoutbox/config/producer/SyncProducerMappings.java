@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
  * <p>Mappings are keyed by the defaults prefix reported by each binder and use property names and JavaBean paths, so the core module does
  * not depend on a concrete binder implementation.
  */
-public final class SyncProducerMappings {
+final class SyncProducerMappings {
 
   /** Defaults prefix reported by the Apache Kafka binder. */
-  public static final String KAFKA_DEFAULTS_PREFIX = "spring.cloud.stream.kafka.default";
+  static final String KAFKA_DEFAULTS_PREFIX = "spring.cloud.stream.kafka.default";
 
   private static final Map<String, SyncProducerMapping> MAPPINGS = Map.of(
       KAFKA_DEFAULTS_PREFIX, new SyncProducerMapping(
@@ -28,7 +28,7 @@ public final class SyncProducerMappings {
   }
 
   /** Finds the mapping for a binder defaults prefix. */
-  public static Optional<SyncProducerMapping> findByDefaultsPrefix(final String defaultsPrefix) {
+  static Optional<SyncProducerMapping> findByDefaultsPrefix(final String defaultsPrefix) {
     if (defaultsPrefix == null || defaultsPrefix.isBlank()) {
       return Optional.empty();
     }
@@ -36,12 +36,12 @@ public final class SyncProducerMappings {
   }
 
   /** Returns the binder names supported by automatic synchronous producer configuration. */
-  public static Set<String> supportedBinders() {
+  static Set<String> supportedBinders() {
     return MAPPINGS.values().stream().map(SyncProducerMapping::binderName).collect(Collectors.toUnmodifiableSet());
   }
 
   /** Describes the binder-specific setting required for synchronous publishing. */
-  public record SyncProducerMapping(
+  record SyncProducerMapping(
       String binderName,
       String bindingPropertyTemplate,
       String binderDefaultProperty,
@@ -49,7 +49,7 @@ public final class SyncProducerMappings {
       Object requiredValue) {
 
     /** Builds the binding-scoped property name. */
-    public String bindingProperty(final String bindingName) {
+    String bindingProperty(final String bindingName) {
       return String.format(this.bindingPropertyTemplate, bindingName);
     }
   }
