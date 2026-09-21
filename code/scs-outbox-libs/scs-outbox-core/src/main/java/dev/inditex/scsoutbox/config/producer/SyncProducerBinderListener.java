@@ -22,18 +22,19 @@ import org.springframework.context.ConfigurableApplicationContext;
 @Slf4j
 public class SyncProducerBinderListener implements DefaultBinderFactory.Listener {
 
-  private final OutboxBindingsContext outboxBindingsContext;
+  private final SyncProducerBinderResolver syncProducerBinderResolver;
 
   private final ObjectProvider<Bindable> bindables;
 
-  public SyncProducerBinderListener(final OutboxBindingsContext outboxBindingsContext, final ObjectProvider<Bindable> bindables) {
-    this.outboxBindingsContext = outboxBindingsContext;
+  public SyncProducerBinderListener(final SyncProducerBinderResolver syncProducerBinderResolver,
+      final ObjectProvider<Bindable> bindables) {
+    this.syncProducerBinderResolver = syncProducerBinderResolver;
     this.bindables = bindables;
   }
 
   @Override
   public void afterBinderContextInitialized(final String binderConfigurationName, final ConfigurableApplicationContext binderContext) {
-    if (!this.outboxBindingsContext.isSyncProducerAutoConfigurationEnabled()) {
+    if (!this.syncProducerBinderResolver.isSyncProducerAutoConfigurationEnabled()) {
       log.warn(SyncProducerDiagnostics.autoConfigurationDisabledMessage());
       return;
     }
@@ -41,7 +42,7 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
     final Object binder = resolveBinder(binderContext);
     final InputBindings inputBindings = InputBindings.from(this.bindables.stream().toList());
     final Optional<SupportedBinder> supportedBinder =
-        this.outboxBindingsContext.supportFor(binderConfigurationName, binder, binderContext.getEnvironment(), inputBindings);
+        this.syncProducerBinderResolver.resolve(binderConfigurationName, binder, binderContext.getEnvironment(), inputBindings);
 
     if (supportedBinder.isEmpty()) {
       log.warn(SyncProducerDiagnostics.unsupportedBinderMessage(binderConfigurationName, binder.getClass().getName()));
@@ -55,8 +56,8 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
    * Resolves the Spring Cloud Stream {@code Binder} bean from the binder child context.
    *
    * <p>Fully qualified on purpose: {@code org.springframework.cloud.stream.binder.Binder} would otherwise collide with
-   * {@link org.springframework.boot.context.properties.bind.Binder}, used by {@link OutboxBindingsContext} and {@link OutboxBinding} to
-   * resolve declared properties.
+   * {@link org.springframework.boot.context.properties.bind.Binder}, which {@link SyncProducerBinderResolver} and {@link OutboxBinding} use
+   * to resolve declared properties.
    */
   private static Object resolveBinder(final ConfigurableApplicationContext binderContext) {
     return binderContext.getBean(org.springframework.cloud.stream.binder.Binder.class);

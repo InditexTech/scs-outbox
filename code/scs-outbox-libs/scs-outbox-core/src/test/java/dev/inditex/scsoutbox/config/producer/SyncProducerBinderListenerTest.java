@@ -67,7 +67,7 @@ class SyncProducerBinderListenerTest {
   private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
     return new SyncProducerBinderListener(
-        new OutboxBindingsContext(outboxProperties, bindingServiceProperties), bindables());
+        new SyncProducerBinderResolver(outboxProperties, bindingServiceProperties), bindables());
   }
 
   private static SyncProducerBinderListener listener(final OutboxProperties outboxProperties,
@@ -75,7 +75,7 @@ class SyncProducerBinderListenerTest {
     final Bindable bindable = mock(Bindable.class);
     when(bindable.getInputs()).thenReturn(inputBindingNames);
     return new SyncProducerBinderListener(
-        new OutboxBindingsContext(outboxProperties, bindingServiceProperties), bindables(bindable));
+        new SyncProducerBinderResolver(outboxProperties, bindingServiceProperties), bindables(bindable));
   }
 
   private static ObjectProvider<Bindable> bindables(final Bindable... bindables) {
@@ -178,8 +178,8 @@ class SyncProducerBinderListenerTest {
   class UnsupportedBinders {
 
     /**
-     * The set of causes that make {@code supportFor(...)} return empty (wrong binder type, unknown defaults prefix) is covered by
-     * {@link OutboxBindingsContextTest}; this only verifies the listener does not fail when that happens.
+     * The set of causes that make {@code resolve(...)} return empty (wrong binder type, unknown defaults prefix) is covered by
+     * {@link SyncProducerBinderResolverTest}; this only verifies the listener does not fail when that happens.
      */
     @Test
     void when_binder_is_not_supported_expect_no_failure() {
@@ -196,7 +196,7 @@ class SyncProducerBinderListenerTest {
 
     /**
      * Verifies the feature flag short-circuits before any binder/eligibility logic runs: even though the binding is explicitly declared
-     * asynchronous, no violation is ever evaluated. {@link OutboxBindingsContextTest} covers the flag's boolean logic on its own.
+     * asynchronous, no violation is ever evaluated. {@link SyncProducerBinderResolverTest} covers the flag's boolean logic on its own.
      */
     @Test
     void when_sync_producers_are_disabled_expect_binding_untouched_and_no_failure() {

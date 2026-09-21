@@ -10,16 +10,17 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.core.env.Environment;
 
 /**
- * Single point of contact between {@link SyncProducerBinderListener} and the outbox configuration: whether the automatic synchronous
- * producer feature is enabled, and, for each binder being initialised, whether scs-outbox knows how to configure it.
+ * Resolves initialized binders that scs-outbox can configure for synchronous publishing.
+ *
+ * <p>Also exposes whether automatic synchronous producer configuration is enabled.
  */
-public class OutboxBindingsContext {
+public class SyncProducerBinderResolver {
 
   private final OutboxProperties outboxProperties;
 
   private final BindingServiceProperties bindingServiceProperties;
 
-  public OutboxBindingsContext(final OutboxProperties outboxProperties, final BindingServiceProperties bindingServiceProperties) {
+  public SyncProducerBinderResolver(final OutboxProperties outboxProperties, final BindingServiceProperties bindingServiceProperties) {
     this.outboxProperties = outboxProperties;
     this.bindingServiceProperties = bindingServiceProperties;
   }
@@ -39,7 +40,7 @@ public class OutboxBindingsContext {
    * @param binderEnvironment the environment of the binder child context, used to detect settings the application declared explicitly
    * @param inputBindings the input binding names resolved by Spring Cloud Stream for the application
    */
-  Optional<SupportedBinder> supportFor(final String binderConfigurationName, final Object binder, final Environment binderEnvironment,
+  Optional<SupportedBinder> resolve(final String binderConfigurationName, final Object binder, final Environment binderEnvironment,
       final InputBindings inputBindings) {
     if (!(binder instanceof final ExtendedPropertiesBinder<?, ?, ?> extendedPropertiesBinder)) {
       return Optional.empty();

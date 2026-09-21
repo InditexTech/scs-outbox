@@ -10,8 +10,8 @@ import java.util.concurrent.Executors;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
-import dev.inditex.scsoutbox.config.producer.OutboxBindingsContext;
 import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderResolver;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -94,19 +94,19 @@ public class OutboxAutoConfiguration {
    */
   @Bean
   public SyncProducerBinderListener scsOutboxSyncProducerBinderListener(
-      final OutboxBindingsContext outboxBindingsContext,
+      final SyncProducerBinderResolver syncProducerBinderResolver,
       final ObjectProvider<Bindable> bindables) {
-    return new SyncProducerBinderListener(outboxBindingsContext, bindables);
+    return new SyncProducerBinderListener(syncProducerBinderResolver, bindables);
   }
 
   /**
-   * Determines whether automatic synchronous producer configuration is enabled and which bindings it applies to.
+   * Resolves binders supported by automatic synchronous producer configuration.
    */
   @Bean
-  public OutboxBindingsContext outboxBindingsContext(
+  public SyncProducerBinderResolver syncProducerBinderResolver(
       final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
-    return new OutboxBindingsContext(outboxProperties, bindingServiceProperties);
+    return new SyncProducerBinderResolver(outboxProperties, bindingServiceProperties);
   }
 
   @Bean

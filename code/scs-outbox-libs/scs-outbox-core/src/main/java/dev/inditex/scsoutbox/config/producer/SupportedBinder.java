@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 /**
  * A binder that scs-outbox knows how to enforce synchronous publishing on.
  *
- * <p>Instances are only created by {@link OutboxBindingsContext#supportFor} for binders it recognises, so every method here assumes the
+ * <p>Instances are only created by {@link SyncProducerBinderResolver#resolve} for binders it recognises, so every method here assumes the
  * mapping between binder and required property is already resolved.
  */
 final class SupportedBinder {

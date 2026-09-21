@@ -16,12 +16,12 @@ import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.mock.env.MockEnvironment;
 
-class OutboxBindingsContextTest {
+class SyncProducerBinderResolverTest {
 
   private static final String BINDER_NAME = "named-kafka";
 
-  private static OutboxBindingsContext context(final OutboxProperties outboxProperties) {
-    return new OutboxBindingsContext(outboxProperties, mock(BindingServiceProperties.class));
+  private static SyncProducerBinderResolver resolver(final OutboxProperties outboxProperties) {
+    return new SyncProducerBinderResolver(outboxProperties, mock(BindingServiceProperties.class));
   }
 
   private static OutboxProperties outboxProperties() {
@@ -33,26 +33,26 @@ class OutboxBindingsContextTest {
 
     @Test
     void when_not_configured_expect_enabled_by_default() {
-      assertThat(context(outboxProperties()).isSyncProducerAutoConfigurationEnabled()).isTrue();
+      assertThat(resolver(outboxProperties()).isSyncProducerAutoConfigurationEnabled()).isTrue();
     }
 
     @Test
     void when_explicitly_disabled_expect_disabled() {
       final OutboxProperties outboxProperties = new OutboxProperties(new Bindings(List.of(), List.of(), new SyncProducers(false)));
 
-      assertThat(context(outboxProperties).isSyncProducerAutoConfigurationEnabled()).isFalse();
+      assertThat(resolver(outboxProperties).isSyncProducerAutoConfigurationEnabled()).isFalse();
     }
   }
 
   @Nested
-  class SupportFor {
+  class Resolve {
 
     @Test
     void when_binder_is_not_an_extended_properties_binder_expect_empty() {
       final Binder<?, ?, ?> plainBinder = mock(Binder.class);
 
-      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
-          .supportFor(BINDER_NAME, plainBinder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
+      final Optional<SupportedBinder> supportedBinder = resolver(outboxProperties())
+          .resolve(BINDER_NAME, plainBinder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isEmpty();
     }
@@ -61,8 +61,8 @@ class OutboxBindingsContextTest {
     void when_binder_defaults_prefix_is_unknown_expect_empty() {
       final KafkaLikeStubBinder binder = new KafkaLikeStubBinder("spring.cloud.stream.rabbit.default");
 
-      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
-          .supportFor(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
+      final Optional<SupportedBinder> supportedBinder = resolver(outboxProperties())
+          .resolve(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isEmpty();
     }
@@ -71,8 +71,8 @@ class OutboxBindingsContextTest {
     void when_binder_defaults_prefix_is_known_expect_supported_binder_present() {
       final KafkaLikeStubBinder binder = new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX);
 
-      final Optional<SupportedBinder> supportedBinder = context(outboxProperties())
-          .supportFor(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
+      final Optional<SupportedBinder> supportedBinder = resolver(outboxProperties())
+          .resolve(BINDER_NAME, binder, new MockEnvironment(), InputBindings.conventionalNamesOnly());
 
       assertThat(supportedBinder).isPresent();
     }

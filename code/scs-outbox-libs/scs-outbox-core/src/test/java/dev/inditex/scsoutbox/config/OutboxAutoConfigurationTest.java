@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutorService;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
-import dev.inditex.scsoutbox.config.producer.OutboxBindingsContext;
 import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderResolver;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -338,12 +338,12 @@ class OutboxAutoConfigurationTest {
     }
 
     @Test
-    @DisplayName("registers the outbox bindings context bean")
-    void registers_the_outbox_bindings_context_bean() {
+    @DisplayName("registers the synchronous producer binder resolver bean")
+    void registers_the_sync_producer_binder_resolver_bean() {
       OutboxAutoConfigurationTest.this.baseContextRunner
           .run(context -> {
             assertThat(context).hasNotFailed();
-            assertThat(context).hasSingleBean(OutboxBindingsContext.class);
+            assertThat(context).hasSingleBean(SyncProducerBinderResolver.class);
           });
     }
   }
