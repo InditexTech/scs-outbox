@@ -34,8 +34,8 @@ public class SyncProducerBinderListener implements DefaultBinderFactory.Listener
 
   @Override
   public void afterBinderContextInitialized(final String binderConfigurationName, final ConfigurableApplicationContext binderContext) {
-    if (!this.syncProducerBinderResolver.isSyncProducerAutoConfigurationEnabled()) {
-      log.warn(SyncProducerDiagnostics.autoConfigurationDisabledMessage());
+    if (!this.syncProducerBinderResolver.isProducerSyncEnforced()) {
+      log.warn(SyncProducerDiagnostics.producerSyncEnforcementDisabledMessage());
       return;
     }
 

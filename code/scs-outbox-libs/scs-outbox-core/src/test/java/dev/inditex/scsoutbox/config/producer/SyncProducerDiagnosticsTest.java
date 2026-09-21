@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 class SyncProducerDiagnosticsTest {
 
   @Nested
-  class AutoConfigurationDisabledMessage {
+  class ProducerSyncEnforcementDisabledMessage {
 
     @Test
-    void expect_message_mentions_the_property_that_disables_the_feature_and_the_risk() {
-      final String message = SyncProducerDiagnostics.autoConfigurationDisabledMessage();
+    void expect_message_mentions_the_property_that_disables_enforcement_and_the_risk() {
+      final String message = SyncProducerDiagnostics.producerSyncEnforcementDisabledMessage();
 
       assertThat(message)
-          .contains(SyncProducerDiagnostics.SYNC_PRODUCERS_ENABLED_PROPERTY + "=false")
+          .contains(SyncProducerDiagnostics.ENFORCE_PRODUCER_SYNC_PROPERTY + "=false")
           .contains("fully responsible for configuring synchronous producers")
           .contains("messages may be lost");
     }

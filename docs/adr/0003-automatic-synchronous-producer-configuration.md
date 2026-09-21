@@ -111,7 +111,7 @@ producer binding:
 | Binder is unknown, or is not an `ExtendedPropertiesBinder` | `WARN` listing the binder and the supported binders | scs-outbox *cannot tell* whether the configuration is unsafe. Failing would break every non-Kafka user |
 
 The failure message only suggests fixing the property, or excluding that specific binding via `scs-outbox.bindings.exclusions` when it must
-genuinely publish asynchronously. It deliberately never suggests `scs-outbox.bindings.sync-producers.enabled=false`: that switch disables the
+genuinely publish asynchronously. It deliberately never suggests `scs-outbox.bindings.enforce-producer-sync=false`: that switch disables the
 guarantee for **every** outbox-enabled binding in the application, not just the one that failed to start, so presenting it next to the
 correct, binding-scoped fix would normalise disabling the safety net instead of fixing the misconfiguration.
 
@@ -131,10 +131,12 @@ Only bindings that are **both** outbox-enabled and producer candidates are affec
 Outbox membership reuses `OutboxProperties.Bindings#matches(..)`, the same inclusion/exclusion logic used by `OutboxChannelInterceptor`
 through `OutboxServiceProperties.isOutboxEnabledFor(..)`. The logic lives in `Bindings` so both call sites share exactly one implementation.
 
-A binding is considered a producer candidate when it declares a destination, Spring Cloud Stream has not resolved its name as an input, and it
-does not declare consumer-only settings. The conventional function input name (`<function>-in-<index>`) is retained as a fallback when input
-metadata is not available. Configuring an inbound binding would be harmless for the binder, but would make the listener report inbound
-bindings as violations. This also covers function inputs renamed through `spring.cloud.stream.function.bindings.*`.
+A binding is considered a producer candidate when it declares a destination, it does not declare consumer-only settings, and Spring Cloud
+Stream has not resolved its name as an input. The conventional function input name (`<function>-in-<index>`) is retained as a fallback when
+input metadata is not available. An explicit `spring.cloud.stream.output-bindings` declaration takes precedence over either kind of input
+evidence, so a binding explicitly declared as an output remains a producer candidate. Configuring an inbound binding would be harmless for
+the binder, but would make the listener report inbound bindings as violations. This also covers function inputs renamed through
+`spring.cloud.stream.function.bindings.*`.
 
 Bindings that name a *different* binder are skipped, so a multi-binder application is only ever evaluated against the binder that actually
 serves each binding.
@@ -144,7 +146,7 @@ serves each binding.
 | Opt-out | Effect |
 |---------|--------|
 | `scs-outbox.bindings.exclusions` | The binding is no longer managed by the outbox at all, so no synchronous producer constraint applies. This is the correct opt-out when a binding must publish asynchronously |
-| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the configuration and the validation globally. The application becomes fully responsible for configuring synchronous producers; message loss is possible. A `WARN` is logged. This is a deliberate, upfront, application-wide decision — it is never suggested by a per-binding startup failure |
+| `scs-outbox.bindings.enforce-producer-sync=false` | Disables both producer sync enforcement and validation globally. The application becomes fully responsible for configuring synchronous producers; message loss is possible. A `WARN` is logged. This is a deliberate, upfront, application-wide decision — it is never suggested by a per-binding startup failure |
 
 ---
 

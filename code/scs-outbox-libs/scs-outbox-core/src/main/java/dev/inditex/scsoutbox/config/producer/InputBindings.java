@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.cloud.stream.binding.Bindable;
 
-/** The input binding names resolved by Spring Cloud Stream for the application. */
+/** Names Spring Cloud Stream resolves as inputs for the application. */
 final class InputBindings {
 
   private static final Pattern CONVENTIONAL_INPUT_NAME = Pattern.compile(".*-in-\\d+");
@@ -29,6 +29,12 @@ final class InputBindings {
     return new InputBindings(Set.of());
   }
 
+  /**
+   * Whether the name is resolved as an input or follows the conventional input name pattern.
+   *
+   * <p>This is input evidence, not the binding's final direction: an explicit {@code spring.cloud.stream.output-bindings} declaration takes
+   * precedence.
+   */
   boolean isInputBinding(final String bindingName) {
     return this.resolvedNames.contains(bindingName) || CONVENTIONAL_INPUT_NAME.matcher(bindingName).matches();
   }

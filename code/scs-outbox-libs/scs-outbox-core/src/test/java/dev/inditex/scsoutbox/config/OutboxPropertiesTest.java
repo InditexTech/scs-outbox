@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
-import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 
 class OutboxPropertiesTest {
 
@@ -96,44 +98,40 @@ class OutboxPropertiesTest {
     }
 
     @Test
-    void when_two_argument_constructor_expect_sync_producers_enabled_by_default() {
+    void when_two_argument_constructor_expect_producer_sync_enforced_by_default() {
       final Bindings bindings = new Bindings(List.of(), List.of());
 
-      assertThat(bindings.getSyncProducers()).isNotNull();
-      assertThat(bindings.getSyncProducers().isEnabled()).isTrue();
+      assertThat(bindings.isEnforceProducerSync()).isTrue();
     }
 
     @Test
-    void when_null_sync_producers_expect_enabled_by_default() {
+    void when_null_enforce_producer_sync_expect_enforced_by_default() {
       final Bindings bindings = new Bindings(List.of(), List.of(), null);
 
-      assertThat(bindings.getSyncProducers().isEnabled()).isTrue();
+      assertThat(bindings.isEnforceProducerSync()).isTrue();
     }
 
     @Test
-    void when_sync_producers_disabled_expect_disabled() {
-      final Bindings bindings = new Bindings(List.of(), List.of(), new SyncProducers(false));
+    void when_producer_sync_enforcement_disabled_expect_disabled() {
+      final Bindings bindings = new Bindings(List.of(), List.of(), false);
 
-      assertThat(bindings.getSyncProducers().isEnabled()).isFalse();
+      assertThat(bindings.isEnforceProducerSync()).isFalse();
     }
   }
 
   @Nested
-  class SyncProducersConstructor {
+  @SpringBootTest(
+      classes = {OutboxPropertiesTest.class},
+      properties = {"scs-outbox.bindings.enforce-producer-sync=false"})
+  @EnableConfigurationProperties(OutboxProperties.class)
+  class SpringBootBinding {
+
+    @Autowired
+    private OutboxProperties outboxProperties;
 
     @Test
-    void when_no_argument_constructor_expect_enabled() {
-      assertThat(new SyncProducers().isEnabled()).isTrue();
-    }
-
-    @Test
-    void when_null_expect_enabled() {
-      assertThat(new SyncProducers(null).isEnabled()).isTrue();
-    }
-
-    @Test
-    void when_true_expect_enabled() {
-      assertThat(new SyncProducers(true).isEnabled()).isTrue();
+    void when_producer_sync_enforcement_is_configured_expect_bound_value() {
+      assertThat(this.outboxProperties.getBindings().isEnforceProducerSync()).isFalse();
     }
   }
 

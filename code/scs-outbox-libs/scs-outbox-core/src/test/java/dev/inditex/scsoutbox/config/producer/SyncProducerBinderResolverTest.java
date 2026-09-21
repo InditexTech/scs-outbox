@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
-import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,18 +28,18 @@ class SyncProducerBinderResolverTest {
   }
 
   @Nested
-  class IsSyncProducerAutoConfigurationEnabled {
+  class IsProducerSyncEnforced {
 
     @Test
     void when_not_configured_expect_enabled_by_default() {
-      assertThat(resolver(outboxProperties()).isSyncProducerAutoConfigurationEnabled()).isTrue();
+      assertThat(resolver(outboxProperties()).isProducerSyncEnforced()).isTrue();
     }
 
     @Test
     void when_explicitly_disabled_expect_disabled() {
-      final OutboxProperties outboxProperties = new OutboxProperties(new Bindings(List.of(), List.of(), new SyncProducers(false)));
+      final OutboxProperties outboxProperties = new OutboxProperties(new Bindings(List.of(), List.of(), false));
 
-      assertThat(resolver(outboxProperties).isSyncProducerAutoConfigurationEnabled()).isFalse();
+      assertThat(resolver(outboxProperties).isProducerSyncEnforced()).isFalse();
     }
   }
 

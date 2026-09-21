@@ -67,9 +67,9 @@ class SyncProducerConflictIT {
         .hasMessageContaining("output")
         .hasMessageContaining(OUTBOX_BINDING_SYNC_PROPERTY + "=false")
         .hasMessageContaining("scs-outbox.bindings.exclusions")
-        // The global 'scs-outbox.bindings.sync-producers.enabled=false' switch must never be suggested as a fix for a single
+        // The global 'scs-outbox.bindings.enforce-producer-sync=false' switch must never be suggested as a fix for a single
         // misconfigured binding: it disables the delivery guarantee for every outbox-enabled binding in the application.
-        .hasMessageNotContaining("scs-outbox.bindings.sync-producers.enabled=false");
+        .hasMessageNotContaining("scs-outbox.bindings.enforce-producer-sync=false");
   }
 
   @Test
@@ -83,10 +83,10 @@ class SyncProducerConflictIT {
   }
 
   @Test
-  void when_automatic_configuration_is_disabled_expect_startup_to_succeed() {
+  void when_producer_sync_enforcement_is_disabled_expect_startup_to_succeed() {
     try (ConfigurableApplicationContext context = run(
         OUTBOX_BINDING_SYNC_PROPERTY + "=false",
-        "scs-outbox.bindings.sync-producers.enabled=false")) {
+        "scs-outbox.bindings.enforce-producer-sync=false")) {
       assertThat(context.isRunning()).isTrue();
     }
   }

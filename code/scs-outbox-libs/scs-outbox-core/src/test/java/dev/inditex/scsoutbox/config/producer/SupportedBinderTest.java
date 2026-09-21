@@ -142,6 +142,18 @@ class SupportedBinderTest {
     }
 
     @Test
+    void when_renamed_function_input_is_declared_as_explicit_output_expect_it_returned() {
+      final String bindingName = "anonymous-inbound";
+      final BindingServiceProperties bindingServiceProperties = bindings(Map.of(bindingName, producerBinding("published")));
+      when(bindingServiceProperties.getOutputBindings()).thenReturn(bindingName);
+
+      final SupportedBinder supportedBinder = supportedBinder(BINDER_NAME, outboxProperties(List.of(), List.of()), bindingServiceProperties,
+          new KafkaLikeStubBinder(SyncProducerMappings.KAFKA_DEFAULTS_PREFIX), kafkaMapping(), inputBindings(bindingName));
+
+      assertThat(outboxBindingNames(supportedBinder)).containsExactly(bindingName);
+    }
+
+    @Test
     void when_function_input_metadata_is_unavailable_expect_conventional_name_to_be_used_as_fallback() {
       final BindingProperties input = producerBinding("inbound");
       final SupportedBinder supportedBinder = supportedBinder(

@@ -482,7 +482,7 @@ graph TD
 |----------|------|---------|-------------|
 | `bindings.inclusions` | `List<String>` | `[]` (all bindings) | Bindings to enable outbox for. Supports regex with `regex:` prefix (see [Regex binding inclusions/exclusions](#regex-binding-inclusionsexclusions)) |
 | `bindings.exclusions` | `List<String>` | `[]` | Bindings to exclude from outbox. Supports regex with `regex:` prefix (see [Regex binding inclusions/exclusions](#regex-binding-inclusionsexclusions)). **Exclusions take precedence** |
-| `bindings.sync-producers.enabled` | `Boolean` | `true` | Automatically configure synchronous producers for outbox-enabled bindings and fail at startup when one is explicitly asynchronous (see [Synchronous producers](#synchronous-producers)) |
+| `bindings.enforce-producer-sync` | `Boolean` | `true` | Enforce synchronous producers for outbox-enabled bindings: configure missing settings and fail at startup when one is explicitly asynchronous (see [Synchronous producers](#synchronous-producers)) |
 
 ### Publishing properties
 
@@ -920,7 +920,7 @@ See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/
 | Opt-out | Consequence |
 |---------|-------------|
 | `scs-outbox.bindings.exclusions=<binding>` | The binding is no longer managed by the outbox, so no constraint applies. **This is the correct opt-out** when a specific binding must publish asynchronously |
-| `scs-outbox.bindings.sync-producers.enabled=false` | Disables both the automatic configuration and the validation for **every** outbox-enabled binding in the application. This is a drastic, application-wide decision, not a fix for a single misconfigured binding — it is never suggested by the startup failure. Set it only if you have your own way of guaranteeing synchronous publishing; otherwise **messages may be lost**. A `WARN` is logged at startup |
+| `scs-outbox.bindings.enforce-producer-sync=false` | Disables both producer sync enforcement and validation for **every** outbox-enabled binding in the application. This is a drastic, application-wide decision, not a fix for a single misconfigured binding — it is never suggested by the startup failure. Set it only if you have your own way of guaranteeing synchronous publishing; otherwise **messages may be lost**. A `WARN` is logged at startup |
 
 ### Kafka linger property
 

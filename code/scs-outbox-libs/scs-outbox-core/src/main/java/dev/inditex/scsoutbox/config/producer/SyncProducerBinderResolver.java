@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 /**
  * Resolves initialized binders that scs-outbox can configure for synchronous publishing.
  *
- * <p>Also exposes whether automatic synchronous producer configuration is enabled.
+ * <p>Also exposes whether scs-outbox should enforce synchronous producers.
  */
 public class SyncProducerBinderResolver {
 
@@ -25,9 +25,9 @@ public class SyncProducerBinderResolver {
     this.bindingServiceProperties = bindingServiceProperties;
   }
 
-  /** Whether scs-outbox should automatically configure synchronous producers at all. */
-  boolean isSyncProducerAutoConfigurationEnabled() {
-    return this.outboxProperties.getBindings().getSyncProducers().isEnabled();
+  /** Whether scs-outbox should enforce synchronous producers for outbox-enabled bindings. */
+  boolean isProducerSyncEnforced() {
+    return this.outboxProperties.getBindings().isEnforceProducerSync();
   }
 
   /**

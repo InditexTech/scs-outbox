@@ -24,31 +24,37 @@ public class OutboxProperties {
 
     private final List<BindingMatcher> exclusions = new ArrayList<>();
 
-    private final SyncProducers syncProducers;
+    /**
+     * Whether scs-outbox should enforce synchronous producers for outbox-enabled bindings.
+     *
+     * <p>When enabled, scs-outbox configures missing producer sync settings and fails startup when the application explicitly configures an
+     * outbox-enabled producer as asynchronous.
+     */
+    private final boolean enforceProducerSync;
 
     public Bindings(final List<String> inclusions, final List<String> exclusions) {
       this(inclusions, exclusions, null);
     }
 
     /**
-     * Creates the binding selection configuration.
+     * Creates the binding selection and producer sync enforcement configuration.
      *
      * <p>Note: this constructor is explicitly annotated with {@link ConstructorBinding} because the class declares more than one
      * constructor, which disables Spring Boot's "single parameterized constructor" inference.
      *
      * @param inclusions raw inclusion entries (exact binding names or {@code regex:}-prefixed patterns)
      * @param exclusions raw exclusion entries (exact binding names or {@code regex:}-prefixed patterns)
-     * @param syncProducers synchronous producer auto-configuration settings
+     * @param enforceProducerSync whether scs-outbox should enforce synchronous producers for outbox-enabled bindings
      */
     @ConstructorBinding
-    public Bindings(final List<String> inclusions, final List<String> exclusions, final SyncProducers syncProducers) {
+    public Bindings(final List<String> inclusions, final List<String> exclusions, final Boolean enforceProducerSync) {
       if (inclusions != null) {
         inclusions.stream().map(BindingMatcher::new).forEach(this.inclusions::add);
       }
       if (exclusions != null) {
         exclusions.stream().map(BindingMatcher::new).forEach(this.exclusions::add);
       }
-      this.syncProducers = Objects.requireNonNullElseGet(syncProducers, SyncProducers::new);
+      this.enforceProducerSync = Objects.requireNonNullElse(enforceProducerSync, true);
       this.validateNoExactConflicts();
     }
 
@@ -92,28 +98,4 @@ public class OutboxProperties {
     }
   }
 
-  /**
-   * Controls the automatic configuration of synchronous producers for outbox-enabled bindings.
-   *
-   * <p>When enabled (the default), scs-outbox switches every outbox-enabled producer binding to synchronous mode when its binder is
-   * initialised, and fails fast at startup when a binding is explicitly configured as asynchronous.
-   *
-   * <p>Disabling this flag turns off both behaviours. The application then becomes fully responsible for configuring synchronous producers;
-   * otherwise message loss is possible, because scs-outbox deletes the outbox record as soon as {@code StreamBridge.send} returns
-   * {@code true}, which for asynchronous producers happens before the broker acknowledges the record.
-   */
-  @Getter
-  public static class SyncProducers {
-
-    private final boolean enabled;
-
-    public SyncProducers() {
-      this(null);
-    }
-
-    @ConstructorBinding
-    public SyncProducers(final Boolean enabled) {
-      this.enabled = Objects.requireNonNullElse(enabled, true);
-    }
-  }
 }

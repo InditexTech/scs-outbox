@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import dev.inditex.scsoutbox.config.OutboxProperties;
 import dev.inditex.scsoutbox.config.OutboxProperties.Bindings;
-import dev.inditex.scsoutbox.config.OutboxProperties.SyncProducers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -199,10 +198,10 @@ class SyncProducerBinderListenerTest {
      * asynchronous, no violation is ever evaluated. {@link SyncProducerBinderResolverTest} covers the flag's boolean logic on its own.
      */
     @Test
-    void when_sync_producers_are_disabled_expect_binding_untouched_and_no_failure() {
+    void when_producer_sync_enforcement_is_disabled_expect_binding_untouched_and_no_failure() {
       final KafkaLikeStubBinder binder = kafkaBinder();
       final OutboxProperties outboxProperties =
-          new OutboxProperties(new Bindings(List.of(), List.of(), new SyncProducers(false)));
+          new OutboxProperties(new Bindings(List.of(), List.of(), false));
       final MockEnvironment environment = new MockEnvironment().withProperty(BOOK_SYNC_PROPERTY, "false");
 
       assertThatCode(() -> listener(outboxProperties, bindings(bookBinding()))

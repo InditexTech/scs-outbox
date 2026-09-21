@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
  */
 final class SyncProducerDiagnostics {
 
-  /** Property that globally disables the automatic synchronous producer configuration. */
-  static final String SYNC_PRODUCERS_ENABLED_PROPERTY = "scs-outbox.bindings.sync-producers.enabled";
+  /** Property that globally disables synchronous producer enforcement. */
+  static final String ENFORCE_PRODUCER_SYNC_PROPERTY = "scs-outbox.bindings.enforce-producer-sync";
 
   /** Property used to remove a binding from outbox management, suggested as a fix for a binding that must publish asynchronously. */
   static final String BINDINGS_EXCLUSIONS_PROPERTY = "scs-outbox.bindings.exclusions";
@@ -28,10 +28,10 @@ final class SyncProducerDiagnostics {
   private SyncProducerDiagnostics() {
   }
 
-  /** Message logged when {@link #SYNC_PRODUCERS_ENABLED_PROPERTY} disables the automatic synchronous producer configuration. */
-  static String autoConfigurationDisabledMessage() {
-    return "Automatic synchronous producer configuration is disabled ('"
-        + SYNC_PRODUCERS_ENABLED_PROPERTY + "=false')."
+  /** Message logged when {@link #ENFORCE_PRODUCER_SYNC_PROPERTY} disables synchronous producer enforcement. */
+  static String producerSyncEnforcementDisabledMessage() {
+    return "Synchronous producer enforcement is disabled ('"
+        + ENFORCE_PRODUCER_SYNC_PROPERTY + "=false')."
         + " The application is fully responsible for configuring synchronous producers on outbox-enabled bindings;"
         + " messages may be lost if a producer publishes asynchronously.";
   }

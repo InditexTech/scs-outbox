@@ -131,8 +131,8 @@ final class SupportedBinder {
    * Returns {@code true} when the binding may be used to publish messages, and is therefore a candidate for synchronous producer
    * configuration.
    *
-   * <p>A binding is discarded when it declares no destination (nothing would be published), when its name follows the Spring Cloud Stream
-   * convention for function inputs, or when it is a {@linkplain #isConsumerOnlyBinding consumer-only binding}.
+   * <p>A binding is discarded when it declares no destination (nothing would be published), when Spring Cloud Stream resolves it as an
+   * input and it is not explicitly declared as an output, or when it is a {@linkplain #isConsumerOnlyBinding consumer-only binding}.
    */
   private boolean isProducerBinding(final String bindingName, final BindingProperties bindingProperties) {
     if (bindingProperties == null || bindingProperties.getDestination() == null || bindingProperties.getDestination().isBlank()) {

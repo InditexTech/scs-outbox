@@ -44,6 +44,7 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.integration.config.GlobalChannelInterceptor;
 
 @Slf4j
@@ -94,7 +95,7 @@ public class OutboxAutoConfiguration {
    */
   @Bean
   public SyncProducerBinderListener scsOutboxSyncProducerBinderListener(
-      final SyncProducerBinderResolver syncProducerBinderResolver,
+      final @Lazy SyncProducerBinderResolver syncProducerBinderResolver,
       final ObjectProvider<Bindable> bindables) {
     return new SyncProducerBinderListener(syncProducerBinderResolver, bindables);
   }

@@ -1,5 +1,6 @@
 package dev.inditex.scsoutbox.config.producer;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -37,7 +38,7 @@ final class SyncOutcome {
   }
 
   static SyncOutcome violation(final DeclaredSetting declaredSetting) {
-    return new SyncOutcome(Status.VIOLATION, declaredSetting);
+    return new SyncOutcome(Status.VIOLATION, Objects.requireNonNull(declaredSetting));
   }
 
   Status status() {
