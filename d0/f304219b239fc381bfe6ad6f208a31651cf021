@@ -1,0 +1,23 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/OutboxAutoConfiguration.java
+  s_7133d3b01af4dd::t_4a8272fdbe76e1 34,42,96-99,103
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/OutboxBindingsContext.java
+  s_7133d3b01af4dd::t_9c5f71fece05f6 28,34-35
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerMappings.java
+  s_7133d3b01af4dd::t_abfc9e1ae694e1 14,17,31,39,44,52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d0f304219b239fc381bfe6ad6f208a31651cf021",
+  "prompts": {},
+  "sessions": {
+    "s_7133d3b01af4dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3bb44956ffebcl30VQ15pjdeV",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
