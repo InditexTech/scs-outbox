@@ -31,7 +31,7 @@ To maintain a collaborative and respectful environment, please consider the foll
 
 ## Contribution Guidelines
 
-- All contributors are expected to follow the project's [code of conduct](CODE_of_CONDUCT.md). Please be respectful and
+- All contributors are expected to follow the project's [code of conduct](CODE_OF_CONDUCT.md). Please be respectful and
 considerate towards other contributors.
 - Before starting work on a new feature or fix, check existing [issues](../../issues) and [pull requests](../../pulls)
 to avoid duplications and unnecessary discussions.
@@ -44,5 +44,3 @@ project's structure or architecture.
 and its purpose.
 - Be sure to link the corresponding issue in your pull request to maintain proper tracking of contributions.
 - Remember to add license and copyright information following the [REUSE Specification](https://reuse.software/spec/#copyright-and-licensing-information).
-
-## Development
