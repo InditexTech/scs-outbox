@@ -29,10 +29,10 @@ class MultiThreadingOutboxPublishingTaskTest extends AbstractOutboxPublishingTas
     // 30 ms of send message delay
     // then
     // 150 messages can be published in less than 1.5 seconds
-    final int ThreadPoolSize = 5;
-    final int sendMessageDelay = 25;
+    final int threadPoolSize = 5;
+    final int sendMessageDelay = 30;
     final int numOfMessages = 150;
-    this.generateScenario(ThreadPoolSize, sendMessageDelay, numOfMessages);
+    this.generateScenario(threadPoolSize, sendMessageDelay, numOfMessages);
     final List<OutboxMessage> unpublishedOutboxMessages = this.repository.findAllOrderByCapturedAt(UNLIMITED);
 
     final OutboxPublishingTaskReport report = this.task.run();
