@@ -11,6 +11,7 @@ public class CompositeJsonMapper implements JsonMapper<Object> {
 
   private final List<JsonMapper<?>> mappers;
 
+  @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   public String writeValueAsString(final Object value) {
     final JsonMapper mapper = this.mappers.stream()
