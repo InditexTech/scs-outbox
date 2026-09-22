@@ -62,7 +62,7 @@ class MultiThreadingOutboxPublishingTaskTest extends AbstractOutboxPublishingTas
     return messages;
   }
 
-  private class AnswerWithDelay implements Answer<Object> {
+  private static class AnswerWithDelay implements Answer<Object> {
 
     private final int delay;
 

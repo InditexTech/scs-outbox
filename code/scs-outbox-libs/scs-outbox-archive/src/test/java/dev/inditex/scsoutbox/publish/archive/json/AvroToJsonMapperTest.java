@@ -76,7 +76,7 @@ class AvroToJsonMapperTest {
       getterVisibility = JsonAutoDetect.Visibility.NONE,
       setterVisibility = JsonAutoDetect.Visibility.NONE,
       creatorVisibility = JsonAutoDetect.Visibility.NONE)
-  abstract class JacksonIgnoreAvroProperties {
+  abstract static class JacksonIgnoreAvroProperties {
 
     @JsonIgnore
     public abstract org.apache.avro.Schema getClassSchema();
