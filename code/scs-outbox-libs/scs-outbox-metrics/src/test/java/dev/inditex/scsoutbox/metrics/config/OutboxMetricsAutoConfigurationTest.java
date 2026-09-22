@@ -48,6 +48,7 @@ class OutboxMetricsAutoConfigurationTest {
     @Test
     void when_metrics_disabled_expect_autoconfiguration_skipped() {
       OutboxMetricsAutoConfigurationTest.this.contextRunner
+          .withPropertyValues("scs-outbox.metrics.enabled=false")
           .withBean(MeterRegistry.class, SimpleMeterRegistry::new)
           .run(context -> {
             assertThat(context).hasNotFailed();
