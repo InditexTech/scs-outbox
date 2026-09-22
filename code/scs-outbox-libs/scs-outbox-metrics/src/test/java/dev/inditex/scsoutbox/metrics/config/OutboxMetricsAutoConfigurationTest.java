@@ -64,5 +64,20 @@ class OutboxMetricsAutoConfigurationTest {
             assertThat(context).doesNotHaveBean(MessagesPendingMeter.class);
           });
     }
+
+    @Test
+    void when_outbox_message_repository_absent_expect_other_metrics_created() {
+      OutboxMetricsAutoConfigurationTest.this.contextRunner
+          .withPropertyValues("scs-outbox.metrics.enabled=true")
+          .withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).hasSingleBean(TimedAspect.class);
+            assertThat(context).doesNotHaveBean(MessagesPendingMeter.class);
+            assertThat(context).hasSingleBean(PublishingDelayMeter.class);
+            assertThat(context).hasSingleBean(PublishingTaskMeter.class);
+            assertThat(context).hasSingleBean(PostSendErrorsMeter.class);
+          });
+    }
   }
 }

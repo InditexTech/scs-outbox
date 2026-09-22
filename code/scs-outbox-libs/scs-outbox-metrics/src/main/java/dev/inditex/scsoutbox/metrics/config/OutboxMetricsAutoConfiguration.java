@@ -31,6 +31,7 @@ public class OutboxMetricsAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnBean(OutboxMessageRepository.class)
   public MessagesPendingMeter messagesPendingMeter(final MeterRegistry meterRegistry,
       final OutboxMessageRepository outboxMessageRepository) {
     return new MessagesPendingMeter(meterRegistry, outboxMessageRepository);
