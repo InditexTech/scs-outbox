@@ -1,0 +1,19 @@
+CONTRIBUTING.md
+  s_1c75c67c4de164::t_38b2529975ce70 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "53cc6271887fc0497c0342b79b614dc1aa8b5aac",
+  "prompts": {},
+  "sessions": {
+    "s_1c75c67c4de164": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "8a3a0d73-26b1-47c4-b831-834dffae5cb4",
+        "model": "zai-org/GLM-5.3-Flash"
+      },
+      "human_author": "Andrea Magán Rey <andrea.magan@outlook.com>"
+    }
+  }
+}
