@@ -1,0 +1,81 @@
+{
+  "configuration": {
+    "branch_roles": {
+      "development_branch": "develop",
+      "release_branch": "main"
+    },
+    "development_flow": "git-flow",
+    "outputs": [
+      "gh-release",
+      "publish"
+    ],
+    "parameters": {
+      "project_type": "monorepo",
+      "release": {
+        "lifecycle": "delegated",
+        "packages": [
+          "scs-outbox-archive",
+          "scs-outbox-archive-jdbc",
+          "scs-outbox-archive-mongodb",
+          "scs-outbox-core",
+          "scs-outbox-jdbc",
+          "scs-outbox-jdbc-starter",
+          "scs-outbox-metrics",
+          "scs-outbox-mongodb",
+          "scs-outbox-mongodb-starter",
+          "scs-outbox-serialization",
+          "scs-outbox-test-support"
+        ],
+        "snapshot_publish": true,
+        "strategy": "locked-step"
+      },
+      "working_directory": "code"
+    }
+  },
+  "creation_year": 2026,
+  "integrity": {
+    "algorithm": "hmac-sha256",
+    "signature": "536a1faa087d87798d618a0f3051ba4b1b814fb47be6edd44d319f5579a4dae5"
+  },
+  "managed_by": "InditexTech CI governance",
+  "managed_paths": {
+    ".github/ISSUE_TEMPLATE/1-bug.yml": "cd4dad3f32fe707e06324790a2fe2c25829c55566de2b459d744e785b36e1205",
+    ".github/ISSUE_TEMPLATE/2-feature.yml": "ebb92730d6c01641d055f97ac094cbe07f88fac24be9b689ddf26e47e7bda863",
+    ".github/ISSUE_TEMPLATE/3-other.yml": "5a839b39a98704036210dee498146f51bd5a6c057228685680e02004ff063a9a",
+    ".github/ISSUE_TEMPLATE/config.yml": "10e5dee4d49aa9e7792ceb4c986160c61f95da1ba00a64bf06e5f1f636cd17ec",
+    ".github/inditextech-ci-java.json": "260f50711e3f8cbfb7694f4efe76ba8aabec8372b95cd725eb75ca0669a6260e",
+    ".github/workflows/code-maven_java-PR_verify.yml": "9d763ae0ab0b6dbcc564b426fda3853da879c6e6c1766267107f0dc296fa9809",
+    ".github/workflows/code-maven_java-build_snapshot.yml": "a0e2352e2829064fac119de13c11e69ba0339dd18b3ada350b4ffd6c1b92321e",
+    ".github/workflows/code-maven_java-release-core.yml": "8f8d2cb22b25181b07992306e06cf1a62b2dd10f25d2776cbd5733123f7583e9",
+    ".github/workflows/code-maven_java-release.yml": "45e8fdcab2a47f28dec35c5d6df872d69e8a8502be5b714a8dc9aaaa49b9720f",
+    ".github/workflows/code-maven_java-sonarcloud-analysis.yml": "023af151ca9dfadb39daa8d07fdd631e5d56b1f2a800e10c8031972df3e938e8",
+    ".github/workflows/code-release_preview.yml": "73d3b09e770a741a9de6cc250c5e45a29ca0d86f35b6161a946edb075593dc8f",
+    ".github/workflows/codeql.yml": "b4ef9dfddd7b28387b669d48a4228225dc1d6dc76f98d21b65dd4a324d228ad5",
+    ".github/workflows/pr-verify.yml": "dfcff10f7b2ff38a112ea4051e79462f4f2c6ad1a82035db3145327e79a34fbb",
+    ".github/workflows/push-verify.yml": "49e6e9c6a7015ea59a2bc831982b2fc4bfd1d5721302f6041170b4a15b7d56e1",
+    ".github/workflows/scorecard-analysis.yml": "b45c2a0f87801796cefb4363d9f1414891b0734bc07de3f50d4a880e22faea10",
+    ".github/workflows/sync-to-develop.yml": "2f80696aeb3aa35a47944535539ca1887a8cea0cf11dd62e1a103497aa395acc"
+  },
+  "managed_variables": {
+    "DEVELOPMENT_FLOW": "git-flow",
+    "GIT_FLOW_DEVELOPMENT_BRANCH": "develop",
+    "GIT_FLOW_RELEASE_BRANCH": "main",
+    "PROJECT_TYPE": "monorepo",
+    "WORKING_DIRECTORY": "code"
+  },
+  "profile": "java",
+  "repository_id": 1229656237,
+  "retained_paths": {
+    ".github/PULL_REQUEST_TEMPLATE.md": "4af8b4cbc4da2efa50d0e9d5ab19c74f44e24dd07b1a05de2319206c34bdc23a",
+    "CODE_OF_CONDUCT.md": "ba3f5ddb8ec2d5b4264f4444dc8dd6cde69077b08aeecb31ae1b6c4691f15188",
+    "CONTRIBUTING.md": "dcf87e65409d90da6e81566d15b291da834b4a4892c34a6678a31dfc4fd91372",
+    "SECURITY.md": "62fcb492e9927b34ba3ce2ce179b43eb6ca57b243e5a6e69165864e35bb8d6ee",
+    "code/.tool-versions": "8167a8b24549934ef11bd90902a405c02b511c66c2d7f5daa6132c004c4f1bb2",
+    "repolinter.json": "cca4befe93b3577d5410fc221358177e859344383e9cc47ce62812006cc2b779"
+  },
+  "schema_version": 2,
+  "source_digests": {
+    "base": "36c85df90ec85d0c84361a49fb6ff063827e5fa6ea7d7cb645097350c25bd14c",
+    "java": "7afef62e4b579b7ddcba85d10a064c4047849e19486534b710471ca4618fa39d"
+  }
+}

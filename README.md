@@ -1,5 +1,8 @@
 # SCS-OUTBOX
 
+[![Maven Central: scs-outbox-jdbc-starter](https://img.shields.io/maven-central/v/dev.inditex.scsoutbox/scs-outbox-jdbc-starter.svg?label=scs-outbox-jdbc-starter)](https://central.sonatype.com/artifact/dev.inditex.scsoutbox/scs-outbox-jdbc-starter)
+[![Maven Central: scs-outbox-mongodb-starter](https://img.shields.io/maven-central/v/dev.inditex.scsoutbox/scs-outbox-mongodb-starter.svg?label=scs-outbox-mongodb-starter)](https://central.sonatype.com/artifact/dev.inditex.scsoutbox/scs-outbox-mongodb-starter)
+
 Outbox for Spring Cloud Stream is a library that implements the [transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html) for [Spring Cloud Stream](https://spring.io/projects/spring-cloud-stream) applications.
 
 It intercepts outbound messages produced via `StreamBridge`, stores them inside the current application transaction, and publishes them later through a scheduled task — guaranteeing both **at-least-once delivery** and **message ordering**.
@@ -249,10 +252,7 @@ spring:
           brokers: localhost:9092
           configuration:
             linger.ms: 0        # avoid batching delays (recommended)
-        bindings:
-          orders-out-0:
-            producer:
-              sync: true        # required for at-least-once delivery
+        # 'bindings.orders-out-0.producer.sync=true' is configured automatically by scs-outbox
       bindings:
         orders-out-0:
           destination: orders
@@ -297,10 +297,6 @@ spring:
           brokers: ${KAFKA_BROKERS:localhost:9092}
           configuration:
             linger.ms: 0
-        bindings:
-          orders-out-0:
-            producer:
-              sync: true
       bindings:
         orders-out-0:
           destination: orders
@@ -336,10 +332,6 @@ spring:
           brokers: ${KAFKA_BROKERS:localhost:9092}
           configuration:
             linger.ms: 0
-        bindings:
-          orders-out-0:
-            producer:
-              sync: true
       bindings:
         orders-out-0:
           destination: orders
@@ -370,10 +362,6 @@ spring:
           brokers: ${KAFKA_BROKERS:localhost:9092}
           configuration:
             linger.ms: 0
-        bindings:
-          orders-out-0:
-            producer:
-              sync: true
       bindings:
         orders-out-0:
           destination: orders
@@ -438,7 +426,7 @@ sequenceDiagram
 ```
 
 > [!IMPORTANT]
-> To guarantee message ordering and delivery, configure your Spring Cloud Stream producers in **synchronous** mode. See [Synchronous Producers](#synchronous-producers).
+> The outbox record is deleted as soon as `StreamBridge.send` returns `true`, which for an asynchronous producer happens **before** the broker acknowledges the record. To guarantee message ordering and delivery, producers must publish in **synchronous** mode. scs-outbox configures this automatically for the Kafka binder. See [Synchronous producers](#synchronous-producers).
 
 ### Module overview
 
@@ -494,6 +482,7 @@ graph TD
 |----------|------|---------|-------------|
 | `bindings.inclusions` | `List<String>` | `[]` (all bindings) | Bindings to enable outbox for. Supports regex with `regex:` prefix (see [Regex binding inclusions/exclusions](#regex-binding-inclusionsexclusions)) |
 | `bindings.exclusions` | `List<String>` | `[]` | Bindings to exclude from outbox. Supports regex with `regex:` prefix (see [Regex binding inclusions/exclusions](#regex-binding-inclusionsexclusions)). **Exclusions take precedence** |
+| `bindings.enforce-producer-sync` | `Boolean` | `true` | Enforce synchronous producers for outbox-enabled bindings: configure missing settings and fail at startup when one is explicitly asynchronous (see [Synchronous producers](#synchronous-producers)) |
 
 ### Publishing properties
 
@@ -644,6 +633,13 @@ To provide a custom executor, define a Spring bean of type `ExecutorService` **e
 
 scs-outbox can archive published messages to a separate table or collection for auditing and troubleshooting.
 
+> [!IMPORTANT]
+> Archiving is a best-effort side effect that runs **after** a message has already been
+> successfully published to the broker. If archiving fails for a given message, that
+> message simply won't have an archive record — the outbox message is still removed from
+> the pending table/collection. Archiving failures are logged but never affect the
+> outbox's delivery guarantees (at-least-once, ordering).
+
 Enable in configuration:
 
 ```yaml
@@ -707,6 +703,27 @@ Set `json-payload-enabled: true` to store a human-readable JSON representation o
 
 To add custom JSON serialization for specific types, create a Spring bean implementing `dev.inditex.scsoutbox.publish.archive.json.JsonMapper`.
 
+> [!WARNING]
+> When using the MongoDB archive repository, if the JSON representation of a payload
+> contains keys with dots (`.`) — for example, an Avro field that is a union with a named
+> type (`record`/`enum`/`fixed`) nested directly in it (`["null", SomeRecord]`), Avro's JSON
+> encoder produces a JSON key equal to that type's fully-qualified name, namespace included
+> (e.g. `com.example.SomeRecord`) — the archive insert will fail with an error similar to:
+> ```
+> org.springframework.data.mapping.MappingException: Map key com.example.SomeRecord
+> contains dots but no replacement was configured
+> ```
+> Since archiving is best-effort (see [Archive messages](#archive-messages)), this only
+> affects the archive record for that message — publishing is not impacted. To avoid it,
+> choose one of:
+> 1. Configure a dot replacement on your application's `MappingMongoConverter`
+>    (`mappingMongoConverter.setMapKeyDotReplacement(...)`). Note this changes behavior for
+>    the whole converter/`MongoTemplate`, including any of your own application's documents
+>    that may rely on dotted map keys — evaluate the impact before enabling it broadly.
+> 2. Provide your own `JsonMapper` bean (see above) producing a JSON representation that
+>    avoids dotted keys for your Avro types, instead of relying on the default
+>    `AvroToJsonMapper`.
+
 ### Metrics
 
 scs-outbox provides [Micrometer](https://docs.micrometer.io/micrometer/reference/overview.html) metrics when `scs-outbox.metrics.enabled=true` and a `MeterRegistry` bean is present.
@@ -717,6 +734,7 @@ scs-outbox provides [Micrometer](https://docs.micrometer.io/micrometer/reference
 | `outbox.publishing.time` | Timer | Time taken for the publishing task execution (via `@Timed`) |
 | `outbox.publishing.delay` | Timer | Delay between message capture and publishing |
 | `outbox.publishing.messages` | Counter | Number of messages published |
+| `outbox.publishing.postsend.errors` | Counter | Number of exceptions thrown by post-send interceptors (e.g. archiving), tagged by `interceptor` and `destination` |
 | `outbox.messages.pending` | Gauge | Estimated number of messages pending publishing |
 
 ### Pause message publishing
@@ -859,23 +877,51 @@ To override it, define a custom `LockProvider` Spring bean.
 
 ### Synchronous producers
 
-To avoid message loss, configure your Spring Cloud Stream producers in synchronous mode:
+`OutboxMessagePublisher` deletes the outbox record as soon as `StreamBridge.send` returns `true`. With an **asynchronous** producer that happens before the broker acknowledges the record, so a later broker outage, retry exhaustion or serialization error loses the message with no trace left in the outbox table. Synchronous publishing is therefore what makes the outbox guarantee hold.
 
-**Kafka:**
+scs-outbox configures this for you. For every **outbox-enabled producer binding** backed by a supported binder, it switches the producer to synchronous mode when the binder is initialised:
 
-```properties
-spring.cloud.stream.kafka.bindings.<binding>.producer.sync=true
+| Binder | Setting | Value |
+|--------|---------|-------|
+| Kafka | `spring.cloud.stream.kafka.bindings.<binding>.producer.sync` | `true` |
+
+Bindings excluded from the outbox through `scs-outbox.bindings.exclusions` (or not matched by `scs-outbox.bindings.inclusions`) are **never** touched, and neither are bindings served by a different binder. The bindings that were switched are reported at startup:
+
+```
+INFO  Enabled synchronous publishing for outbox-enabled bindings of binder [kafka]: [orders-out-0]
 ```
 
+The configuration is applied to the binder itself rather than to the environment, so it is **not** visible in `/actuator/env`. This makes it independent of property-source ordering and lets scs-outbox see settings declared in a binder child environment under `spring.cloud.stream.binders.<name>.environment.*`.
+
+#### Precedence over your own configuration
+
+scs-outbox **never overrides a setting you declare**. A binding is left untouched when you configure either
+
+- `spring.cloud.stream.kafka.bindings.<binding>.producer.sync`, or
+- `spring.cloud.stream.kafka.default.producer.sync`
+
+in the main environment **or** in the binder child environment. Both keys are checked because Spring Cloud Stream resolves binding-scoped entries over binder-wide defaults regardless of property source ordering, so setting a binding-scoped value would silently override an explicit `default.producer.sync` of yours.
+
+#### Startup validation
+
+Because scs-outbox stands aside for your own configuration, it verifies the result:
+
+- **An outbox-enabled binding is explicitly asynchronous** → the application **fails to start** with a message naming the binder, the binding and the offending property. Starting would mean running without the delivery guarantee the outbox is supposed to provide. The message only suggests removing the property, or excluding that specific binding via `scs-outbox.bindings.exclusions` if it must genuinely publish asynchronously — it never suggests disabling the automatic configuration globally, since that would compromise the guarantee for every other outbox-enabled binding in the application.
+- **The binder is not supported** → a `WARN` is logged naming the binder. scs-outbox cannot tell whether such a configuration is safe, so it never blocks startup.
+
+The check runs when the binder is created. Bindings declared through `spring.cloud.stream.output-bindings` or `spring.cloud.stream.bindings.*` are bound during startup, so a misconfiguration fails the application. A destination used for the first time by `StreamBridge` at runtime is checked at that moment instead.
+
+#### Unsupported binders
+
+Only the Kafka binder is supported today. Other binders must be configured manually.
 See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/reference/kafka/kafka_overview.html#kafka-producer-properties).
 
-**RabbitMQ:**
+#### Opting out
 
-```properties
-spring.cloud.stream.rabbit.bindings.<binding>.producer.producerType=STREAM_SYNC
-```
-
-See the [RabbitMQ binder documentation](https://docs.spring.io/spring-cloud-stream/reference/rabbit/rabbit_overview/prod-props.html).
+| Opt-out | Consequence |
+|---------|-------------|
+| `scs-outbox.bindings.exclusions=<binding>` | The binding is no longer managed by the outbox, so no constraint applies. **This is the correct opt-out** when a specific binding must publish asynchronously |
+| `scs-outbox.bindings.enforce-producer-sync=false` | Disables both producer sync enforcement and validation for **every** outbox-enabled binding in the application. This is a drastic, application-wide decision, not a fix for a single misconfigured binding — it is never suggested by the startup failure. Set it only if you have your own way of guaranteeing synchronous publishing; otherwise **messages may be lost**. A `WARN` is logged at startup |
 
 ### Kafka linger property
 
@@ -892,6 +938,7 @@ spring.cloud.stream.kafka.binder.configuration.linger.ms=0
 - **ShedLock contention under high throughput**: ShedLock ensures only one instance publishes at a time. For extremely high message volumes, this can become a bottleneck. Evaluate whether the outbox pattern is the right fit for your throughput requirements.
 - **PostgreSQL table names must be lowercase**: scs-outbox does not use quoted identifiers. If you customize table names, ensure they are lowercase to avoid case-sensitivity issues.
 - **Integration test lock cleanup**: when running integration tests that trigger publishing, the publishing task may not finish before the test tears down, leaving the ShedLock lock unreleased. Restart the database between tests to avoid this.
+- **Synchronous producers are not auto-configured for undeclared bindings**: a destination created on the fly by `StreamBridge` without a corresponding entry in `spring.cloud.stream.bindings.*` is not enumerated, so the automatic [synchronous producer configuration](#synchronous-producers) does not apply to it. **Resolution**: declare the binding explicitly, or set the binder-specific synchronous producer property yourself.
 
 ## License
 
