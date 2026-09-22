@@ -30,7 +30,7 @@ SCS-Outbox supports **JDBC** and **MongoDB** backends. Add the corresponding sta
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-jdbc-starter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ SCS-Outbox supports **JDBC** and **MongoDB** backends. Add the corresponding sta
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-mongodb-starter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -199,7 +199,7 @@ Everything you need to get SCS-Outbox running, in one place (PostgreSQL + Kafka 
 <dependency>
   <groupId>dev.inditex.scsoutbox</groupId>
   <artifactId>scs-outbox-jdbc-starter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
