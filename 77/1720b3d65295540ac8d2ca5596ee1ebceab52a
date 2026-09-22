@@ -1,0 +1,16 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/OutboxBindingsContext.java
+  h_5ebe62d7d24f9c 40,48,50-51
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/OutboxBindingsContextTest.java
+  h_5ebe62d7d24f9c 54-55,64-65,74-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "771720b3d65295540ac8d2ca5596ee1ebceab52a",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}

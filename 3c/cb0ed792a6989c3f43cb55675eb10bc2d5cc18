@@ -1,0 +1,28 @@
+code/scs-outbox-it/scs-outbox-jdbc-it/src/test/java/dev/inditex/scsoutbox/it/jdbc/SyncProducerBindableInputIT.java
+  h_5ebe62d7d24f9c 1-80
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/InputBindings.java
+  h_5ebe62d7d24f9c 1-35
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/OutboxBindingsContext.java
+  h_5ebe62d7d24f9c 49-68
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SupportedBinder.java
+  h_5ebe62d7d24f9c 36-37,39-40,47,135,139
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderListener.java
+  h_5ebe62d7d24f9c 12,44,46
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/SupportedBinderTest.java
+  h_5ebe62d7d24f9c 9,18,54-58,62,70-71,76-77,82-88,90,97-102,135-152
+code/scs-outbox-libs/scs-outbox-core/src/test/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderListenerTest.java
+  h_5ebe62d7d24f9c 11,20,69-82,117-137
+docs/adr/0003-automatic-synchronous-producer-configuration.md
+  h_5ebe62d7d24f9c 134-137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3ccb0ed792a6989c3f43cb55675eb10bc2d5cc18",
+  "prompts": {},
+  "humans": {
+    "h_5ebe62d7d24f9c": {
+      "author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}

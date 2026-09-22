@@ -1,0 +1,21 @@
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SupportedBinder.java
+  s_7133d3b01af4dd::t_5d05951b60691f 21
+code/scs-outbox-libs/scs-outbox-core/src/main/java/dev/inditex/scsoutbox/config/producer/SyncProducerBinderListener.java
+  s_7133d3b01af4dd::t_9ad9e2b58a308a 25,29-31,37,45,59-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cd8ab8c8dbcf5531d22286fede46f50f3b0fabb1",
+  "prompts": {},
+  "sessions": {
+    "s_7133d3b01af4dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3bb44956ffebcl30VQ15pjdeV",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Francisco Barbudo <franciscobru@ext.inditex.com>"
+    }
+  }
+}
