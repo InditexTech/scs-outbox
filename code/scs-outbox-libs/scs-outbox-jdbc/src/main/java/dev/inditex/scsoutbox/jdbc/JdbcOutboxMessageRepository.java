@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import dev.inditex.scsoutbox.OutboxMessage;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
@@ -84,6 +83,10 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
     return this.queryWithDeserializationErrorHandling(query);
   }
 
+  private static final class StopRowIterationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+  }
+
   /**
    * Executes a query and deserializes messages one by one, stopping at the first deserialization error. Messages that were successfully
    * deserialized before the error are returned.
@@ -93,24 +96,24 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
    */
   private List<OutboxMessage> queryWithDeserializationErrorHandling(Query query) {
     final List<OutboxMessage> messages = new ArrayList<>();
-    final AtomicBoolean errorOccurred = new AtomicBoolean(false);
 
-    this.jdbcTemplate.query(query.getSql(), rs -> {
-      if (errorOccurred.get()) {
-        return;
-      }
-      try {
-        final OutboxMessage message = this.mapRow(rs);
-        messages.add(message);
-      } catch (final Exception e) {
-        errorOccurred.set(true);
-        log.error("Deserialization failed for message [{}] at destination [{}]. "
-            + "Returning {} successfully deserialized messages.",
-            rs.getString("ID"),
-            rs.getString("DESTINATION"),
-            messages.size(), e);
-      }
-    }, query.getParams());
+    try {
+      this.jdbcTemplate.query(query.getSql(), rs -> {
+        try {
+          final OutboxMessage message = this.mapRow(rs);
+          messages.add(message);
+        } catch (final Exception e) {
+          log.error("Deserialization failed for message [{}] at destination [{}]. "
+              + "Returning {} successfully deserialized messages.",
+              rs.getString("ID"),
+              rs.getString("DESTINATION"),
+              messages.size(), e);
+          throw new StopRowIterationException();
+        }
+      }, query.getParams());
+    } catch (final StopRowIterationException ignored) {
+      // Expected control flow: stop iterating rows after first deserialization error.
+    }
 
     return messages;
   }
@@ -153,30 +156,31 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
    */
   private Query buildFindAllQuery(Set<String> excludedDestinations, int maxResults) {
     final StringBuilder sql = new StringBuilder("SELECT * FROM " + this.table.getQualifiedTableName());
-
-    Object[] params = new Object[0];
+    final List<Object> params = new ArrayList<>();
 
     // Add WHERE clause if destinations need to be excluded
     if (excludedDestinations != null && !excludedDestinations.isEmpty()) {
+      final Object[] excludedDestinationParams = excludedDestinations.toArray();
       sql.append(" WHERE DESTINATION NOT IN (");
-      for (int i = 0; i < excludedDestinations.size(); i++) {
+      for (int i = 0; i < excludedDestinationParams.length; i++) {
         if (i > 0) {
           sql.append(", ");
         }
         sql.append("?");
       }
       sql.append(")");
-      params = excludedDestinations.toArray();
+      params.addAll(List.of(excludedDestinationParams));
     }
 
     sql.append(" ORDER BY CAPTURED_AT ASC");
 
     // Add LIMIT clause if maxResults is specified
     if (maxResults > 0) {
-      sql.append(" LIMIT ").append(maxResults);
+      sql.append(" LIMIT ?");
+      params.add(maxResults);
     }
 
-    return Query.of(sql.toString(), params);
+    return Query.of(sql.toString(), params.toArray());
   }
 
   protected JdbcTemplate getJdbcTemplate() {
@@ -247,6 +251,7 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
+  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #8).
   public void save(final OutboxMessage outboxMessage) {
     final SerializedOutboxMessage serializedOutboxMessage = this.serializer.serialize(outboxMessage);
     this.jdbcTemplate.update(
@@ -263,6 +268,7 @@ public class JdbcOutboxMessageRepository implements OutboxMessageRepository {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
+  @SuppressWarnings("java:S2077") // False positive: schema/table names are validated by DbNamingValidator (issue #9).
   public void delete(final OutboxMessage outboxMessage) {
     this.jdbcTemplate.update("DELETE FROM " + this.table.getQualifiedTableName() + " WHERE ID = ?",
         outboxMessage.getId().toString());

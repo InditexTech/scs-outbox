@@ -31,8 +31,22 @@ public class OutboxMessagePublisher {
     log.info("message [" + message.getId() + "] published. " + message);
   }
 
+  /**
+   * Runs every registered {@link OutboxMessagePublisherInterceptor} for the given message. Interceptors are treated as best-effort side
+   * effects: an exception thrown by one interceptor is caught and logged, and never prevents the remaining interceptors from running, nor
+   * the outbox message from being deleted afterwards.
+   *
+   * @param message the message that was just published to the broker
+   */
   private void postSend(final OutboxMessage message) {
-    this.interceptors.forEach(interceptor -> interceptor.postSend(message));
+    this.interceptors.forEach(interceptor -> {
+      try {
+        interceptor.postSend(message);
+      } catch (final Exception e) {
+        log.error("Post-send interceptor [{}] failed for message [{}]; the message was already published and will still be removed "
+            + "from the outbox.", interceptor.getClass().getName(), message.getId(), e);
+      }
+    });
   }
 
 }

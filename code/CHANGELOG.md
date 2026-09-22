@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [#89](https://github.com/InditexTech/scs-outbox/pull/89) Add Maven Central badges to README.md
+- [#96](https://github.com/InditexTech/scs-outbox/pull/96) Enforce synchronous producers for outbox-enabled bindings
+- [#98](https://github.com/InditexTech/scs-outbox/pull/98) Add a metric to measure archiving (post-send interceptor) failures
+
+### Fixed
+
+- [#94](https://github.com/InditexTech/scs-outbox/pull/94) Archiving failure after a successful publish can cause outbox messages to be re-sent and duplicated
+
+### Dependencies
+
+- [#74](https://github.com/InditexTech/scs-outbox/pull/74) chore(deps): bump org.postgresql:postgresql from 42.7.11 to 42.7.13 in /code
+- [#85](https://github.com/InditexTech/scs-outbox/pull/85) chore(deps): bump shedlock.version from 7.9.0 to 7.10.1 in /code
+- [#72](https://github.com/InditexTech/scs-outbox/pull/72) chore(deps): bump org.mariadb.jdbc:mariadb-java-client from 3.5.8 to 3.5.10 in /code
+- [#86](https://github.com/InditexTech/scs-outbox/pull/86) chore(deps-dev): bump com.diffplug.spotless:spotless-maven-plugin from 3.4.0 to 3.10.2 in /code
+
 ## [1.1.0] - 2026-08-27
 
 ### Added

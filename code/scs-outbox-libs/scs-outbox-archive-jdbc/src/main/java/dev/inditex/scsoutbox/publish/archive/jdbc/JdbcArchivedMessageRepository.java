@@ -8,7 +8,6 @@ import dev.inditex.scsoutbox.publish.archive.ArchivedMessageRepository;
 import dev.inditex.scsoutbox.publish.archive.ArchivedMessageSerializer;
 import dev.inditex.scsoutbox.publish.archive.ArchivedMessageSerializer.SerializedArchivedMessage;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +23,6 @@ public class JdbcArchivedMessageRepository implements ArchivedMessageRepository 
 
   private final Table table;
 
-  @SneakyThrows
   public JdbcArchivedMessageRepository(final JdbcTemplate jdbcTemplate, final ArchivedMessageSerializer serializer, final Table table) {
     this.jdbcTemplate = jdbcTemplate;
     this.serializer = serializer;
@@ -35,13 +33,17 @@ public class JdbcArchivedMessageRepository implements ArchivedMessageRepository 
 
   private String getColumnDataType(final String columnName) {
     try {
-      // Build the basic SQL query
       final String sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS "
-          + "WHERE UPPER(TABLE_NAME) = UPPER('" + this.table.tableName().value() + "') "
-          + "AND UPPER(COLUMN_NAME) = UPPER('" + columnName + "') "
-          + "AND UPPER(TABLE_SCHEMA) = UPPER('" + this.table.schemaName().value() + "')";
+          + "WHERE UPPER(TABLE_NAME) = UPPER(?) "
+          + "AND UPPER(COLUMN_NAME) = UPPER(?) "
+          + "AND UPPER(TABLE_SCHEMA) = UPPER(?)";
 
-      return this.jdbcTemplate.queryForObject(sql, String.class);
+      return this.jdbcTemplate.queryForObject(
+          sql,
+          String.class,
+          this.table.tableName().value(),
+          columnName,
+          this.table.schemaName().value());
     } catch (final EmptyResultDataAccessException e) {
       return "text";
     }
