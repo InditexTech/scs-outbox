@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-22
+
 ### Added
 
 - [#89](https://github.com/InditexTech/scs-outbox/pull/89) Add Maven Central badges to README.md
@@ -100,7 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maven build configuration with javadocs and sources plugins
 - CI/CD workflows for release and testing
 
-[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/InditexTech/scs-outbox/compare/1.2.0...HEAD
+
+[1.2.0]: https://github.com/InditexTech/scs-outbox/compare/1.1.0...1.2.0
 
 [1.1.0]: https://github.com/InditexTech/scs-outbox/compare/1.0.1...1.1.0
 
