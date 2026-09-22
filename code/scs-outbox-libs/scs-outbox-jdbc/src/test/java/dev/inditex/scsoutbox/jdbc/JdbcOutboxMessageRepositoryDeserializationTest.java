@@ -92,6 +92,28 @@ class JdbcOutboxMessageRepositoryDeserializationTest {
   }
 
   @Test
+  void findAllOrderByCapturedAt_shouldStopDeserializingAfterFirstFailure() {
+    this.insertMessage("destination1", Instant.now().minusSeconds(50));
+    this.insertMessage("destination1", Instant.now().minusSeconds(40));
+    this.insertMessage("destination1", Instant.now().minusSeconds(30));
+    this.insertMessage("destination1", Instant.now().minusSeconds(20));
+    this.insertMessage("destination1", Instant.now().minusSeconds(10));
+    final FailingSerializationEngine failingEngine = new FailingSerializationEngine(this.realSerialization, 3);
+    final OutboxMessageSerializer serializer = new OutboxMessageSerializer(
+        failingEngine,
+        this.headersMapper);
+    final JdbcOutboxMessageRepository repository = new JdbcOutboxMessageRepository(
+        this.jdbcTemplate,
+        this.table,
+        serializer);
+
+    final List<OutboxMessage> result = repository.findAllOrderByCapturedAt(UNLIMITED);
+
+    assertEquals(2, result.size());
+    assertEquals(3, failingEngine.getCallCount());
+  }
+
+  @Test
   void findAllOrderByCapturedAt_shouldReturnAllButLast_whenLastMessageFailsDeserialization() {
     this.insertMessage("destination1", Instant.now().minusSeconds(30));
     this.insertMessage("destination1", Instant.now().minusSeconds(20));
@@ -179,6 +201,10 @@ class JdbcOutboxMessageRepositoryDeserializationTest {
     @Override
     public byte[] serialize(Object object) {
       return this.delegate.serialize(object);
+    }
+
+    int getCallCount() {
+      return this.callCount.get();
     }
   }
 }
