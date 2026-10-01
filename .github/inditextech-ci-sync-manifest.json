@@ -35,7 +35,7 @@
   "creation_year": 2026,
   "integrity": {
     "algorithm": "hmac-sha256",
-    "signature": "612b7bc0aba82d50be9aa347944aae1fdc81d589a1cd3bc61ba3cdce291aeb70"
+    "signature": "8ee7e7340cdcb118b7e4e14ec9ac06619def433c5c636b28379a58b5ab024a11"
   },
   "managed_by": "InditexTech CI governance",
   "managed_paths": {
@@ -45,9 +45,9 @@
     ".github/ISSUE_TEMPLATE/config.yml": "10e5dee4d49aa9e7792ceb4c986160c61f95da1ba00a64bf06e5f1f636cd17ec",
     ".github/inditextech-ci-java.json": "260f50711e3f8cbfb7694f4efe76ba8aabec8372b95cd725eb75ca0669a6260e",
     ".github/workflows/code-maven_java-PR_verify.yml": "6660014f58bb9992ca6dab032f9132ed10ac2b4ea3077e05772e269e36ee7011",
-    ".github/workflows/code-maven_java-build_snapshot.yml": "490966c5b5ccaaf33365341d15370fee59519431847679e97cdda0b2cdfb2670",
-    ".github/workflows/code-maven_java-release-core.yml": "8846e31c3a273526417a932b266b60e90a088eda16163e8a4d1cc657366d6fa9",
-    ".github/workflows/code-maven_java-release.yml": "ac2d1fa1eef20bdc05396aebf67dd588f3a0dad0702acec6a03c2327aad251e7",
+    ".github/workflows/code-maven_java-build_snapshot.yml": "1a1ad850ef059dc6533f76cdebffce89a21fc9c0ee756f91f2e6c617a0d245c7",
+    ".github/workflows/code-maven_java-release-core.yml": "a4472ccd2b910aee0b7f863f0e58b04ca4f3a5d1f3f850f3455b2c2d488b5e40",
+    ".github/workflows/code-maven_java-release.yml": "7fd420bcbe007990f07c0089a8764cabb335362b268fab60edbe027fe6b4da0c",
     ".github/workflows/code-maven_java-sonarcloud-analysis.yml": "51f005d23c095da1352aa2a49c34583cf0ca882a9f2fdfb90a412e85b0ba78aa",
     ".github/workflows/code-release_preview.yml": "d8acad2b0e4f26b42502fcccc901697cd09c01a84b1d1e77ce2bf4c1577fb930",
     ".github/workflows/codeql.yml": "b4ef9dfddd7b28387b669d48a4228225dc1d6dc76f98d21b65dd4a324d228ad5",
@@ -76,6 +76,6 @@
   "schema_version": 2,
   "source_digests": {
     "base": "6c9dfdee6144a6200861335bf9b947130162825df20db38979f0293b7e155fbe",
-    "java": "2820118030545c1133bcb13224efb57edf85bbc7f890f1c09db17f5084475d65"
+    "java": "717b514be76849d15fcc5bc89d0764084720e50d91e7aaecec4ac8af824359ee"
   }
 }

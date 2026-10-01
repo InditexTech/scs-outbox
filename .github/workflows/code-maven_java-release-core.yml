@@ -73,6 +73,12 @@ on:
     secrets:
       APP_PRIVATE_KEY:
         required: true
+      CI_GPG_SECRET_KEY:
+        description: Armored GPG secret key signing release commits and tags.
+        required: false
+      CI_GPG_SECRET_KEY_PASSWORD:
+        description: Passphrase protecting CI_GPG_SECRET_KEY.
+        required: false
 
 permissions:
   actions: read
@@ -588,6 +594,13 @@ jobs:
             rm -f "$tmp"
           fi
 
+      - name: Configure release git signing
+        uses: InditexTech/gh-actions/configure-release-git@ca5ff3f7d69ee5a3cb026ac5585d680f083d8f7b
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          gpg-secret-key: ${{ secrets.CI_GPG_SECRET_KEY }}
+          gpg-passphrase: ${{ secrets.CI_GPG_SECRET_KEY_PASSWORD }}
+
       - name: Commit and stage release
         if: steps.release-plan.outputs.resume != 'true' && steps.lifecycle.outputs.mode != 'delegated'
         id: release-commit
@@ -606,8 +619,6 @@ jobs:
             echo "::error title=Missing release metadata::Versioning did not produce changes to commit."
             exit 1
           fi
-          git config user.name "${APP_SLUG}[bot]"
-          git config user.email "${APP_SLUG}[bot]@users.noreply.github.com"
           git commit -m "[java-release] Prepare release"
 
           while IFS= read -r record; do
@@ -718,8 +729,6 @@ jobs:
         run: |
           set -euo pipefail
           gh auth setup-git
-          git config user.name "${APP_SLUG}[bot]"
-          git config user.email "${APP_SLUG}[bot]@users.noreply.github.com"
 
           git -C "$GITHUB_WORKSPACE" checkout -B "$BASELINE_BRANCH"
 
@@ -1284,6 +1293,13 @@ jobs:
           set -euo pipefail
           echo "java_home=$(asdf where java)" >> "$GITHUB_OUTPUT"
 
+      - name: Configure release git signing
+        uses: InditexTech/gh-actions/configure-release-git@ca5ff3f7d69ee5a3cb026ac5585d680f083d8f7b
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          gpg-secret-key: ${{ secrets.CI_GPG_SECRET_KEY }}
+          gpg-passphrase: ${{ secrets.CI_GPG_SECRET_KEY_PASSWORD }}
+
       - name: Promote the release to the default branch
         id: promote
         env:
@@ -1299,8 +1315,6 @@ jobs:
         run: |
           set -euo pipefail
           gh auth setup-git
-          git config user.name "${APP_SLUG}[bot]"
-          git config user.email "${APP_SLUG}[bot]@users.noreply.github.com"
 
           git fetch --no-tags origin "+${STAGING_REF}:refs/ci-governance/staged" 2>/dev/null || true
           if [[ "$(git ls-remote origin "$EXPECTED_REF" | cut -f1)" == "$PROMOTE_COMMIT" ]]; then
@@ -1324,7 +1338,7 @@ jobs:
               echo "::error title=Tag conflict::$tag already exists."
               exit 1
             fi
-            git tag -a "$tag" -m "Release $version" "$RELEASE_COMMIT"
+            git tag -s "$tag" -m "Release $version" "$RELEASE_COMMIT"
             tag_refs+=("refs/tags/$tag")
           done < <(jq -c '.[]' <<< "$RELEASES")
 
@@ -1347,8 +1361,6 @@ jobs:
         run: |
           set -euo pipefail
           gh auth setup-git
-          git config user.name "${APP_SLUG}[bot]"
-          git config user.email "${APP_SLUG}[bot]@users.noreply.github.com"
 
           descriptor="$GITHUB_WORKSPACE/.github/inditextech-ci-java.json"
           release_mode="$(jq -r '.release.lifecycle // "govern-inject"' "$descriptor")"
