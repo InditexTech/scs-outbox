@@ -1,0 +1,14 @@
+.github/dependabot.yml
+  h_4822c601baecd3 50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "cee63d857acc938638d3afebba0766976bc6dbc3",
+  "prompts": {},
+  "humans": {
+    "h_4822c601baecd3": {
+      "author": "Julio Gomez Diaz <juliojgd@inditex.com>"
+    }
+  }
+}
