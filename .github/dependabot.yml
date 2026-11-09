@@ -10,12 +10,6 @@ updates:
   - package-ecosystem: maven
     directories:
       - '/code'
-    exclude-paths:
-      - 'docs'
-      - 'example'
-      - 'e2e'
-      - 'archetype-resources'
-      - 'src/test/projects'
     schedule:
       interval: weekly
       day: monday
@@ -25,21 +19,10 @@ updates:
       default-days: 3
       semver-minor-days: 7
       semver-patch-days: 3
-      semver-major-days: 30
     open-pull-requests-limit: 20
-    groups:
-      codeql-action:
-        patterns:
-          - 'github/codeql-action/*'
   - package-ecosystem: github-actions
     directories:
       - '/'
-    exclude-paths:
-      - 'docs'
-      - 'example'
-      - 'e2e'
-      - 'archetype-resources'
-      - 'src/test/projects'
     schedule:
       interval: weekly
       day: monday
@@ -48,10 +31,6 @@ updates:
     cooldown:
       default-days: 3
     open-pull-requests-limit: 20
-    groups:
-      codeql-action:
-        patterns:
-          - 'github/codeql-action/*'
     ignore:
       - dependency-name: 'InditexTech/gh-actions/*'
       - dependency-name: 'SonarSource/sonarqube-scan-action'
