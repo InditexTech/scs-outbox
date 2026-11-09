@@ -26,15 +26,8 @@ updates:
       semver-minor-days: 7
       semver-patch-days: 3
       semver-major-days: 30
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 20
     groups:
-      minor-and-patch:
-        update-types:
-          - minor
-          - patch
-      major:
-        update-types:
-          - major
       codeql-action:
         patterns:
           - 'github/codeql-action/*'
@@ -54,7 +47,7 @@ updates:
       timezone: UTC
     cooldown:
       default-days: 3
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 20
     groups:
       codeql-action:
         patterns:
