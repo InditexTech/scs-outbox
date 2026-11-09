@@ -1,0 +1,14 @@
+.sync-exclude
+  h_4822c601baecd3 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "b05133f278c6512f8d1f025abb21a92864198eda",
+  "prompts": {},
+  "humans": {
+    "h_4822c601baecd3": {
+      "author": "Julio Gomez Diaz <juliojgd@inditex.com>"
+    }
+  }
+}
