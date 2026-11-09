@@ -8,7 +8,6 @@ import dev.inditex.scsoutbox.publish.archive.ArchivedMessageRepository;
 import dev.inditex.scsoutbox.publish.archive.ArchivedMessageSerializer;
 import dev.inditex.scsoutbox.publish.archive.ArchivedMessageSerializer.SerializedArchivedMessage;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +23,6 @@ public class JdbcArchivedMessageRepository implements ArchivedMessageRepository 
 
   private final Table table;
 
-  @SneakyThrows
   public JdbcArchivedMessageRepository(final JdbcTemplate jdbcTemplate, final ArchivedMessageSerializer serializer, final Table table) {
     this.jdbcTemplate = jdbcTemplate;
     this.serializer = serializer;

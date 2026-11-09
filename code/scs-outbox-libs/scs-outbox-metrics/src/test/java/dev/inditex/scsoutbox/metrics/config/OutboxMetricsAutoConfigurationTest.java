@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.metrics.MessagesPendingMeter;
+import dev.inditex.scsoutbox.metrics.PostSendErrorsMeter;
 import dev.inditex.scsoutbox.metrics.PublishingDelayMeter;
 import dev.inditex.scsoutbox.metrics.PublishingTaskMeter;
 
@@ -40,12 +41,14 @@ class OutboxMetricsAutoConfigurationTest {
             assertThat(context).hasSingleBean(MessagesPendingMeter.class);
             assertThat(context).hasSingleBean(PublishingDelayMeter.class);
             assertThat(context).hasSingleBean(PublishingTaskMeter.class);
+            assertThat(context).hasSingleBean(PostSendErrorsMeter.class);
           });
     }
 
     @Test
     void when_metrics_disabled_expect_autoconfiguration_skipped() {
       OutboxMetricsAutoConfigurationTest.this.contextRunner
+          .withPropertyValues("scs-outbox.metrics.enabled=false")
           .withBean(MeterRegistry.class, SimpleMeterRegistry::new)
           .run(context -> {
             assertThat(context).hasNotFailed();
@@ -60,6 +63,21 @@ class OutboxMetricsAutoConfigurationTest {
           .run(context -> {
             assertThat(context).hasNotFailed();
             assertThat(context).doesNotHaveBean(MessagesPendingMeter.class);
+          });
+    }
+
+    @Test
+    void when_outbox_message_repository_absent_expect_other_metrics_created() {
+      OutboxMetricsAutoConfigurationTest.this.contextRunner
+          .withPropertyValues("scs-outbox.metrics.enabled=true")
+          .withBean(MeterRegistry.class, SimpleMeterRegistry::new)
+          .run(context -> {
+            assertThat(context).hasNotFailed();
+            assertThat(context).hasSingleBean(TimedAspect.class);
+            assertThat(context).doesNotHaveBean(MessagesPendingMeter.class);
+            assertThat(context).hasSingleBean(PublishingDelayMeter.class);
+            assertThat(context).hasSingleBean(PublishingTaskMeter.class);
+            assertThat(context).hasSingleBean(PostSendErrorsMeter.class);
           });
     }
   }

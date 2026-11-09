@@ -8,6 +8,7 @@ public class DefaultJsonMapper implements JsonMapper<Object> {
 
   private final ObjectMapper mapper;
 
+  @Override
   public String writeValueAsString(final Object value) {
     return this.mapper.writeValueAsString(value);
   }

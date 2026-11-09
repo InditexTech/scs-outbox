@@ -4,9 +4,12 @@ import static dev.inditex.scsoutbox.OutboxMessageMother.anOutboxMessage;
 import static dev.inditex.scsoutbox.OutboxMessageRepository.UNLIMITED;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -54,6 +57,36 @@ class OutboxMessagePublisherTest {
       OutboxMessagePublisherTest.this.publisher.publish(message);
 
       assertThat(OutboxMessagePublisherTest.this.repository.findAllOrderByCapturedAt(UNLIMITED)).isEmpty();
+    }
+
+    @Test
+    void when_postsend_interceptor_throws_expect_message_still_deleted_and_exception_not_propagated() {
+      final OutboxMessagePublisherInterceptor failingInterceptor = mock(OutboxMessagePublisherInterceptor.class);
+      doThrow(new RuntimeException("archiving failed")).when(failingInterceptor).postSend(any(OutboxMessage.class));
+      final OutboxMessagePublisher publisherWithFailingInterceptor = new OutboxMessagePublisher(
+          OutboxMessagePublisherTest.this.messageSender, OutboxMessagePublisherTest.this.repository, List.of(failingInterceptor));
+      final OutboxMessage message = anOutboxMessage();
+      OutboxMessagePublisherTest.this.repository.save(message);
+
+      assertThatCode(() -> publisherWithFailingInterceptor.publish(message)).doesNotThrowAnyException();
+
+      assertThat(OutboxMessagePublisherTest.this.repository.findAllOrderByCapturedAt(UNLIMITED)).isEmpty();
+    }
+
+    @Test
+    void when_first_postsend_interceptor_throws_expect_second_interceptor_still_invoked() {
+      final OutboxMessagePublisherInterceptor failingInterceptor = mock(OutboxMessagePublisherInterceptor.class);
+      doThrow(new RuntimeException("archiving failed")).when(failingInterceptor).postSend(any(OutboxMessage.class));
+      final OutboxMessagePublisherInterceptor secondInterceptor = mock(OutboxMessagePublisherInterceptor.class);
+      final OutboxMessagePublisher publisherWithTwoInterceptors = new OutboxMessagePublisher(
+          OutboxMessagePublisherTest.this.messageSender, OutboxMessagePublisherTest.this.repository,
+          List.of(failingInterceptor, secondInterceptor));
+      final OutboxMessage message = anOutboxMessage();
+      OutboxMessagePublisherTest.this.repository.save(message);
+
+      publisherWithTwoInterceptors.publish(message);
+
+      verify(secondInterceptor).postSend(message);
     }
   }
 

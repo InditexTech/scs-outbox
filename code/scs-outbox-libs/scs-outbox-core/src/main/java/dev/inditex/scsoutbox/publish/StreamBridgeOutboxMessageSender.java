@@ -18,6 +18,7 @@ public class StreamBridgeOutboxMessageSender implements OutboxMessageSender {
 
   private final BindingServiceProperties bindingServiceProperties;
 
+  @Override
   public boolean send(final OutboxMessage outboxMessage) {
     if (outboxMessage.getPayload() instanceof byte[]) {
       return this.sendRaw(outboxMessage);

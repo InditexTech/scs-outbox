@@ -31,7 +31,7 @@ To maintain a collaborative and respectful environment, please consider the foll
 
 ## Contribution Guidelines
 
-- All contributors are expected to follow the project's [code of conduct](CODE_of_CONDUCT.md). Please be respectful and
+- All contributors are expected to follow the project's [code of conduct](CODE_OF_CONDUCT.md). Please be respectful and
 considerate towards other contributors.
 - Before starting work on a new feature or fix, check existing [issues](../../issues) and [pull requests](../../pulls)
 to avoid duplications and unnecessary discussions.
@@ -39,10 +39,8 @@ to avoid duplications and unnecessary discussions.
 This will help coordinate efforts and prevent conflicts.
 - It is always advisable to discuss and gather feedback from the community before making significant changes to the
 project's structure or architecture.
-- Ensure a clean and organized commit history. Divide your changes into logical and descriptive commits. We recommend to use the [Conventional Commits Specification](https://www.conventionalcommits.org/en/v1.0.0/)
+- Ensure a clean and organized commit history. Divide your changes into logical and descriptive commits. We recommend using the [Conventional Commits Specification](https://www.conventionalcommits.org/en/v1.0.0/)
 - Document any new changes or features you add. This will help other contributors and project users understand your work
 and its purpose.
 - Be sure to link the corresponding issue in your pull request to maintain proper tracking of contributions.
 - Remember to add license and copyright information following the [REUSE Specification](https://reuse.software/spec/#copyright-and-licensing-information).
-
-## Development

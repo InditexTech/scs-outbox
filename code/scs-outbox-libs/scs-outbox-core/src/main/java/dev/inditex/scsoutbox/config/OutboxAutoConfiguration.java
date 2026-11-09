@@ -10,6 +10,8 @@ import java.util.concurrent.Executors;
 import dev.inditex.scsoutbox.MessageCaptureTxService;
 import dev.inditex.scsoutbox.OutboxMessageRepository;
 import dev.inditex.scsoutbox.OutboxServiceProperties;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener;
+import dev.inditex.scsoutbox.config.producer.SyncProducerBinderResolver;
 import dev.inditex.scsoutbox.interceptor.MessageChannelAccessor;
 import dev.inditex.scsoutbox.interceptor.OutboxChannelInterceptor;
 import dev.inditex.scsoutbox.publish.DestinationGroupingKeyGenerator;
@@ -29,6 +31,7 @@ import dev.inditex.scsoutbox.scheduler.AfterCommitTrigger;
 import dev.inditex.scsoutbox.scheduler.OutboxScheduledService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,10 +39,12 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.stream.binding.Bindable;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.integration.config.GlobalChannelInterceptor;
 
 @Slf4j
@@ -80,6 +85,29 @@ public class OutboxAutoConfiguration {
       final OutboxProperties outboxProperties,
       final BindingServiceProperties bindingServiceProperties) {
     return new OutboxServiceProperties(outboxProperties, bindingServiceProperties);
+  }
+
+  /**
+   * Enables synchronous publishing on every outbox-enabled producer binding, and fails fast when a binding is explicitly configured to
+   * publish asynchronously.
+   *
+   * @see dev.inditex.scsoutbox.config.producer.SyncProducerBinderListener
+   */
+  @Bean
+  public SyncProducerBinderListener scsOutboxSyncProducerBinderListener(
+      final @Lazy SyncProducerBinderResolver syncProducerBinderResolver,
+      final ObjectProvider<Bindable> bindables) {
+    return new SyncProducerBinderListener(syncProducerBinderResolver, bindables);
+  }
+
+  /**
+   * Resolves binders supported by automatic synchronous producer configuration.
+   */
+  @Bean
+  public SyncProducerBinderResolver syncProducerBinderResolver(
+      final OutboxProperties outboxProperties,
+      final BindingServiceProperties bindingServiceProperties) {
+    return new SyncProducerBinderResolver(outboxProperties, bindingServiceProperties);
   }
 
   @Bean

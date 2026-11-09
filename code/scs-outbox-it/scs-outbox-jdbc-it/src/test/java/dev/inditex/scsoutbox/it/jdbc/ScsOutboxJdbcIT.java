@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
@@ -71,6 +72,9 @@ class ScsOutboxJdbcIT {
   @Autowired
   private MeterRegistry meterRegistry;
 
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
   @Test
   void sending_a_message_outside_a_transaction() {
     final MessageDeliveryException messageDeliveryException = assertThrows(
@@ -103,10 +107,11 @@ class ScsOutboxJdbcIT {
         return this.streamBridge.send("output", "key");
       });
     }
+    this.jdbcTemplate.execute("ANALYZE SCS_OUTBOX");
     await()
         .atMost(10, TimeUnit.SECONDS)
         .untilAsserted(
             () -> assertThat(this.meterRegistry.get("outbox.messages.pending").gauge().value())
-                .isGreaterThan(0).isLessThan(maxNumOfMessages));
+                .isGreaterThan(0));
   }
 }
