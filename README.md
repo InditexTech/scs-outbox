@@ -250,8 +250,11 @@ spring:
       kafka:
         binder:
           brokers: localhost:9092
-          configuration:
-            linger.ms: 0        # avoid batching delays (recommended)
+        bindings:
+          orders-out-0:
+            producer:
+              configuration:
+                linger.ms: 0    # avoid batching delays on outbox bindings (recommended)
         # 'bindings.orders-out-0.producer.sync=true' is configured automatically by scs-outbox
       bindings:
         orders-out-0:
@@ -295,8 +298,11 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_BROKERS:localhost:9092}
-          configuration:
-            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              configuration:
+                linger.ms: 0
       bindings:
         orders-out-0:
           destination: orders
@@ -330,8 +336,11 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_BROKERS:localhost:9092}
-          configuration:
-            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              configuration:
+                linger.ms: 0
       bindings:
         orders-out-0:
           destination: orders
@@ -360,8 +369,11 @@ spring:
       kafka:
         binder:
           brokers: ${KAFKA_BROKERS:localhost:9092}
-          configuration:
-            linger.ms: 0
+        bindings:
+          orders-out-0:
+            producer:
+              configuration:
+                linger.ms: 0
       bindings:
         orders-out-0:
           destination: orders
@@ -925,11 +937,28 @@ See the [Kafka binder documentation](https://docs.spring.io/spring-cloud-stream/
 
 ### Kafka linger property
 
-scs-outbox sends messages individually. Set `linger.ms=0` to avoid unnecessary batching delays:
+scs-outbox sends messages synchronously, one by one. If you configure a non-zero `linger.ms` globally (for example, at the Spring Boot or binder level to batch messages on other bindings), set `linger.ms=0` on each outbox-enabled binding so they do not incur unnecessary batching delays while keeping batching intact on non-outbox bindings:
 
-```properties
-spring.cloud.stream.kafka.binder.configuration.linger.ms=0
+```yaml
+spring:
+  cloud:
+    stream:
+      kafka:
+        bindings:
+          orders-out-0:
+            producer:
+              configuration:
+                linger.ms: 0
+          payments-out-0:
+            producer:
+              configuration:
+                linger.ms: 0
 ```
+
+Setting `linger.ms` under `bindings.<binding>.producer.configuration` overrides any binder- or Boot-level `linger.ms` setting (unlike `producer.batch-timeout`, which is only applied when no global `linger.ms` is set).
+
+> [!NOTE]
+> If every Kafka producer binding in your application uses scs-outbox, you can set it once for all producer bindings with `spring.cloud.stream.kafka.default.producer.configuration.linger.ms=0` instead of repeating it per binding (and still override it on individual bindings if needed). When no `linger.ms` is configured anywhere at the Boot or binder level, the Spring Cloud Stream Kafka binder already defaults `linger.ms` to `0`.
 
 ## Known Issues
 
